@@ -1,0 +1,29 @@
+﻿<Window x:Name="TaskBarWindow" x:Class="BlinkReminder.Windows.TaskbarPresence"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:local="clr-namespace:BlinkReminder.Windows"
+        mc:Ignorable="d"
+        Title="TaskBarIcon" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowState="Minimized" Visibility="Hidden">
+    <Grid>
+        <tb:TaskbarIcon x:Name="taskbarIcon" IconSource="BlinkReminder.ico" 
+                    ToolTipText="Reminds you to stop staring at the screen" 
+                    MenuActivation="LeftOrRightClick">
+
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Start short break" Click="ShortBreak_Click"/>
+                    <MenuItem Header="Start long break" Click="LongBreak_Click"/>
+                    <MenuItem Header="Pause" Click="PauseItem_Click"/>
+                    <Separator />
+                    <MenuItem Header="Settings" Click="Settings_Click"/>
+                    <Separator />
+                    <MenuItem Header="Exit" Click="ExitItem_Click"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+
+        </tb:TaskbarIcon>
+    </Grid>
+</Window>

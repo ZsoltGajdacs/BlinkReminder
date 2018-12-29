@@ -1,0 +1,27 @@
+﻿<Window x:Name="BlockerLong" x:Class="BlinkReminder.ViewBlockerLong"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlinkReminder"
+        mc:Ignorable="d"
+        Title="BlockerLong" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.8" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/> <!--0-->
+            <RowDefinition Height="30"/><!--1-->
+            <RowDefinition Height="30"/><!--2-->
+            <RowDefinition Height="30"/><!--3-->
+            <RowDefinition Height="*"/> <!--4-->
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />  <!--0-->
+            <ColumnDefinition Width="150" /><!--1-->
+            <ColumnDefinition Width="*" />  <!--2-->
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="skipButton" Content="Skip Break" Grid.Column="1" Grid.Row="3" Click="SkipButton_Click"/>
+        <TextBlock x:Name="longText" Text="This is a long break!" Foreground="White" Grid.Column="1" Grid.Row="1"/>
+    </Grid>
+</Window>
