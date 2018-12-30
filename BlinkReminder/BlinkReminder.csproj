@@ -120,9 +120,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Windows\ViewBlockerShort.xaml.cs">
-      <DependentUpon>ViewBlockerShort.xaml</DependentUpon>
-    </Compile>
     <Page Include="Windows\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -131,7 +128,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\ViewBlockerLong.xaml">
+    <Page Include="Windows\ViewBlocker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -148,14 +145,10 @@
     <Compile Include="Windows\TaskbarPresence.xaml.cs">
       <DependentUpon>TaskbarPresence.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ViewBlockerLong.xaml.cs">
-      <DependentUpon>ViewBlockerLong.xaml</DependentUpon>
+    <Compile Include="Windows\ViewBlocker.xaml.cs">
+      <DependentUpon>ViewBlocker.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Windows\ViewBlockerShort.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

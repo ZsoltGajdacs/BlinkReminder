@@ -18,15 +18,31 @@ using System.Timers;
 
 namespace BlinkReminder
 {
-    public partial class ViewBlockerLong : Window, IDisposable
+    public partial class ViewBlocker : Window, IDisposable
     {
         private Timer timeOfBlock;
 
-        public ViewBlockerLong(long interval)
+        public ViewBlocker(long interval, bool isSkippable, string message)
         {
             InitializeComponent();
             StartDisplayTimer(interval);
+            SetSkippable(isSkippable);
+            SetMessage(message);
             PrepareWindow();
+        }
+
+        private void SetMessage(string msg)
+        {
+            longText.Text = msg;
+        }
+
+        private void SetSkippable(bool isSkippable)
+        {
+            if (!isSkippable)
+            {
+                skipButton.IsEnabled = false;
+                skipButton.Visibility = Visibility.Hidden;
+            }
         }
 
         private void PrepareWindow()
@@ -35,6 +51,8 @@ namespace BlinkReminder
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 Application.Current.MainWindow.Activate();
+                Application.Current.MainWindow.Topmost = true;
+                Application.Current.MainWindow.Focus();
             }));
         }
 

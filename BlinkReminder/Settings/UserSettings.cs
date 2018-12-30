@@ -22,9 +22,17 @@ namespace BlinkReminder.Settings
         internal long LongDisplayTime { get; set; }
         internal long LongIntervalTime { get; set; }
 
+        internal bool IsShortSkippable { get; set; }
+        internal bool IsLongSkippable { get; set; }
+
+        private List<string> shortBreakQuotes;
+        private List<string> longBreakQuotes;
+
+        #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => new UserSettings());
 
         public static UserSettings Instance { get { return lazy.Value; } }
+        #endregion
 
         private UserSettings()
         {
@@ -32,6 +40,24 @@ namespace BlinkReminder.Settings
             ShortIntervalTime = (long)CycleTimesEnum.ShortIntervalTime;
             LongDisplayTime = (long)CycleTimesEnum.LongDisplayTime;
             LongIntervalTime = (long)CycleTimesEnum.LongIntervalTime;
+
+            IsShortSkippable = false;
+            IsLongSkippable = true;
+
+            shortBreakQuotes = new List<string>();
+            longBreakQuotes = new List<string>();
+        }
+
+        internal string GetShortQuote()
+        {
+            // Temporary stuff
+            return "This is a short break";
+        }
+
+        internal string GetLongQuote()
+        {
+            // Temp
+            return "This is a long break";
         }
 
     }

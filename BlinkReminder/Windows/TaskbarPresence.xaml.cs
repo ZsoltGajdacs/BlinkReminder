@@ -27,8 +27,7 @@ namespace BlinkReminder.Windows
 
         // Windows
         private Window settingsWindow;
-        private Window longBlockerWindow;
-        private Window shortBlockerWindow;
+        private Window blockerWindow;
 
         //Timers
         private Timer shortCycleTimer;
@@ -50,12 +49,12 @@ namespace BlinkReminder.Windows
 
         private void ShortBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlockerShort(userSettings.ShortDisplayTime);
+            ShowViewBlocker(userSettings.ShortDisplayTime, userSettings.IsShortSkippable, userSettings.GetShortQuote());
         }
 
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlockerLong(userSettings.LongDisplayTime);
+            ShowViewBlocker(userSettings.LongDisplayTime, userSettings.IsLongSkippable, userSettings.GetLongQuote());
         }
 
         private void PauseItem_Click(object sender, RoutedEventArgs e)
@@ -79,12 +78,12 @@ namespace BlinkReminder.Windows
 
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlockerLong(userSettings.LongDisplayTime);
+            ShowViewBlocker(userSettings.LongDisplayTime, userSettings.IsLongSkippable, userSettings.GetLongQuote());
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlockerShort(userSettings.ShortDisplayTime);
+            ShowViewBlocker(userSettings.ShortDisplayTime, userSettings.IsShortSkippable, userSettings.GetShortQuote());
         }
 
         #endregion
@@ -93,8 +92,7 @@ namespace BlinkReminder.Windows
 
         private void BlockerWindow_Closed(object sender, EventArgs e)
         {
-            longBlockerWindow = null;
-            shortBlockerWindow = null;
+            blockerWindow = null;
             kh.Dispose(); // Release keyboard trap
         }
 
@@ -107,32 +105,16 @@ namespace BlinkReminder.Windows
 
         #region Window showers
 
-        private void ShowViewBlockerLong(long interval)
+        private void ShowViewBlocker(long interval, bool isSkippable, string message)
         {
-            if (longBlockerWindow == null)
+            if (blockerWindow == null)
             {
                 kh = new KeyboardHook(); // Intercept every key
-                longBlockerWindow = new ViewBlockerLong(interval);
-                longBlockerWindow.Closed += BlockerWindow_Closed;
-                longBlockerWindow.Show();
+                blockerWindow = new ViewBlocker(interval, isSkippable, message);
+                blockerWindow.Closed += BlockerWindow_Closed;
+                blockerWindow.Show();
             }
-            else { longBlockerWindow.Activate(); }
-        }
-
-        private void ShowViewBlockerShort(long interval)
-        {
-            if (shortBlockerWindow == null)
-            {
-                kh = new KeyboardHook(); // Intercept every key
-
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    shortBlockerWindow = new ViewBlockerShort(interval);
-                    shortBlockerWindow.Closed += BlockerWindow_Closed;
-                    shortBlockerWindow.Show();
-                }));
-            }
-            else { shortBlockerWindow.Activate(); }
+            else { blockerWindow.Activate(); }
         }
 
         private void ShowSettings()

@@ -1,11 +1,11 @@
-﻿<Window x:Name="BlockerLong" x:Class="BlinkReminder.ViewBlockerLong"
+﻿<Window x:Name="Blocker" x:Class="BlinkReminder.ViewBlocker"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder"
         mc:Ignorable="d"
-        Title="BlockerLong" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.8" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
+        Title="Blocker" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.8" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/> <!--0-->
