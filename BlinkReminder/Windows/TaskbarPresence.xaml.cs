@@ -118,28 +118,33 @@ namespace BlinkReminder.Windows
 
         private void ShowViewBlocker(long interval, bool isSkippable, string message)
         {
-            if (blockerWindow == null)
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                kh = new KeyboardHook(); // Intercept every key
-                blockerWindow = new ViewBlocker(interval, isSkippable, message);
-                blockerWindow.Closed += BlockerWindow_Closed;
-                blockerWindow.Show();
-            }
-            else { blockerWindow.Activate(); }
+                if (blockerWindow == null)
+                {
+                    kh = new KeyboardHook(); // Intercept every key
+                    blockerWindow = new ViewBlocker(interval, isSkippable, message);
+                    blockerWindow.Closed += BlockerWindow_Closed;
+                    blockerWindow.Show();
+                
+                }
+                else { blockerWindow.Activate(); }
+            }));
         }
 
         private void ShowSettings()
         {
-            if (settingsWindow == null)
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                if (settingsWindow == null)
                 {
                     settingsWindow = new SettingsWindow(ref userSettings);
                     settingsWindow.Closed += SettingsWindow_Closed;
                     settingsWindow.Show();
-                }));
-            }
-            else { settingsWindow.Activate(); }
+                
+                }
+                else { settingsWindow.Activate(); }
+            }));
         }
 
         #endregion
