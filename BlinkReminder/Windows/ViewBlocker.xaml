@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder"
         mc:Ignorable="d"
-        Title="Blocker" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.8" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
+        Title="Blocker" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.95" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/> <!--0-->

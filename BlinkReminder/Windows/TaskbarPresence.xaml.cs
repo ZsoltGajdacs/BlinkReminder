@@ -23,7 +23,7 @@ namespace BlinkReminder.Windows
     /// </summary>
     public partial class TaskbarPresence : Window, IDisposable
     {
-        private System.ComponentModel.IContainer components;
+        private IContainer components;
         private KeyboardHook kh;
 
         // Windows
@@ -31,8 +31,8 @@ namespace BlinkReminder.Windows
         private Window blockerWindow;
 
         //Timers
-        private Timer shortCycleTimer;
-        private Timer longCycleTimer;
+        private Timer shortIntervalTimer;
+        private Timer longIntervalTimer;
 
         private UserSettings userSettings;
 
@@ -42,9 +42,9 @@ namespace BlinkReminder.Windows
             InitializeComponent();
             userSettings = UserSettings.Instance;
             userSettings.PropertyChanged += UserSettings_PropertyChanged;
-            components = new System.ComponentModel.Container();
+            components = new Container();
 
-            StartTimers();
+            StartDefaultTimers();
         }
 
         #region Click Events
@@ -106,10 +106,9 @@ namespace BlinkReminder.Windows
         #endregion
 
         #region Property changed Events
-        // INCOMPLETE!
         private void UserSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            ResetAndStartTimers();
+            DecideWhichClockToReset(e.PropertyName);
         }
 
         #endregion
@@ -151,32 +150,48 @@ namespace BlinkReminder.Windows
 
         #region Helpers
 
-        private void StartTimers()
+        private void StartDefaultTimers()
         {
-            shortCycleTimer = new Timer(userSettings.ShortIntervalTime)
+            shortIntervalTimer = new Timer(userSettings.ShortIntervalTime)
             {
                 AutoReset = true
             };
-            shortCycleTimer.Elapsed += ShortCycleTimer_Elapsed;
-            shortCycleTimer.Start();
+            shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
+            shortIntervalTimer.Start();
 
-            longCycleTimer = new Timer(userSettings.LongIntervalTime)
+            longIntervalTimer = new Timer(userSettings.LongIntervalTime)
             {
                 AutoReset = true
             };
-            longCycleTimer.Elapsed += LongCycleTimer_Elapsed;
-            longCycleTimer.Start();
+            longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
+            longIntervalTimer.Start();
 
-            components.Add(shortCycleTimer);
-            components.Add(longCycleTimer);
+            components.Add(shortIntervalTimer);
+            components.Add(longIntervalTimer);
         }
 
-        // TODO: Set timers based on what changed, not just this
-        private void ResetAndStartTimers()
+        private void DecideWhichClockToReset(string changedProperty)
         {
-            shortCycleTimer.Stop();
-            shortCycleTimer.Interval = userSettings.ShortIntervalTime;
-            shortCycleTimer.Start();
+            switch (changedProperty)
+            {
+                case "ShortIntervalTime":
+                    ResetTimer(ref shortIntervalTimer, userSettings.ShortIntervalTime);
+                    break;
+
+                case "LongIntervalTime":
+                    ResetTimer(ref longIntervalTimer, userSettings.LongIntervalTime);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void ResetTimer(ref Timer timer, long time)
+        {
+            timer.Stop();
+            timer.Interval = time;
+            timer.Start();
         }
 
         #endregion
