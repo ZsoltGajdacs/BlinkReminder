@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlinkReminder.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,26 @@ using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows
 {
-    /// <summary>
-    /// Interaction logic for SettingsWindow.xaml
-    /// </summary>
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow()
+        private UserSettings settings;
+
+        public SettingsWindow(ref UserSettings settings)
         {
             InitializeComponent();
+            this.settings = settings;
+
+            SetDataBinding();
+        }
+
+        private void SetDataBinding()
+        {
+            SettingsGrid.DataContext = settings;
+        }
+
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

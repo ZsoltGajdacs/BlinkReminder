@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace BlinkReminder.Windows
 {
@@ -40,6 +41,7 @@ namespace BlinkReminder.Windows
         {
             InitializeComponent();
             userSettings = UserSettings.Instance;
+            userSettings.PropertyChanged += UserSettings_PropertyChanged;
             components = new System.ComponentModel.Container();
 
             StartTimers();
@@ -64,7 +66,7 @@ namespace BlinkReminder.Windows
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            
+            ShowSettings();
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
@@ -103,6 +105,15 @@ namespace BlinkReminder.Windows
 
         #endregion
 
+        #region Property changed Events
+        // INCOMPLETE!
+        private void UserSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            ResetAndStartTimers();
+        }
+
+        #endregion
+
         #region Window showers
 
         private void ShowViewBlocker(long interval, bool isSkippable, string message)
@@ -123,7 +134,7 @@ namespace BlinkReminder.Windows
             {
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    settingsWindow = new SettingsWindow();
+                    settingsWindow = new SettingsWindow(ref userSettings);
                     settingsWindow.Closed += SettingsWindow_Closed;
                     settingsWindow.Show();
                 }));
@@ -153,6 +164,14 @@ namespace BlinkReminder.Windows
 
             components.Add(shortCycleTimer);
             components.Add(longCycleTimer);
+        }
+
+        // TODO: Set timers based on what changed, not just this
+        private void ResetAndStartTimers()
+        {
+            shortCycleTimer.Stop();
+            shortCycleTimer.Interval = userSettings.ShortIntervalTime;
+            shortCycleTimer.Start();
         }
 
         #endregion
