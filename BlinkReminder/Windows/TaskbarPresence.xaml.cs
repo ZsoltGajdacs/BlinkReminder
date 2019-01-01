@@ -23,8 +23,16 @@ namespace BlinkReminder.Windows
     /// </summary>
     public partial class TaskbarPresence : Window, IDisposable
     {
-        private IContainer components; // Holds all able objects
-        private KeyboardHook kh; // keyboard input catcher
+        // Consts
+        private const string TOOLTIP_MSG_BEGIN = "Time until next long break: ";
+        private const string TOOLTIP_MSG_END = " minutes";
+        private const int ONE_MINUTE_IN_MS = 60000;
+
+        // Component holder for disposal
+        private IContainer components;
+
+        // Keyboard input catcher
+        private KeyboardHook kh;
 
         // Windows
         private Window settingsWindow;
@@ -38,23 +46,16 @@ namespace BlinkReminder.Windows
         //Timer Helpers
         private bool isShortIntervalTimerDone;
         private bool isLongIntervalTimerDone;
+        private long timeToNextLongBreak; // Expressed in minutes
 
+        // Settings singleton
         private UserSettings userSettings;
 
 
         public TaskbarPresence()
         {
             InitializeComponent();
-
-            // Get Single settings instance and subscribe to it's event
-            userSettings = UserSettings.Instance;
-            userSettings.PropertyChanged += UserSettings_PropertyChanged;
-
-            components = new Container();
-
-            isShortIntervalTimerDone = false;
-            isLongIntervalTimerDone = false;
-
+            SetDefaultValues();
             StartDefaultTimers();
         }
 
@@ -93,6 +94,8 @@ namespace BlinkReminder.Windows
         {
             ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
             isLongIntervalTimerDone = true;
+
+            ResetTaskbarTimer();
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
@@ -103,10 +106,12 @@ namespace BlinkReminder.Windows
 
         private void TaskbarTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            if (timeToNextLongBreak > 0)
             {
-                taskbarIcon.ToolTipText = "";
-            }));
+                --timeToNextLongBreak; // One minute passed
+            }
+
+            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
         }
 
         #endregion
@@ -117,7 +122,7 @@ namespace BlinkReminder.Windows
         {
             blockerWindow = null;
             kh.Dispose(); // Release keyboard trap
-            HandleTimerResetOnWindowClose(); // Restart the clock that started that window that closed
+            HandleTimerResetOnWindowClose(); // Restart the clock that started the window that closed
         }
 
         private void SettingsWindow_Closed(object sender, EventArgs e)
@@ -177,6 +182,7 @@ namespace BlinkReminder.Windows
         /// </summary>
         private void StartDefaultTimers()
         {
+            // Short Interval
             shortIntervalTimer = new Timer(userSettings.GetShortIntervalMillisecond())
             {
                 AutoReset = false
@@ -184,6 +190,7 @@ namespace BlinkReminder.Windows
             shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
             shortIntervalTimer.Start();
 
+            // Long Interval
             longIntervalTimer = new Timer(userSettings.GetLongIntervalMillisecond())
             {
                 AutoReset = false
@@ -191,13 +198,15 @@ namespace BlinkReminder.Windows
             longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
             longIntervalTimer.Start();
 
-            taskbarTimer = new Timer(60000) // Fires every minute
+            // Taskbar count
+            taskbarTimer = new Timer(ONE_MINUTE_IN_MS) // Fires every minute
             {
                 AutoReset = true
             };
             taskbarTimer.Elapsed += TaskbarTimer_Elapsed;
             taskbarTimer.Start();
 
+            // Add to Component holder for proper disposal later
             components.Add(shortIntervalTimer);
             components.Add(longIntervalTimer);
             components.Add(taskbarTimer);
@@ -217,6 +226,7 @@ namespace BlinkReminder.Windows
 
                 case "LongIntervalTime":
                     ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
+                    ResetTimer(ref taskbarTimer, ONE_MINUTE_IN_MS);
                     break;
 
                 default:
@@ -236,6 +246,15 @@ namespace BlinkReminder.Windows
             timer.Start();
         }
 
+        /// <summary>
+        /// Resets the taskbar time counter and stops the timer
+        /// </summary>
+        private void ResetTaskbarTimer()
+        {
+            timeToNextLongBreak = userSettings.LongIntervalTime;
+            taskbarTimer.Stop();
+        }
+
         #endregion
 
         #region Timer Helpers
@@ -252,9 +271,37 @@ namespace BlinkReminder.Windows
             else if (isLongIntervalTimerDone)
             {
                 ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
+                ResetTimer(ref taskbarTimer, ONE_MINUTE_IN_MS);
             }
         }
 
+        #endregion
+
+        #region Startup support
+        private void SetDefaultValues()
+        {
+            // Get Single settings instance and subscribe to it's event
+            userSettings = UserSettings.Instance;
+            userSettings.PropertyChanged += UserSettings_PropertyChanged;
+
+            components = new Container();
+
+            isShortIntervalTimerDone = false;
+            isLongIntervalTimerDone = false;
+
+            timeToNextLongBreak = userSettings.LongIntervalTime / 60;
+            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
+        }
+        #endregion
+
+        #region Taskbar manipulation
+        private void SetTaskbarTooltip(string text)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                taskbarIcon.ToolTipText = text;
+            }));
+        }
         #endregion
 
         #region IDisposable Support
