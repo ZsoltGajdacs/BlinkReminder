@@ -10,7 +10,7 @@ namespace BlinkReminder.Settings
 {
     public class UserSettings : INotifyPropertyChanged
     {
-        // Times are interpreted as milliseconds
+        // Times are interpreted as seconds
         private long shortDisplayTime;
         private long shortIntervalTime;
         private long longDisplayTime;
@@ -41,6 +41,9 @@ namespace BlinkReminder.Settings
 
         #region Accessor properties
 
+        /// <summary>
+        /// Gives back Seconds
+        /// </summary>
         public long ShortDisplayTime
         {
             get
@@ -57,7 +60,10 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Gives back Seconds
+        /// </summary>
         public long ShortIntervalTime
         {
             get
@@ -74,7 +80,10 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Gives back Seconds
+        /// </summary>
         public long LongDisplayTime
         {
             get
@@ -91,7 +100,10 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Gives back Seconds
+        /// </summary>
         public long LongIntervalTime
         {
             get
@@ -143,6 +155,28 @@ namespace BlinkReminder.Settings
             }
         }
 
+        #endregion
+
+        #region Milliseconds getters
+        public long GetShortDisplayMillisecond()
+        {
+            return shortDisplayTime * 1000;
+        }
+
+        public long GetLongDisplayMillisecond()
+        {
+            return longDisplayTime * 1000;
+        }
+
+        public long GetShortIntervalMillisecond()
+        {
+            return shortIntervalTime * 1000;
+        }
+
+        public long GetLongIntervalMillisecond()
+        {
+            return longIntervalTime * 1000;
+        }
         #endregion
 
         private UserSettings()

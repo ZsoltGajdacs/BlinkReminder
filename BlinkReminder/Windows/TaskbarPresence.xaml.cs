@@ -23,8 +23,8 @@ namespace BlinkReminder.Windows
     /// </summary>
     public partial class TaskbarPresence : Window, IDisposable
     {
-        private IContainer components;
-        private KeyboardHook kh;
+        private IContainer components; // Holds all able objects
+        private KeyboardHook kh; // keyboard input catcher
 
         // Windows
         private Window settingsWindow;
@@ -33,6 +33,7 @@ namespace BlinkReminder.Windows
         //Timers
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
+        private Timer taskbarTimer;
 
         //Timer Helpers
         private bool isShortIntervalTimerDone;
@@ -45,6 +46,7 @@ namespace BlinkReminder.Windows
         {
             InitializeComponent();
 
+            // Get Single settings instance and subscribe to it's event
             userSettings = UserSettings.Instance;
             userSettings.PropertyChanged += UserSettings_PropertyChanged;
 
@@ -60,12 +62,12 @@ namespace BlinkReminder.Windows
 
         private void ShortBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlocker(userSettings.ShortDisplayTime, userSettings.IsShortSkippable, userSettings.GetShortQuote());
+            ShowViewBlocker(userSettings.GetShortDisplayMillisecond(), userSettings.IsShortSkippable, userSettings.GetShortQuote());
         }
 
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlocker(userSettings.LongDisplayTime, userSettings.IsLongSkippable, userSettings.GetLongQuote());
+            ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
         }
 
         private void PauseItem_Click(object sender, RoutedEventArgs e)
@@ -89,14 +91,22 @@ namespace BlinkReminder.Windows
 
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlocker(userSettings.LongDisplayTime, userSettings.IsLongSkippable, userSettings.GetLongQuote());
+            ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
             isLongIntervalTimerDone = true;
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlocker(userSettings.ShortDisplayTime, userSettings.IsShortSkippable, userSettings.GetShortQuote());
+            ShowViewBlocker(userSettings.GetShortDisplayMillisecond(), userSettings.IsShortSkippable, userSettings.GetShortQuote());
             isShortIntervalTimerDone = true;
+        }
+
+        private void TaskbarTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                taskbarIcon.ToolTipText = "";
+            }));
         }
 
         #endregion
@@ -162,36 +172,51 @@ namespace BlinkReminder.Windows
 
         #region Timer methods
 
+        /// <summary>
+        /// Starts the default timers at application start
+        /// </summary>
         private void StartDefaultTimers()
         {
-            shortIntervalTimer = new Timer(userSettings.ShortIntervalTime)
+            shortIntervalTimer = new Timer(userSettings.GetShortIntervalMillisecond())
             {
                 AutoReset = false
             };
             shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
             shortIntervalTimer.Start();
 
-            longIntervalTimer = new Timer(userSettings.LongIntervalTime)
+            longIntervalTimer = new Timer(userSettings.GetLongIntervalMillisecond())
             {
                 AutoReset = false
             };
             longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
             longIntervalTimer.Start();
 
+            taskbarTimer = new Timer(60000) // Fires every minute
+            {
+                AutoReset = true
+            };
+            taskbarTimer.Elapsed += TaskbarTimer_Elapsed;
+            taskbarTimer.Start();
+
             components.Add(shortIntervalTimer);
             components.Add(longIntervalTimer);
+            components.Add(taskbarTimer);
         }
 
+        /// <summary>
+        /// Based on the changed properties name it resets the timer related to it
+        /// </summary>
+        /// <param name="changedProperty"></param>
         private void DecideWhichClockToReset(string changedProperty)
         {
             switch (changedProperty)
             {
                 case "ShortIntervalTime":
-                    ResetTimer(ref shortIntervalTimer, userSettings.ShortIntervalTime);
+                    ResetTimer(ref shortIntervalTimer, userSettings.GetShortIntervalMillisecond());
                     break;
 
                 case "LongIntervalTime":
-                    ResetTimer(ref longIntervalTimer, userSettings.LongIntervalTime);
+                    ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
                     break;
 
                 default:
@@ -199,6 +224,11 @@ namespace BlinkReminder.Windows
             }
         }
 
+        /// <summary>
+        /// Resets the given timer to the given time
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <param name="time"></param>
         private void ResetTimer(ref Timer timer, long time)
         {
             timer.Stop();
@@ -210,15 +240,18 @@ namespace BlinkReminder.Windows
 
         #region Timer Helpers
 
+        /// <summary>
+        /// Resets the timer which generated the latest break event
+        /// </summary>
         private void HandleTimerResetOnWindowClose()
         {
             if (isShortIntervalTimerDone)
             {
-                ResetTimer(ref shortIntervalTimer, userSettings.ShortIntervalTime);
+                ResetTimer(ref shortIntervalTimer, userSettings.GetShortIntervalMillisecond());
             }
             else if (isLongIntervalTimerDone)
             {
-                ResetTimer(ref longIntervalTimer, userSettings.LongIntervalTime);
+                ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
             }
         }
 
@@ -264,9 +297,5 @@ namespace BlinkReminder.Windows
             // GC.SuppressFinalize(this);
         }
         #endregion
-
-
-
-        
     }
 }
