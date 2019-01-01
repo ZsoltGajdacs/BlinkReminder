@@ -34,15 +34,24 @@ namespace BlinkReminder.Windows
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
 
+        //Timer Helpers
+        private bool isShortIntervalTimerDone;
+        private bool isLongIntervalTimerDone;
+
         private UserSettings userSettings;
 
 
         public TaskbarPresence()
         {
             InitializeComponent();
+
             userSettings = UserSettings.Instance;
             userSettings.PropertyChanged += UserSettings_PropertyChanged;
+
             components = new Container();
+
+            isShortIntervalTimerDone = false;
+            isLongIntervalTimerDone = false;
 
             StartDefaultTimers();
         }
@@ -81,11 +90,13 @@ namespace BlinkReminder.Windows
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
             ShowViewBlocker(userSettings.LongDisplayTime, userSettings.IsLongSkippable, userSettings.GetLongQuote());
+            isLongIntervalTimerDone = true;
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
         {
             ShowViewBlocker(userSettings.ShortDisplayTime, userSettings.IsShortSkippable, userSettings.GetShortQuote());
+            isShortIntervalTimerDone = true;
         }
 
         #endregion
@@ -96,6 +107,7 @@ namespace BlinkReminder.Windows
         {
             blockerWindow = null;
             kh.Dispose(); // Release keyboard trap
+            HandleTimerResetOnWindowClose(); // Restart the clock that started that window that closed
         }
 
         private void SettingsWindow_Closed(object sender, EventArgs e)
@@ -148,20 +160,20 @@ namespace BlinkReminder.Windows
 
         #endregion
 
-        #region Helpers
+        #region Timer methods
 
         private void StartDefaultTimers()
         {
             shortIntervalTimer = new Timer(userSettings.ShortIntervalTime)
             {
-                AutoReset = true
+                AutoReset = false
             };
             shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
             shortIntervalTimer.Start();
 
             longIntervalTimer = new Timer(userSettings.LongIntervalTime)
             {
-                AutoReset = true
+                AutoReset = false
             };
             longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
             longIntervalTimer.Start();
@@ -192,6 +204,22 @@ namespace BlinkReminder.Windows
             timer.Stop();
             timer.Interval = time;
             timer.Start();
+        }
+
+        #endregion
+
+        #region Timer Helpers
+
+        private void HandleTimerResetOnWindowClose()
+        {
+            if (isShortIntervalTimerDone)
+            {
+                ResetTimer(ref shortIntervalTimer, userSettings.ShortIntervalTime);
+            }
+            else if (isLongIntervalTimerDone)
+            {
+                ResetTimer(ref longIntervalTimer, userSettings.LongIntervalTime);
+            }
         }
 
         #endregion
