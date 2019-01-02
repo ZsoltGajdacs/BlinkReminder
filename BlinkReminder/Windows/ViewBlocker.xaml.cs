@@ -18,9 +18,12 @@ using System.Timers;
 
 namespace BlinkReminder
 {
+    /// <summary>
+    /// A simple window that comes to fore and blocks all view
+    /// </summary>
     public partial class ViewBlocker : Window, IDisposable
     {
-        private Timer timeOfBlock;
+        private Timer timeOfBlock; // Timer to control the window's lifetime
 
         public ViewBlocker(long interval, bool isSkippable, string message)
         {
@@ -31,11 +34,20 @@ namespace BlinkReminder
             PrepareWindow();
         }
 
+        #region Startup helpers
+        /// <summary>
+        /// Sets the message that appears on screen
+        /// </summary>
+        /// <param name="msg">This is the msg that will appear</param>
         private void SetMessage(string msg)
         {
             longText.Text = msg;
         }
 
+        /// <summary>
+        /// Sets if the skip button should appear or not
+        /// </summary>
+        /// <param name="isSkippable">true or false</param>
         private void SetSkippable(bool isSkippable)
         {
             if (!isSkippable)
@@ -45,6 +57,9 @@ namespace BlinkReminder
             }
         }
 
+        /// <summary>
+        /// Sets up the window to appear in front of everything
+        /// </summary>
         private void PrepareWindow()
         {
             Application.Current.MainWindow = this; // Set to mainwindow
@@ -56,6 +71,10 @@ namespace BlinkReminder
             }));
         }
 
+        /// <summary>
+        /// Starts the timer that control the duration of the window's appearance
+        /// </summary>
+        /// <param name="interval"></param>
         private void StartDisplayTimer(long interval)
         {
             timeOfBlock = new Timer(interval)
@@ -65,7 +84,12 @@ namespace BlinkReminder
             timeOfBlock.Elapsed += TimeOfBlock_Elapsed;
             timeOfBlock.Start();
         }
+        #endregion
 
+        #region Event helpers
+        /// <summary>
+        /// Properply closes the window and disposes of the timer
+        /// </summary>
         private void CloseBlockWindow()
         {
             if (timeOfBlock != null)
@@ -79,16 +103,29 @@ namespace BlinkReminder
                 Application.Current.MainWindow.Close();
             }));
         }
+        #endregion
 
+        #region Event methods
+        /// <summary>
+        /// Called when the timer's countwown is finished
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TimeOfBlock_Elapsed(object sender, ElapsedEventArgs e)
         {
             CloseBlockWindow();
         }
 
+        /// <summary>
+        /// Called when the user pushes the skip button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SkipButton_Click(object sender, RoutedEventArgs e)
         {
             CloseBlockWindow();
         }
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

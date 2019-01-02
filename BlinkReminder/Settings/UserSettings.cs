@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace BlinkReminder.Settings
 {
+    /// <summary>
+    /// Keeps the current settings
+    /// </summary>
     public class UserSettings : INotifyPropertyChanged
     {
         // Times are interpreted as seconds
@@ -16,18 +19,42 @@ namespace BlinkReminder.Settings
         private long longDisplayTime;
         private long longIntervalTime;
 
+        // For setting whether the breaks are skippable
         private bool isShortSkippable;
         private bool isLongSkippable;
 
+        // For keeping the quotes that appear during breaks
         private List<string> shortBreakQuotes;
         private List<string> longBreakQuotes;
 
+        // Event handler for MVVM support
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => new UserSettings());
 
         public static UserSettings Instance { get { return lazy.Value; } }
+
+        private UserSettings()
+        {
+            SetDefaults();
+        }
+        #endregion
+
+        #region Startup setter
+        private void SetDefaults()
+        {
+            ShortDisplayTime = (long)CycleTimesEnum.ShortDisplayTime;
+            ShortIntervalTime = (long)CycleTimesEnum.ShortIntervalTime;
+            LongDisplayTime = (long)CycleTimesEnum.LongDisplayTime;
+            LongIntervalTime = (long)CycleTimesEnum.LongIntervalTime;
+
+            IsShortSkippable = false;
+            IsLongSkippable = true;
+
+            shortBreakQuotes = new List<string>();
+            longBreakQuotes = new List<string>();
+        }
         #endregion
 
         #region Property changed handler
@@ -179,11 +206,6 @@ namespace BlinkReminder.Settings
         }
         #endregion
 
-        private UserSettings()
-        {
-            SetDefaults();
-        }
-
         internal string GetShortQuote()
         {
             // Temporary stuff
@@ -195,20 +217,5 @@ namespace BlinkReminder.Settings
             // Temp
             return "This is a long break";
         }
-
-        private void SetDefaults()
-        {
-            ShortDisplayTime = (long)CycleTimesEnum.ShortDisplayTime;
-            ShortIntervalTime = (long)CycleTimesEnum.ShortIntervalTime;
-            LongDisplayTime = (long)CycleTimesEnum.LongDisplayTime;
-            LongIntervalTime = (long)CycleTimesEnum.LongIntervalTime;
-
-            IsShortSkippable = false;
-            IsLongSkippable = true;
-
-            shortBreakQuotes = new List<string>();
-            longBreakQuotes = new List<string>();
-        }
-
     }
 }

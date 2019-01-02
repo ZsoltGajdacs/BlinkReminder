@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows
 {
+    /// <summary>
+    /// Code behind for the settings window
+    /// </summary>
     public partial class SettingsWindow : Window
     {
         private UserSettings settings;

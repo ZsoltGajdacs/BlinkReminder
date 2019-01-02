@@ -17,11 +17,13 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />  <!--0-->
-            <ColumnDefinition Width="150" /><!--1-->
-            <ColumnDefinition Width="*" />  <!--2-->
+            <ColumnDefinition Width="50" /><!--1-->
+            <ColumnDefinition Width="150" /><!--2-->
+            <ColumnDefinition Width="50" /><!--3-->
+            <ColumnDefinition Width="*" />  <!--4-->
         </Grid.ColumnDefinitions>
 
-        <Button x:Name="skipButton" Content="Skip Break" Grid.Column="1" Grid.Row="3" Click="SkipButton_Click"/>
-        <TextBlock x:Name="longText" Text="This is a long break!" Foreground="White" Grid.Column="1" Grid.Row="1"/>
+        <Button x:Name="skipButton" Content="Skip Break" Grid.Column="2" Grid.Row="3" Click="SkipButton_Click"/>
+        <TextBlock x:Name="longText" Text="This is a long break!" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" FontSize="14"/>
     </Grid>
 </Window>
