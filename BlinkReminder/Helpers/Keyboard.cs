@@ -31,6 +31,11 @@
 ///                        if (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP)
 ///                        ...
 ///                   Many thanks to "Scottie Numbnuts" for the solution.
+///                   
+/// 02/01/19: 1.4.1 - Modified by Zsolt Gajdács according to VS2017 recommendations:
+///                     - Added sender to event handler
+///                     - Modified Disopose to conform to the dispose pattern
+///                     - Charset set to UNICODE on native method dllimports
 
 
 using System;
@@ -266,15 +271,15 @@ public class KeyboardHook : IDisposable
     /// <param name="e">An instance of KeyboardHookEventArgs</param>
     public void OnKeyIntercepted(KeyboardHookEventArgs e)
     {
-        if (KeyIntercepted != null)
-            KeyIntercepted(e);
+        KeyIntercepted?.Invoke(this, e);
     }
 
     /// <summary>
     /// Delegate for KeyboardHook event handling.
     /// </summary>
+    /// <param name="sender">An instance of the KeyboardHook class</param>
     /// <param name="e">An instance of InterceptKeysEventArgs.</param>
-    public delegate void KeyboardHookEventHandler(KeyboardHookEventArgs e);
+    public delegate void KeyboardHookEventHandler(object sender, KeyboardHookEventArgs e);
 
     /// <summary>
     /// Event arguments for the KeyboardHook class's KeyIntercepted event.
@@ -322,13 +327,49 @@ public class KeyboardHook : IDisposable
 
     #endregion
 
-    #region IDisposable Members
+    #region IDisposable Support
+
+    #region Original Disposable support commented out
     /// <summary>
     /// Releases the keyboard hook.
     /// </summary>
+    /*
     public void Dispose()
     {
         NativeMethods.UnhookWindowsHookEx(hookID);
+    }*/
+    #endregion
+
+    private bool disposedValue = false; // To detect redundant calls
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects).
+            }
+
+            NativeMethods.UnhookWindowsHookEx(hookID);
+            // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+            // TODO: set large fields to null.
+
+            disposedValue = true;
+        }
+    }
+
+    // Finalizer method
+    ~KeyboardHook()
+    {
+        Dispose(false);
+    }
+
+    // This code added to correctly implement the disposable pattern.
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
     #endregion
 
@@ -338,26 +379,25 @@ public class KeyboardHook : IDisposable
      System.Security.SuppressUnmanagedCodeSecurity()]
     internal class NativeMethods
     {
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook,
             HookHandlerDelegate lpfn, IntPtr hMod, uint dwThreadId);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
             IntPtr wParam, ref KBDLLHOOKSTRUCT lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern short GetKeyState(int keyCode);
         
-    } 
- 
+    }
 
     #endregion
 }
