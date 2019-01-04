@@ -24,6 +24,7 @@ namespace BlinkReminder.Windows
     public partial class TaskbarPresence : Window, IDisposable
     {
         // Consts
+        private readonly string VERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
         private const string TOOLTIP_MSG_BEGIN = "Time until next long break: ";
         private const string TOOLTIP_MSG_END = " minutes";
         private const int ONE_MINUTE_IN_MS = 60000;
@@ -79,6 +80,11 @@ namespace BlinkReminder.Windows
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             ShowSettings();
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Version: " + VERSION, "Current product verison", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)

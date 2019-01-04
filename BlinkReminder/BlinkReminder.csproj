@@ -28,7 +28,7 @@
     <TargetCulture>en</TargetCulture>
     <ProductName>BlinkReminder</ProductName>
     <PublisherName>Zsolt Gajdács</PublisherName>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>11</ApplicationRevision>
     <ApplicationVersion>0.1.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
