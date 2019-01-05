@@ -25,7 +25,7 @@
             <ColumnDefinition Width="*" />  <!--4-->
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" FontSize="14" TextAlignment="Center"/>
+        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" FontSize="16" TextAlignment="Center"/>
         <TextBlock x:Name="counterText" Grid.Column="2" Grid.Row="3" Text="{Binding TimeToDisplay, Mode=OneWay}" Foreground="White" FontSize="14" TextAlignment="Center"/>
 
         <Button x:Name="skipButton" Content="Skip Break" Grid.Column="2" Grid.Row="5" Click="SkipButton_Click"/>
