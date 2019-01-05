@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Timers;
+using System.Windows.Threading;
+using BlinkReminder.Windows.Support;
 
 namespace BlinkReminder
 {
@@ -24,11 +26,14 @@ namespace BlinkReminder
     public partial class ViewBlocker : Window, IDisposable
     {
         private Timer timeOfBlock; // Timer to control the window's lifetime
+        private CountdownTimer countdownTimer; // Timer to display remaining time
 
         public ViewBlocker(long interval, bool isSkippable, string message)
         {
             InitializeComponent();
-            StartDisplayTimer(interval);
+            SetTimer(interval);
+            SetBinding();
+            StartViewTimer(interval);
             SetSkippable(isSkippable);
             SetMessage(message);
             PrepareWindow();
@@ -41,7 +46,7 @@ namespace BlinkReminder
         /// <param name="msg">This is the msg that will appear</param>
         private void SetMessage(string msg)
         {
-            longText.Text = msg;
+            quoteText.Text = msg;
         }
 
         /// <summary>
@@ -55,6 +60,16 @@ namespace BlinkReminder
                 skipButton.IsEnabled = false;
                 skipButton.Visibility = Visibility.Hidden;
             }
+        }
+
+        private void SetTimer(long duration)
+        {
+            countdownTimer = new CountdownTimer(duration);
+        }
+
+        private void SetBinding()
+        {
+            blockerGrid.DataContext = countdownTimer;
         }
 
         /// <summary>
@@ -75,7 +90,7 @@ namespace BlinkReminder
         /// Starts the timer that control the duration of the window's appearance
         /// </summary>
         /// <param name="interval"></param>
-        private void StartDisplayTimer(long interval)
+        private void StartViewTimer(long interval)
         {
             timeOfBlock = new Timer(interval)
             {
@@ -87,6 +102,7 @@ namespace BlinkReminder
         #endregion
 
         #region Event helpers
+
         /// <summary>
         /// Properply closes the window and disposes of the timer
         /// </summary>
@@ -103,9 +119,11 @@ namespace BlinkReminder
                 Application.Current.MainWindow.Close();
             }));
         }
+
         #endregion
 
         #region Event methods
+
         /// <summary>
         /// Called when the timer's countwown is finished
         /// </summary>
@@ -125,6 +143,7 @@ namespace BlinkReminder
         {
             CloseBlockWindow();
         }
+
         #endregion
 
         #region IDisposable Support
