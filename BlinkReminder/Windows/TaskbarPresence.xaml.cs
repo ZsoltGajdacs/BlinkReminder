@@ -26,6 +26,7 @@ namespace BlinkReminder.Windows
         // Consts
         private readonly int MAJVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMajorPart;
         private readonly int MINVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMinorPart;
+        private readonly int REVVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileBuildPart;
         private const string TOOLTIP_MSG_BEGIN = "Time until next long break: ";
         private const string TOOLTIP_MSG_END = " minutes";
         private const int ONE_MINUTE_IN_MS = 60000;
@@ -85,8 +86,8 @@ namespace BlinkReminder.Windows
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            string versionText = "Version: " + MAJVERSION + "." + MINVERSION;
-            MessageBox.Show(versionText, "Current product verison", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+            string versionText = "Version: " + MAJVERSION + "." + MINVERSION + "." + REVVERSION;
+            MessageBox.Show(versionText, "Current product version", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
@@ -275,11 +276,14 @@ namespace BlinkReminder.Windows
             if (isShortIntervalTimerDone)
             {
                 ResetTimer(ref shortIntervalTimer, userSettings.GetShortIntervalMillisecond());
+                isShortIntervalTimerDone = false;
             }
-            else if (isLongIntervalTimerDone)
+
+            if (isLongIntervalTimerDone)
             {
                 ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
                 ResetTimer(ref taskbarTimer, ONE_MINUTE_IN_MS);
+                isLongIntervalTimerDone = false;
             }
         }
 
