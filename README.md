@@ -12,3 +12,4 @@ I decided to make this, because I couldn't find a proper alternative to SafeEyes
 * Timer pause (the button is there but doesn't do anything currently)
 * Custom quotes during breaks
 * Make it look better, add window transitions :)
+* Proper installer
