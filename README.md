@@ -10,6 +10,7 @@ I decided to make this, because I couldn't find a proper alternative to SafeEyes
 
 ## Planned features
 * Timer pause (the button is there but doesn't do anything currently)
+* Saveable settings
 * Custom quotes during breaks
 * Make it look better, add window transitions :)
 * Proper installer
