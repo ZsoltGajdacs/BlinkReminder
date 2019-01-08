@@ -44,7 +44,7 @@ namespace BlinkReminder.Windows
         //Timers
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
-        private Timer taskbarTimer;
+        private Timer tooltipRefreshTimer;
 
         //Timer Helpers
         private bool isShortIntervalTimerDone;
@@ -66,12 +66,12 @@ namespace BlinkReminder.Windows
 
         private void ShortBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlocker(userSettings.GetShortDisplayMillisecond(), userSettings.IsShortSkippable, userSettings.GetShortQuote());
+            ShortCycleTimer_Elapsed(sender, e);
         }
 
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
-            ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
+            LongCycleTimer_Elapsed(sender, e);
         }
 
         private void PauseItem_Click(object sender, RoutedEventArgs e)
@@ -104,7 +104,7 @@ namespace BlinkReminder.Windows
             ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
             isLongIntervalTimerDone = true;
 
-            ResetTaskbarTimer();
+            SetBackTooltipTimer();
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
@@ -208,17 +208,17 @@ namespace BlinkReminder.Windows
             longIntervalTimer.Start();
 
             // Taskbar count
-            taskbarTimer = new Timer(ONE_MINUTE_IN_MS) // Fires every minute
+            tooltipRefreshTimer = new Timer(ONE_MINUTE_IN_MS) // Fires every minute
             {
                 AutoReset = true
             };
-            taskbarTimer.Elapsed += TaskbarTimer_Elapsed;
-            taskbarTimer.Start();
+            tooltipRefreshTimer.Elapsed += TaskbarTimer_Elapsed;
+            tooltipRefreshTimer.Start();
 
             // Add to Component holder for proper disposal later
             components.Add(shortIntervalTimer);
             components.Add(longIntervalTimer);
-            components.Add(taskbarTimer);
+            components.Add(tooltipRefreshTimer);
         }
 
         /// <summary>
@@ -235,7 +235,9 @@ namespace BlinkReminder.Windows
 
                 case "LongIntervalTime":
                     ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
-                    ResetTimer(ref taskbarTimer, ONE_MINUTE_IN_MS);
+                    RefreshLongIntervalTimeCount();
+                    SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
+                    ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
                     break;
 
                 default:
@@ -256,12 +258,13 @@ namespace BlinkReminder.Windows
         }
 
         /// <summary>
-        /// Resets the taskbar time counter and stops the timer
+        /// Stops the timer and sets the current long interval
         /// </summary>
-        private void ResetTaskbarTimer()
+        private void SetBackTooltipTimer()
         {
-            timeToNextLongBreak = userSettings.LongIntervalTime;
-            taskbarTimer.Stop();
+            RefreshLongIntervalTimeCount();
+            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
+            tooltipRefreshTimer.Stop();
         }
 
         #endregion
@@ -282,9 +285,17 @@ namespace BlinkReminder.Windows
             if (isLongIntervalTimerDone)
             {
                 ResetTimer(ref longIntervalTimer, userSettings.GetLongIntervalMillisecond());
-                ResetTimer(ref taskbarTimer, ONE_MINUTE_IN_MS);
+                ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
                 isLongIntervalTimerDone = false;
             }
+        }
+
+        /// <summary>
+        /// Gets the latest long interval setting from userSettings
+        /// </summary>
+        private void RefreshLongIntervalTimeCount()
+        {
+            timeToNextLongBreak = userSettings.LongIntervalTime / 60;
         }
 
         #endregion
@@ -301,7 +312,7 @@ namespace BlinkReminder.Windows
             isShortIntervalTimerDone = false;
             isLongIntervalTimerDone = false;
 
-            timeToNextLongBreak = userSettings.LongIntervalTime / 60;
+            RefreshLongIntervalTimeCount();
             SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
         }
         #endregion
