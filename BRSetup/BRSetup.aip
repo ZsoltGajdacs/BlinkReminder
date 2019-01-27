@@ -6,8 +6,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Debug"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Debug"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config" Value="BlinkReminder.exe.config"/>
@@ -20,10 +20,10 @@
     <ROW Property="ARPURLINFOABOUT" Value="https://github.com/ZsoltGajdacs/BlinkReminder"/>
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/ZsoltGajdacs/BlinkReminder/releases"/>
     <ROW Property="Manufacturer" Value="ZsGWorks"/>
-    <ROW Property="ProductCode" Value="1033:{055B128F-B497-487A-887B-D127A4F4CF76} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{EE3923D6-9DFD-4230-AEF4-1D6DB37621DD} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlinkReminder"/>
-    <ROW Property="ProductVersion" Value="0.3.2" Type="32"/>
+    <ROW Property="ProductVersion" Value="0.4.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CED82C3D-3135-468B-84C3-73AF11ECFFDA}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
