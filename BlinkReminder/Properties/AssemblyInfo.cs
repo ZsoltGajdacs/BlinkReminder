@@ -8,12 +8,12 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BlinkReminder")]
-[assembly: AssemblyDescription("To help you remember when to look away")]
+[assembly: AssemblyDescription("Helps you to take a break from the screen")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Zsolt Gajdács")]
 [assembly: AssemblyProduct("BlinkReminder")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Licensed under GNU General Public License v3.0")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.1")]
+[assembly: AssemblyVersion("0.3.2")]
 //[assembly: AssemblyFileVersion("0.1.2.11")]

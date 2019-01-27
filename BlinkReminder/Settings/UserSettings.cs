@@ -13,19 +13,35 @@ namespace BlinkReminder.Settings
     /// </summary>
     public class UserSettings : INotifyPropertyChanged
     {
+        // Consts for TimeSpan ToString
+        private const string TOSECONDSHORT = @"s\s";
+        private const string TOSECONDLONG = @"ss\s";
+        private const string TOMINUTESHORT = @"m\m\:ss\s";
+        private const string TOMINUTELONG = @"mm\m\:ss\s";
+        private const string TOHOUR = @"h\h\:mm\m\:ss\s";
+
         // Times are interpreted as seconds
-        private long shortDisplayTime;
-        private long shortIntervalTime;
-        private long longDisplayTime;
-        private long longIntervalTime;
+        private long _shortDisplayTime;
+        private long _shortIntervalTime;
+        private long _longDisplayTime;
+        private long _longIntervalTime;
+
+        // Minute keepers for user guidance
+        private string _shortDisplayTimeFormatted;
+        private string _shortIntervalTimeFormatted;
+        private string _LongDisplayTimeFormatted;
+        private string _longIntervalTimeFormatted;
 
         // For setting whether the breaks are skippable
-        private bool isShortSkippable;
-        private bool isLongSkippable;
+        private bool _isShortSkippable;
+        private bool _isLongSkippable;
 
         // For keeping the quotes that appear during breaks
         private List<string> shortBreakQuotes;
         private List<string> longBreakQuotes;
+
+        // For checking if breaks should occur when there is a fullscreen app running
+        private bool _shouldBrakeWhenFullScreen;
 
         // Event handler for MVVM support
         public event PropertyChangedEventHandler PropertyChanged;
@@ -44,6 +60,8 @@ namespace BlinkReminder.Settings
         #region Startup setter
         private void SetDefaults()
         {
+            PropertyChanged += UserSettings_PropertyChanged;
+
             ShortDisplayTime = (long)CycleTimesEnum.ShortDisplayTime;
             ShortIntervalTime = (long)CycleTimesEnum.ShortIntervalTime;
             LongDisplayTime = (long)CycleTimesEnum.LongDisplayTime;
@@ -51,10 +69,12 @@ namespace BlinkReminder.Settings
 
             IsShortSkippable = false;
             IsLongSkippable = true;
+            ShouldBreakWhenFullScreen = true;
 
             shortBreakQuotes = new List<string>();
             longBreakQuotes = new List<string>();
         }
+
         #endregion
 
         #region Property changed handler
@@ -66,7 +86,18 @@ namespace BlinkReminder.Settings
 
         #endregion
 
+        #region Event handler
+
+        private void UserSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            TimeConverter(e.PropertyName);
+        }
+
+        #endregion
+
         #region Accessor properties
+
+        #region Time setters
 
         /// <summary>
         /// Gives back Seconds
@@ -75,14 +106,14 @@ namespace BlinkReminder.Settings
         {
             get
             {
-                return this.shortDisplayTime;
+                return this._shortDisplayTime;
             }
 
             set
             {
-                if (value != this.shortDisplayTime)
+                if (value != this._shortDisplayTime)
                 {
-                    this.shortDisplayTime = value;
+                    this._shortDisplayTime = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -95,14 +126,14 @@ namespace BlinkReminder.Settings
         {
             get
             {
-                return this.shortIntervalTime;
+                return this._shortIntervalTime;
             }
 
             set
             {
-                if (value != this.shortIntervalTime)
+                if (value != this._shortIntervalTime)
                 {
-                    this.shortIntervalTime = value;
+                    this._shortIntervalTime = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -115,14 +146,14 @@ namespace BlinkReminder.Settings
         {
             get
             {
-                return this.longDisplayTime;
+                return this._longDisplayTime;
             }
 
             set
             {
-                if (value != this.longDisplayTime)
+                if (value != this._longDisplayTime)
                 {
-                    this.longDisplayTime = value;
+                    this._longDisplayTime = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -135,31 +166,33 @@ namespace BlinkReminder.Settings
         {
             get
             {
-                return this.longIntervalTime;
+                return this._longIntervalTime;
             }
 
             set
             {
-                if (value != this.longIntervalTime)
+                if (value != this._longIntervalTime)
                 {
-                    this.longIntervalTime = value;
+                    this._longIntervalTime = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
+        #endregion
+
         public bool IsShortSkippable
         {
             get
             {
-                return this.isShortSkippable;
+                return this._isShortSkippable;
             }
 
             set
             {
-                if (value != this.isShortSkippable)
+                if (value != this._isShortSkippable)
                 {
-                    this.isShortSkippable = value;
+                    this._isShortSkippable = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -169,43 +202,112 @@ namespace BlinkReminder.Settings
         {
             get
             {
-                return this.isLongSkippable;
+                return this._isLongSkippable;
             }
 
             set
             {
-                if (value != isLongSkippable)
+                if (value != _isLongSkippable)
                 {
-                    this.isLongSkippable = value;
+                    this._isLongSkippable = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
+        public bool ShouldBreakWhenFullScreen
+        {
+            get
+            {
+                return _shouldBrakeWhenFullScreen;
+            }
+            set
+            {
+                _shouldBrakeWhenFullScreen = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        #region Minute display helpers
+
+        public string ShortDisplayTimeFormatted
+        {
+            get
+            {
+                return _shortDisplayTimeFormatted;
+            }
+            set
+            {
+                _shortDisplayTimeFormatted = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ShortIntervalTimeFormatted
+        {
+            get
+            {
+                return _shortIntervalTimeFormatted;
+            }
+            set
+            {
+                _shortIntervalTimeFormatted = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string LongDisplayTimeFormatted
+        {
+            get
+            {
+                return _LongDisplayTimeFormatted;
+            }
+            set
+            {
+                _LongDisplayTimeFormatted = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string LongIntervalTimeFormatted
+        {
+            get
+            {
+                return _longIntervalTimeFormatted;
+            }
+            set
+            {
+                _longIntervalTimeFormatted = value;
+                NotifyPropertyChanged();
+            }
+        }
+        #endregion
+        
         #endregion
 
         #region Milliseconds getters
         public long GetShortDisplayMillisecond()
         {
-            return shortDisplayTime * 1000;
+            return _shortDisplayTime * 1000;
         }
 
         public long GetLongDisplayMillisecond()
         {
-            return longDisplayTime * 1000;
+            return _longDisplayTime * 1000;
         }
 
         public long GetShortIntervalMillisecond()
         {
-            return shortIntervalTime * 1000;
+            return _shortIntervalTime * 1000;
         }
 
         public long GetLongIntervalMillisecond()
         {
-            return longIntervalTime * 1000;
+            return _longIntervalTime * 1000;
         }
         #endregion
 
+        #region Quote getters
         internal string GetShortQuote()
         {
             // Temporary stuff
@@ -216,6 +318,97 @@ namespace BlinkReminder.Settings
         {
             // Temp
             return "This is a long break";
+        }
+        #endregion
+
+        /// <summary>
+        /// Converts the second based times to easily readable format
+        /// </summary>
+        /// <param name="propertyName"></param>
+        private void TimeConverter(string propertyName)
+        {
+            TimeSpan time;
+            switch (propertyName)
+            {
+                case ("ShortDisplayTime"):
+                    time = TimeSpan.FromSeconds(ShortDisplayTime);
+
+                    if (time < TimeSpan.FromSeconds(10))
+                    {
+                        ShortDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
+                    }
+                    else if (time < TimeSpan.FromSeconds(60))
+                    {
+                        ShortDisplayTimeFormatted = time.ToString(TOSECONDLONG);
+                    }
+                    else if (time < TimeSpan.FromMinutes(10))
+                    {
+                        ShortDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
+                    }
+                    else
+                    {
+                        ShortDisplayTimeFormatted = time.ToString(TOMINUTELONG);
+                    }
+                    
+                    break;
+
+                case ("ShortIntervalTime"):
+                    time = TimeSpan.FromSeconds(ShortIntervalTime);
+
+                    if (time < TimeSpan.FromSeconds(60))
+                    {
+                        ShortIntervalTimeFormatted = time.ToString(TOSECONDLONG);
+                    }
+                    else if (time < TimeSpan.FromMinutes(10))
+                    {
+                        ShortIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
+                    }
+                    else
+                    {
+                        ShortIntervalTimeFormatted = time.ToString(TOMINUTELONG);
+                    }
+
+                    break;
+
+                case ("LongDisplayTime"):
+                    time = TimeSpan.FromSeconds(LongDisplayTime);
+
+                    if (time < TimeSpan.FromSeconds(10))
+                    {
+                        LongDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
+                    }
+                    else if (time < TimeSpan.FromSeconds(60))
+                    {
+                        LongDisplayTimeFormatted = time.ToString(TOSECONDLONG);
+                    }
+                    else if (time < TimeSpan.FromMinutes(10))
+                    {
+                        LongDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
+                    }
+                    else
+                    {
+                        LongDisplayTimeFormatted = time.ToString(TOMINUTELONG);
+                    }
+
+                    break;
+
+                case ("LongIntervalTime"):
+                    time = TimeSpan.FromSeconds(LongIntervalTime);
+
+                    if (time < TimeSpan.FromMinutes(60))
+                    {
+                        LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
+                    }
+                    else
+                    {
+                        LongIntervalTimeFormatted = time.ToString(TOHOUR);
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

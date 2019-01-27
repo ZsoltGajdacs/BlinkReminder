@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
+using BlinkReminder.Helpers;
 
 namespace BlinkReminder.Windows
 {
@@ -24,9 +27,9 @@ namespace BlinkReminder.Windows
     public partial class TaskbarPresence : Window, IDisposable
     {
         // Consts
-        private readonly int MAJVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMajorPart;
-        private readonly int MINVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMinorPart;
-        private readonly int REVVERSION = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileBuildPart;
+        private readonly int MAJVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMajorPart;
+        private readonly int MINVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMinorPart;
+        private readonly int REVVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileBuildPart;
         private const string TOOLTIP_MSG_BEGIN = "Time until next long break: ";
         private const string TOOLTIP_MSG_END = " minutes";
         private const int ONE_MINUTE_IN_MS = 60000;
@@ -35,7 +38,7 @@ namespace BlinkReminder.Windows
         private IContainer components;
 
         // Keyboard input catcher
-        private KeyboardHook kh;
+        private KeyboardHook keyTrap;
 
         // Windows
         private Window settingsWindow;
@@ -54,6 +57,8 @@ namespace BlinkReminder.Windows
         // Settings singleton
         private UserSettings userSettings;
 
+        // For identifying the fullscreen window that can block the blockerWindow
+        Process foreProc;
 
         public TaskbarPresence()
         {
@@ -101,16 +106,31 @@ namespace BlinkReminder.Windows
 
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
             isLongIntervalTimerDone = true;
-
             SetBackTooltipTimer();
+
+            if (userSettings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
+            {
+                ResetElaspedTimer();
+            }
+            else
+            {
+                ShowViewBlocker(userSettings.GetLongDisplayMillisecond(), userSettings.IsLongSkippable, userSettings.GetLongQuote());
+            }
         }
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            ShowViewBlocker(userSettings.GetShortDisplayMillisecond(), userSettings.IsShortSkippable, userSettings.GetShortQuote());
             isShortIntervalTimerDone = true;
+
+            if (userSettings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
+            {
+                ResetElaspedTimer();
+            }
+            else
+            {
+                ShowViewBlocker(userSettings.GetShortDisplayMillisecond(), userSettings.IsShortSkippable, userSettings.GetShortQuote());
+            }
         }
 
         private void TaskbarTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -130,8 +150,8 @@ namespace BlinkReminder.Windows
         private void BlockerWindow_Closed(object sender, EventArgs e)
         {
             blockerWindow = null;
-            kh.Dispose(); // Release keyboard trap
-            HandleTimerResetOnWindowClose(); // Restart the clock that started the window that closed
+            keyTrap?.Dispose(); // Release keyboard trap
+            ResetElaspedTimer(); // Restart the clock that started the window that closed
         }
 
         private void SettingsWindow_Closed(object sender, EventArgs e)
@@ -157,7 +177,7 @@ namespace BlinkReminder.Windows
             {
                 if (blockerWindow == null)
                 {
-                    kh = new KeyboardHook(); // Intercept every key
+                    keyTrap = new KeyboardHook(); // Intercept every key
                     blockerWindow = new ViewBlocker(interval, isSkippable, message);
                     blockerWindow.Closed += BlockerWindow_Closed;
                     blockerWindow.Show();
@@ -274,7 +294,7 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Resets the timer which generated the latest break event
         /// </summary>
-        private void HandleTimerResetOnWindowClose()
+        private void ResetElaspedTimer()
         {
             if (isShortIntervalTimerDone)
             {
@@ -339,9 +359,9 @@ namespace BlinkReminder.Windows
                     components.Dispose();
                     taskbarIcon.Dispose();
 
-                    if (kh != null)
+                    if (keyTrap != null)
                     {
-                        kh.Dispose();
+                        keyTrap.Dispose();
                     }
                 }
 
