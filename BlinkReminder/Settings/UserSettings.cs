@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +14,8 @@ namespace BlinkReminder.Settings
     /// <summary>
     /// Keeps the current settings
     /// </summary>
-    public class UserSettings : INotifyPropertyChanged
+    [Serializable]
+    public class UserSettings : INotifyPropertyChanged, ISerializable
     {
         // Consts for TimeSpan ToString
         private const string TOSECONDSHORT = @"s\s";
@@ -19,6 +23,9 @@ namespace BlinkReminder.Settings
         private const string TOMINUTESHORT = @"m\m\:ss\s";
         private const string TOMINUTELONG = @"mm\m\:ss\s";
         private const string TOHOUR = @"h\h\:mm\m\:ss\s";
+
+        // Const for serialization
+        internal const string SETTINGSFILEPATH = "Settings.brs";
 
         // Times are interpreted as seconds
         private long _shortDisplayTime;
@@ -47,13 +54,45 @@ namespace BlinkReminder.Settings
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Singleton stuff
-        private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => new UserSettings());
+        private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => 
+        {
+            if (File.Exists(SETTINGSFILEPATH) && new FileInfo(SETTINGSFILEPATH).Length > 0)
+            {
+                IFormatter formatter = new BinaryFormatter();
+                FileStream stream = new FileStream(SETTINGSFILEPATH, FileMode.Open, FileAccess.Read);
+
+                return (UserSettings)formatter.Deserialize(stream);
+            }
+            else
+            {
+                return new UserSettings();
+            }
+            
+            
+        });
 
         public static UserSettings Instance { get { return lazy.Value; } }
+        #endregion
 
+        #region Constructors
         private UserSettings()
         {
             SetDefaults();
+        }
+
+        private UserSettings(SerializationInfo info, StreamingContext context)
+        {
+            ShortDisplayTime = (long)info.GetValue("sdt", typeof(long));
+            ShortIntervalTime = (long)info.GetValue("sit", typeof(long));
+            LongDisplayTime = (long)info.GetValue("ldt", typeof(long));
+            LongIntervalTime = (long)info.GetValue("lit", typeof(long));
+
+            IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
+            IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
+            ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
+
+            shortBreakQuotes = (List<string>)info.GetValue("sbq", typeof(List<string>));
+            longBreakQuotes = (List<string>)info.GetValue("lbq", typeof(List<string>));
         }
         #endregion
 
@@ -321,6 +360,23 @@ namespace BlinkReminder.Settings
         }
         #endregion
 
+        #region Serialization
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("sdt", _shortDisplayTime, typeof(long));
+            info.AddValue("sit", _shortIntervalTime, typeof(long));
+            info.AddValue("ldt", _longDisplayTime, typeof(long));
+            info.AddValue("lit", _longIntervalTime, typeof(long));
+
+            info.AddValue("iss", _isShortSkippable, typeof(bool));
+            info.AddValue("ils", _isLongSkippable, typeof(bool));
+            info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
+
+            info.AddValue("sbq", shortBreakQuotes, typeof(List<string>));
+            info.AddValue("lbq", longBreakQuotes, typeof(List<string>));
+        }
+        #endregion
+
         /// <summary>
         /// Converts the second based times to easily readable format
         /// </summary>
@@ -410,5 +466,6 @@ namespace BlinkReminder.Settings
                     break;
             }
         }
+
     }
 }

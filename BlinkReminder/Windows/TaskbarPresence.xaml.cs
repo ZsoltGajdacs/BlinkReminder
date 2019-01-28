@@ -1,22 +1,17 @@
 ﻿using BlinkReminder.Settings;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using BlinkReminder.Helpers;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace BlinkReminder.Windows
 {
@@ -66,6 +61,23 @@ namespace BlinkReminder.Windows
             SetDefaultValues();
             StartDefaultTimers();
         }
+
+        #region Startup support
+        private void SetDefaultValues()
+        {
+            // Get Single settings instance and subscribe to it's event
+            userSettings = UserSettings.Instance;
+            userSettings.PropertyChanged += UserSettings_PropertyChanged;
+
+            components = new Container();
+
+            isShortIntervalTimerDone = false;
+            isLongIntervalTimerDone = false;
+
+            RefreshLongIntervalTimeCount();
+            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
+        }
+        #endregion
 
         #region Click Events
 
@@ -157,6 +169,12 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
+        }
+
+        private void TaskBarWindow_Closing(object sender, CancelEventArgs e)
+        {
+            // Serialize Settings on Exit
+            SerializeObj(userSettings, UserSettings.SETTINGSFILEPATH);
         }
 
         #endregion
@@ -320,23 +338,6 @@ namespace BlinkReminder.Windows
 
         #endregion
 
-        #region Startup support
-        private void SetDefaultValues()
-        {
-            // Get Single settings instance and subscribe to it's event
-            userSettings = UserSettings.Instance;
-            userSettings.PropertyChanged += UserSettings_PropertyChanged;
-
-            components = new Container();
-
-            isShortIntervalTimerDone = false;
-            isLongIntervalTimerDone = false;
-
-            RefreshLongIntervalTimeCount();
-            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + timeToNextLongBreak + TOOLTIP_MSG_END);
-        }
-        #endregion
-
         #region Taskbar manipulation
         private void SetTaskbarTooltip(string text)
         {
@@ -344,6 +345,17 @@ namespace BlinkReminder.Windows
             {
                 taskbarIcon.ToolTipText = text;
             }));
+        }
+        #endregion
+
+        #region Serialization
+        private void SerializeObj(Object o, string serializePath)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(serializePath, FileMode.Create, FileAccess.Write);
+
+            formatter.Serialize(stream, o);
+            stream.Close();
         }
         #endregion
 
@@ -387,5 +399,6 @@ namespace BlinkReminder.Windows
             // GC.SuppressFinalize(this);
         }
         #endregion
+        
     }
 }

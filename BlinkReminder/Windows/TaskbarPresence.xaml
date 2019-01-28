@@ -6,7 +6,7 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:local="clr-namespace:BlinkReminder.Windows"
         mc:Ignorable="d"
-        Title="TaskBarIcon" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowState="Minimized" Visibility="Hidden">
+        Title="TaskBarIcon" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowState="Minimized" Visibility="Hidden" Closing="TaskBarWindow_Closing">
     <Grid>
         <tb:TaskbarIcon x:Name="taskbarIcon" IconSource="BlinkReminder.ico" 
                     ToolTipText="Reminds you to stop staring at the screen" 
