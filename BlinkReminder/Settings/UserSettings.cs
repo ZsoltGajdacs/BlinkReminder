@@ -60,10 +60,16 @@ namespace BlinkReminder.Settings
         {
             if (File.Exists(SETTINGSFILEPATH) && new FileInfo(SETTINGSFILEPATH).Length > 0)
             {
-                IFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(SETTINGSFILEPATH, FileMode.Open, FileAccess.Read);
-
-                return (UserSettings)formatter.Deserialize(stream);
+                try
+                {
+                    IFormatter formatter = new BinaryFormatter();
+                    FileStream stream = new FileStream(SETTINGSFILEPATH, FileMode.Open, FileAccess.Read);
+                    return (UserSettings)formatter.Deserialize(stream);
+                }
+                catch (Exception)
+                {
+                    return new UserSettings();
+                }
             }
             else
             {
