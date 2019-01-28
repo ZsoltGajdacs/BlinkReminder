@@ -17,6 +17,7 @@ namespace BlinkReminder.Settings
     [Serializable]
     public class UserSettings : INotifyPropertyChanged, ISerializable
     {
+        #region Data members
         // Consts for TimeSpan ToString
         private const string TOSECONDSHORT = @"s\s";
         private const string TOSECONDLONG = @"ss\s";
@@ -50,10 +51,12 @@ namespace BlinkReminder.Settings
         // For checking if breaks should occur when there is a fullscreen app running
         private bool _shouldBrakeWhenFullScreen;
 
+        // For selection which quote to show
         private Random rand;
 
         // Event handler for MVVM support
         public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
 
         #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => 

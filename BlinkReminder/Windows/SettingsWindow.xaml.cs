@@ -39,5 +39,10 @@ namespace BlinkReminder.Windows
         {
             Close();
         }
+
+        /*private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Should restore settings here
+        }*/
     }
 }
