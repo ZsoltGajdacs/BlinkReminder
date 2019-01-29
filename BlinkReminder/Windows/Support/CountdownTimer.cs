@@ -24,7 +24,7 @@ namespace BlinkReminder.Windows.Support
         public CountdownTimer(long duration)
         {
             this.duration = TimeSpan.FromMilliseconds(duration);
-            SetPropertyForDisplay();
+            UpdateDurationAndDisplay();
             SetAndStartTimer();
         }
 
@@ -64,46 +64,10 @@ namespace BlinkReminder.Windows.Support
         #region Startup methods
 
         /// <summary>
-        /// Gives initial value for property, compensates for processing time
-        /// </summary>
-        private void SetPropertyForDisplay()
-        {
-            if (duration >= TimeSpan.FromHours(1))
-            {
-                TimeToDisplay = duration.ToString(@"h\:mm\:ss");
-            }
-            else
-            {
-                TimeToDisplay = duration.ToString(@"mm\:ss");
-            }
-
-            duration = duration.Add(TimeSpan.FromSeconds(-1));
-        }
-
-        /// <summary>
-        /// Sets up a dispatcherTime and starts it
-        /// </summary>
-        private void SetAndStartTimer()
-        {
-            timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(Timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 1);
-
-            timer.Start();
-        }
-
-        #endregion
-
-        #region Event methods
-
-        /// <summary>
-        /// Called when the dispatcherTimer ticks (every second).
-        /// Set the TimeToDisplay property
+        /// Sets the TimeToDisplay property. 
         /// Stops the clock if zero reached
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Timer_Tick(object sender, EventArgs e)
+        private void UpdateDurationAndDisplay()
         {
             if (duration >= TimeSpan.FromHours(1))
             {
@@ -120,6 +84,32 @@ namespace BlinkReminder.Windows.Support
             }
 
             duration = duration.Add(TimeSpan.FromSeconds(-1));
+        }
+
+        /// <summary>
+        /// Sets up a dispatcherTimer and starts it
+        /// </summary>
+        private void SetAndStartTimer()
+        {
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(Timer_Tick);
+            timer.Interval = new TimeSpan(0, 0, 1);
+
+            timer.Start();
+        }
+
+        #endregion
+
+        #region Event methods
+
+        /// <summary>
+        /// Called when the dispatcherTimer ticks (every second).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            UpdateDurationAndDisplay();
         }
 
         #endregion
