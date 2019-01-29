@@ -8,44 +8,59 @@
         mc:Ignorable="d"
         Title="BlinkReminder settings" Height="400" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
     <Grid >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
         <TabControl Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
                 <Grid x:Name="SettingsGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/> <!--0 Padding top-->
-                        <RowDefinition Height="30"/> <!--1 ShortInterval-->
-                        <RowDefinition Height="5"/> <!--2 Padding-->
-                        <RowDefinition Height="30"/> <!--3 ShortDisplay-->
-                        <RowDefinition Height="5"/> <!--4 Padding-->
-                        <RowDefinition Height="30"/> <!--5 LongInterval-->
-                        <RowDefinition Height="5"/> <!--6 Padding-->
-                        <RowDefinition Height="30"/> <!--7 LongDisplay-->
-                        <RowDefinition Height="10"/> <!--8 Padding-->
-                        <RowDefinition Height="20"/> <!--9 FullscreenChkbox-->
-                        <RowDefinition Height="5"/> <!--10 Padding-->
-                        <RowDefinition Height="20"/> <!--11 shortSkipChkBox-->
-                        <RowDefinition Height="5"/> <!--12 Padding-->
-                        <RowDefinition Height="20"/> <!--13 longSkipChkBox-->
-                        <RowDefinition Height="10"/> <!--14 Padding-->
-                        <RowDefinition Height="*"/> <!--15 Fill-->
-                        <RowDefinition Height="5"/> <!--16 Padding bottom-->
+                        <RowDefinition Height="5"/>
+                        <!--0 Padding top-->
+                        <RowDefinition Height="30"/>
+                        <!--1 ShortInterval-->
+                        <RowDefinition Height="5"/>
+                        <!--2 Padding-->
+                        <RowDefinition Height="30"/>
+                        <!--3 ShortDisplay-->
+                        <RowDefinition Height="5"/>
+                        <!--4 Padding-->
+                        <RowDefinition Height="30"/>
+                        <!--5 LongInterval-->
+                        <RowDefinition Height="5"/>
+                        <!--6 Padding-->
+                        <RowDefinition Height="30"/>
+                        <!--7 LongDisplay-->
+                        <RowDefinition Height="15"/>
+                        <!--8 Padding-->
+                        <RowDefinition Height="20"/>
+                        <!--9 FullscreenChkbox-->
+                        <RowDefinition Height="5"/>
+                        <!--10 Padding-->
+                        <RowDefinition Height="20"/>
+                        <!--11 shortSkipChkBox-->
+                        <RowDefinition Height="5"/>
+                        <!--12 Padding-->
+                        <RowDefinition Height="20"/>
+                        <!--13 longSkipChkBox-->
+                        <RowDefinition Height="10"/>
+                        <!--14 Padding-->
+                        <RowDefinition Height="*"/>
+                        <!--15 Fill-->
+                        <RowDefinition Height="20"/>
+                        <!--16 OkBtn-->
+                        <RowDefinition Height="5"/>
+                        <!--17 Padding bottom-->
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5" /> <!--0 Padding Left-->
-                        <ColumnDefinition Width="160" /> <!--1 Description Labels-->
-                        <ColumnDefinition Width="150" /> <!--2 Textboxes-->
-                        <ColumnDefinition Width="80" /> <!--3 Minute Labels-->
-                        <ColumnDefinition Width="5" /> <!--4 Right padding-->
+                        <ColumnDefinition Width="5" />
+                        <!--0 Padding Left-->
+                        <ColumnDefinition Width="160" />
+                        <!--1 Description Labels-->
+                        <ColumnDefinition Width="*" />
+                        <!--2 Textboxes-->
+                        <ColumnDefinition Width="80" />
+                        <!--3 Minute Labels-->
+                        <ColumnDefinition Width="5" />
+                        <!--4 Right padding-->
                     </Grid.ColumnDefinitions>
 
                     <Label x:Name="shortIntervalLabel" Content="Interval of short break (s): " Grid.Column="1" Grid.Row="1"/>
@@ -70,6 +85,8 @@
                     <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" Content="Should a short rest be skippable?" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" Content="Should a long rest be skippable?" Grid.Column="1" Grid.Row="13" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
+                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="16" Click="OkButton_Click" />
+                    
                 </Grid>
             </TabItem>
 
@@ -79,6 +96,7 @@
                         <RowDefinition Height="5"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
                         <RowDefinition Height="5"/>
                     </Grid.RowDefinitions>
 
@@ -87,11 +105,12 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="5"/>
                     </Grid.ColumnDefinitions>
-                    
-                    <TextBox x:Name="ShortQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1"/>
+
+                    <TextBox x:Name="ShortQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8"/>
 
                     <StackPanel x:Name="ShortQuoteStack" Orientation="Vertical" Grid.Column="1" Grid.Row="2"/>
 
+                    <Button x:Name="okButtonS" Content="OK" Width="80" Grid.Column="1" Grid.Row="3" Click="OkButton_Click" />
                 </Grid>
             </TabItem>
 
@@ -101,6 +120,7 @@
                         <RowDefinition Height="5"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
                         <RowDefinition Height="5"/>
                     </Grid.RowDefinitions>
 
@@ -110,16 +130,13 @@
                         <ColumnDefinition Width="5"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="LongQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1"/>
+                    <TextBox x:Name="LongQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8"/>
 
                     <StackPanel x:Name="LongQuoteStack" Orientation="Vertical" Grid.Column="1" Grid.Row="2"/>
+
+                    <Button x:Name="okButtonL" Content="OK" Width="80" Grid.Column="1" Grid.Row="3" Click="OkButton_Click" />
                 </Grid>
             </TabItem>
         </TabControl>
-
-        <DockPanel x:Name="ExitPanel" Grid.Column="0" Grid.Row="1">
-            <!--<Button x:Name="cancelButton" Content="Cancel" Width="80" Click="CancelButton_Click" DockPanel.Dock="Left" />-->
-            <Button x:Name="okButton" Content="OK" Width="80" Click="OkButton_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" />
-        </DockPanel>
     </Grid>
 </Window>
