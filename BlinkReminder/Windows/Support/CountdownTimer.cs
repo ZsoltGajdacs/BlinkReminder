@@ -68,8 +68,16 @@ namespace BlinkReminder.Windows.Support
         /// </summary>
         private void SetPropertyForDisplay()
         {
-            TimeToDisplay = duration.ToString("c");
-            duration = duration.Add(TimeSpan.FromMilliseconds(-1000));
+            if (duration >= TimeSpan.FromHours(1))
+            {
+                TimeToDisplay = duration.ToString(@"h\:mm\:ss");
+            }
+            else
+            {
+                TimeToDisplay = duration.ToString(@"mm\:ss");
+            }
+
+            duration = duration.Add(TimeSpan.FromSeconds(-1));
         }
 
         /// <summary>
@@ -97,7 +105,14 @@ namespace BlinkReminder.Windows.Support
         /// <param name="e"></param>
         private void Timer_Tick(object sender, EventArgs e)
         {
-            TimeToDisplay = duration.ToString("c");
+            if (duration >= TimeSpan.FromHours(1))
+            {
+                TimeToDisplay = duration.ToString(@"h\:mm\:ss");
+            }
+            else
+            {
+                TimeToDisplay = duration.ToString(@"mm\:ss");
+            }
 
             if (duration == TimeSpan.Zero)
             {
