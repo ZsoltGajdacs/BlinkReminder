@@ -10,10 +10,10 @@ I decided to make this, because I couldn't find a proper alternative to SafeEyes
   * Display and interval times
   * Skippablity of short and long rests
   * No rest while a full screen app is running
+  * Can add/remove custom quotes
+* Settings are saved
 * Proper MSI installer (Advanced Installer)
 
 ## Planned features
 * Timer pause (the option is there but doesn't do anything currently)
-* Saveable settings
-* Custom quotes during breaks
 * Make it look better, add window transitions :)
