@@ -95,7 +95,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5"/>
                         <RowDefinition Height="30"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="5"/>
                     </Grid.RowDefinitions>
@@ -106,11 +108,11 @@
                         <ColumnDefinition Width="5"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="ShortQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8"/>
+                    <TextBox x:Name="ShortQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="ShortQuoteInput_KeyUp" KeyDown="ShortQuoteInput_KeyDown"/>
 
-                    <StackPanel x:Name="ShortQuoteStack" Orientation="Vertical" Grid.Column="1" Grid.Row="2"/>
+                    <ItemsControl x:Name="ShortQuoteItems" ItemTemplate="{StaticResource ShortQuoteTemplate}" Grid.Column="1" Grid.Row="3"/>
 
-                    <Button x:Name="okButtonS" Content="OK" Width="80" Grid.Column="1" Grid.Row="3" Click="OkButton_Click" />
+                    <Button x:Name="okButtonS" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
                 </Grid>
             </TabItem>
 
@@ -119,7 +121,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5"/>
                         <RowDefinition Height="30"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="5"/>
                     </Grid.RowDefinitions>
@@ -130,11 +134,11 @@
                         <ColumnDefinition Width="5"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="LongQuoteInput" Text="Add new quotes here" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8"/>
+                    <TextBox x:Name="LongQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="LongQuoteInput_KeyUp" KeyDown="LongQuoteInput_KeyDown"/>
+                    
+                    <ItemsControl x:Name="LongQuoteItems" ItemTemplate="{StaticResource LongQuoteTemplate}" Grid.Column="1" Grid.Row="3"/>
 
-                    <StackPanel x:Name="LongQuoteStack" Orientation="Vertical" Grid.Column="1" Grid.Row="2"/>
-
-                    <Button x:Name="okButtonL" Content="OK" Width="80" Grid.Column="1" Grid.Row="3" Click="OkButton_Click" />
+                    <Button x:Name="okButtonL" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
                 </Grid>
             </TabItem>
         </TabControl>

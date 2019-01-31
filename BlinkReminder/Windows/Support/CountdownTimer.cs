@@ -73,9 +73,17 @@ namespace BlinkReminder.Windows.Support
             {
                 TimeToDisplay = duration.ToString(@"h\:mm\:ss");
             }
-            else
+            else if (duration >= TimeSpan.FromMinutes(10))
             {
                 TimeToDisplay = duration.ToString(@"mm\:ss");
+            }
+            else if (duration >= TimeSpan.FromMinutes(1))
+            {
+                TimeToDisplay = duration.ToString(@"m\:ss");
+            }
+            else
+            {
+                TimeToDisplay = duration.ToString("%s");
             }
 
             if (duration == TimeSpan.Zero)

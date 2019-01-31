@@ -6,8 +6,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Debug"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Debug"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config" Value="BlinkReminder.exe.config"/>
@@ -16,15 +16,15 @@
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.7.2" ValueLocId="-"/>
     <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
-    <ROW Property="ARPPRODUCTICON" Value="BlinkReminder.exe" Type="8"/>
+    <ROW Property="ARPPRODUCTICON" Value="BlinkReminder_1.exe" Type="8"/>
     <ROW Property="ARPURLINFOABOUT" Value="https://github.com/ZsoltGajdacs/BlinkReminder"/>
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/ZsoltGajdacs/BlinkReminder/releases"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="Manufacturer" Value="ZsGWorks"/>
-    <ROW Property="ProductCode" Value="1033:{A4D992CD-C58D-400F-9CBD-936005C249A8} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{39367326-B15C-4F6C-8AE5-E510944B55C9} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlinkReminder"/>
-    <ROW Property="ProductVersion" Value="0.4.1" Type="32"/>
+    <ROW Property="ProductVersion" Value="0.5" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CED82C3D-3135-468B-84C3-73AF11ECFFDA}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -136,7 +136,7 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="BlinkReminder.exe" SourcePath="..\BlinkReminder\Windows\BlinkReminder.ico" Index="0"/>
+    <ROW Name="BlinkReminder_1.exe" SourcePath="..\BlinkReminder\Windows\Images\BlinkReminder.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>

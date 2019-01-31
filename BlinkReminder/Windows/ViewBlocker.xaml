@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder"
         mc:Ignorable="d"
-        Title="Blocker" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.95" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
+        Title="Blocker" FontSize="16" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.95" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
     <Grid x:Name="blockerGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/> <!--0-->
@@ -25,8 +25,8 @@
             <ColumnDefinition Width="*" />  <!--4-->
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" FontSize="16" TextAlignment="Center"/>
-        <TextBlock x:Name="counterText" Grid.Column="2" Grid.Row="3" Text="{Binding TimeToDisplay, Mode=OneWay}" Foreground="White" FontSize="14" TextAlignment="Center"/>
+        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center"/>
+        <TextBlock x:Name="counterText" Grid.Column="2" Grid.Row="3" Text="{Binding TimeToDisplay, Mode=OneWay}" Foreground="White" TextAlignment="Center"/>
 
         <Button x:Name="skipButton" Content="Skip Break" Grid.Column="2" Grid.Row="5" Click="SkipButton_Click"/>
     </Grid>

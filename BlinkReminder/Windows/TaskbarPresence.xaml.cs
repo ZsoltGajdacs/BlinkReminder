@@ -169,11 +169,6 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-        }
-
-        private void TaskBarWindow_Closing(object sender, CancelEventArgs e)
-        {
-            // Serialize Settings on Exit
             SerializeObj(userSettings, UserSettings.SETTINGSFILEPATH);
         }
 
@@ -349,6 +344,11 @@ namespace BlinkReminder.Windows
         #endregion
 
         #region Serialization
+        /// <summary>
+        /// Serializes the given object to the given path
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="serializePath"></param>
         private void SerializeObj(Object o, string serializePath)
         {
             IFormatter formatter = new BinaryFormatter();

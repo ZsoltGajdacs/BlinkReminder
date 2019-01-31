@@ -45,8 +45,8 @@ namespace BlinkReminder.Settings
         private bool _isLongSkippable;
 
         // For keeping the quotes that appear during breaks
-        private List<string> shortBreakQuotes;
-        private List<string> longBreakQuotes;
+        private BindingList<Quote> _shortBreakQuotes;
+        private BindingList<Quote> _longBreakQuotes;
 
         // For checking if breaks should occur when there is a fullscreen app running
         private bool _shouldBrakeWhenFullScreen;
@@ -55,11 +55,12 @@ namespace BlinkReminder.Settings
         private Random rand;
 
         // Event handler for MVVM support
+        [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Singleton stuff
-        private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() => 
+        private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
             if (File.Exists(SETTINGSFILEPATH) && new FileInfo(SETTINGSFILEPATH).Length > 0)
             {
@@ -78,8 +79,8 @@ namespace BlinkReminder.Settings
             {
                 return new UserSettings();
             }
-            
-            
+
+
         });
 
         public static UserSettings Instance { get { return lazy.Value; } }
@@ -99,8 +100,8 @@ namespace BlinkReminder.Settings
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
 
-            shortBreakQuotes = new List<string>() { "This is a short break" };
-            longBreakQuotes = new List<string>() { "This is a long break" };
+            _shortBreakQuotes = new BindingList<Quote>() { new Quote("This is a short break", true, 0) };
+            _longBreakQuotes = new BindingList<Quote>() { new Quote("This is a long break", true, 0) };
 
             rand = new Random();
         }
@@ -118,8 +119,8 @@ namespace BlinkReminder.Settings
             IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
             ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
 
-            shortBreakQuotes = ((string[])info.GetValue("sbq", typeof(string[]))).ToList();
-            longBreakQuotes = ((string[])info.GetValue("lbq", typeof(string[]))).ToList();
+            _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
+            _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
 
             rand = new Random();
         }
@@ -166,7 +167,7 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-        
+
         /// <summary>
         /// Gives back Seconds
         /// </summary>
@@ -186,7 +187,7 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-        
+
         /// <summary>
         /// Gives back Seconds
         /// </summary>
@@ -206,7 +207,7 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-        
+
         /// <summary>
         /// Gives back Seconds
         /// </summary>
@@ -228,53 +229,6 @@ namespace BlinkReminder.Settings
         }
 
         #endregion
-
-        public bool IsShortSkippable
-        {
-            get
-            {
-                return this._isShortSkippable;
-            }
-
-            set
-            {
-                if (value != this._isShortSkippable)
-                {
-                    this._isShortSkippable = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool IsLongSkippable
-        {
-            get
-            {
-                return this._isLongSkippable;
-            }
-
-            set
-            {
-                if (value != _isLongSkippable)
-                {
-                    this._isLongSkippable = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool ShouldBreakWhenFullScreen
-        {
-            get
-            {
-                return _shouldBrakeWhenFullScreen;
-            }
-            set
-            {
-                _shouldBrakeWhenFullScreen = value;
-                NotifyPropertyChanged();
-            }
-        }
 
         #region Minute display helpers
 
@@ -330,7 +284,73 @@ namespace BlinkReminder.Settings
             }
         }
         #endregion
-        
+
+        #region Quotes
+
+        public BindingList<Quote> ShortBreakQuotes
+        {
+            get
+            {
+                return _shortBreakQuotes;
+            }
+        }
+
+        public BindingList<Quote> LongBreakQuotes
+        {
+            get
+            {
+                return _longBreakQuotes;
+            }
+        }
+
+        #endregion
+
+        public bool IsShortSkippable
+        {
+            get
+            {
+                return this._isShortSkippable;
+            }
+
+            set
+            {
+                if (value != this._isShortSkippable)
+                {
+                    this._isShortSkippable = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLongSkippable
+        {
+            get
+            {
+                return this._isLongSkippable;
+            }
+
+            set
+            {
+                if (value != _isLongSkippable)
+                {
+                    this._isLongSkippable = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ShouldBreakWhenFullScreen
+        {
+            get
+            {
+                return _shouldBrakeWhenFullScreen;
+            }
+            set
+            {
+                _shouldBrakeWhenFullScreen = value;
+                NotifyPropertyChanged();
+            }
+        }
         #endregion
 
         #region Milliseconds getters
@@ -358,35 +378,35 @@ namespace BlinkReminder.Settings
         #region Quote getters
         internal string GetShortQuote()
         {
-            if (shortBreakQuotes.Count == 0)
+            if (_shortBreakQuotes.Count == 0)
             {
                 return "Short break";
             }
-            else if (shortBreakQuotes.Count == 1)
+            else if (_shortBreakQuotes.Count == 1)
             {
-                return shortBreakQuotes[0];
+                return _shortBreakQuotes[0].QuoteText;
             }
             else
             {
-                int quoteIndex = rand.Next(0, shortBreakQuotes.Count);
-                return shortBreakQuotes[quoteIndex];
+                int quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
+                return _shortBreakQuotes[quoteIndex].QuoteText;
             }
         }
 
         internal string GetLongQuote()
         {
-            if (longBreakQuotes.Count == 0)
+            if (_longBreakQuotes.Count == 0)
             {
                 return "Long break";
             }
-            else if (longBreakQuotes.Count == 1)
+            else if (_longBreakQuotes.Count == 1)
             {
-                return longBreakQuotes[0];
+                return _longBreakQuotes[0].QuoteText;
             }
             else
             {
-                int quoteIndex = rand.Next(0, longBreakQuotes.Count);
-                return longBreakQuotes[quoteIndex];
+                int quoteIndex = rand.Next(0, _longBreakQuotes.Count);
+                return _longBreakQuotes[quoteIndex].QuoteText;
             }
         }
         #endregion
@@ -403,8 +423,8 @@ namespace BlinkReminder.Settings
             info.AddValue("ils", _isLongSkippable, typeof(bool));
             info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
 
-            info.AddValue("sbq", shortBreakQuotes.ToArray(), typeof(string[]));
-            info.AddValue("lbq", longBreakQuotes.ToArray(), typeof(string[]));
+            info.AddValue("sbq", _shortBreakQuotes.ToArray(), typeof(Quote[]));
+            info.AddValue("lbq", _longBreakQuotes.ToArray(), typeof(Quote[]));
         }
         #endregion
 
@@ -436,7 +456,7 @@ namespace BlinkReminder.Settings
                     {
                         ShortDisplayTimeFormatted = time.ToString(TOMINUTELONG);
                     }
-                    
+
                     break;
 
                 case ("ShortIntervalTime"):
