@@ -87,6 +87,9 @@ namespace BlinkReminder.Settings
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Default ctor sets defaul values
+        /// </summary>
         private UserSettings()
         {
             PropertyChanged += UserSettings_PropertyChanged;
@@ -100,12 +103,16 @@ namespace BlinkReminder.Settings
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
 
-            _shortBreakQuotes = new BindingList<Quote>() { new Quote("This is a short break", true, 0) };
-            _longBreakQuotes = new BindingList<Quote>() { new Quote("This is a long break", true, 0) };
+            AddDefaultQuotes();
 
             rand = new Random();
         }
 
+        /// <summary>
+        /// Serialization ctor, loads data from file
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
             PropertyChanged += UserSettings_PropertyChanged;
@@ -124,6 +131,30 @@ namespace BlinkReminder.Settings
 
             rand = new Random();
         }
+        #endregion
+
+        #region Startup methods
+        /// <summary>
+        /// Adds default quotes to the long and short break lists
+        /// </summary>
+        private void AddDefaultQuotes()
+        {
+            _shortBreakQuotes = new BindingList<Quote>()
+            {
+                new Quote("Look out the window", true, 0),
+                new Quote("Strech your legs", true, 1),
+                new Quote("Close your eyes", true, 2),
+                new Quote("Drink some water", true, 3)
+            };
+
+            _longBreakQuotes = new BindingList<Quote>()
+            {
+                new Quote("Take a bit of walk", true, 0),
+                new Quote("Have a cup of tea/coffee", true, 1),
+                new Quote("Relax", true, 2)
+            };
+        }
+
         #endregion
 
         #region Property changed handler

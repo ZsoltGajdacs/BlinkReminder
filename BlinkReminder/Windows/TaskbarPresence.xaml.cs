@@ -38,6 +38,7 @@ namespace BlinkReminder.Windows
         // Windows
         private Window settingsWindow;
         private Window blockerWindow;
+        private Window aboutWindow;
 
         //Timers
         private Timer shortIntervalTimer;
@@ -104,7 +105,17 @@ namespace BlinkReminder.Windows
         private void About_Click(object sender, RoutedEventArgs e)
         {
             string versionText = "Version: " + MAJVERSION + "." + MINVERSION + "." + REVVERSION;
-            MessageBox.Show(versionText, "Current product version", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+
+            if (aboutWindow == null)
+            {
+                aboutWindow = new AboutWindow(versionText);
+                aboutWindow.Closed += AboutWindow_Closed;
+                aboutWindow.Show();
+            }
+            else
+            {
+                aboutWindow.Activate();
+            }
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
@@ -170,6 +181,11 @@ namespace BlinkReminder.Windows
         {
             settingsWindow = null;
             SerializeObj(userSettings, UserSettings.SETTINGSFILEPATH);
+        }
+
+        private void AboutWindow_Closed(object sender, EventArgs e)
+        {
+            aboutWindow = null;
         }
 
         #endregion
