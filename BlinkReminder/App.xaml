@@ -10,7 +10,7 @@
                 <DockPanel LastChildFill="True">
                     <Image Tag="{Binding Path=QuoteText, Mode=OneWay}" ToolTip="Delete Quote" Source="Windows\Images\Red_X.png" Width="15" Height="15" DockPanel.Dock="Right" Margin="0 0 5 0" MouseLeftButtonUp="ShortQuoteClick"/>
                     <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" ToolTip="Activate/Deactivate Quote" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
+                    <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" ToolTip="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
                 </DockPanel>
             </Border>
         </DataTemplate>
@@ -20,7 +20,7 @@
                 <DockPanel LastChildFill="True">
                     <Image Tag="{Binding Path=QuoteText, Mode=OneWay}" ToolTip="Delete Quote" Source="Windows\Images\Red_X.png" Width="15" Height="15" DockPanel.Dock="Right" Margin="0 0 5 0" MouseLeftButtonUp="LongQuoteClick"/>
                     <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" ToolTip="Activate/Deactivate Quote" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
+                    <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" ToolTip="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
                 </DockPanel>
             </Border>
         </DataTemplate>
