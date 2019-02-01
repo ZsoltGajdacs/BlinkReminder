@@ -16,4 +16,6 @@ I decided to make this, because I couldn't find a proper alternative to SafeEyes
 
 ## Planned features
 * Timer pause (the option is there but doesn't do anything currently)
+* Update check in About
+* Statistics about usage
 * Make it look better, add window transitions :)
