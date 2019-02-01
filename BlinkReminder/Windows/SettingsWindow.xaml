@@ -110,7 +110,9 @@
 
                     <TextBox x:Name="ShortQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="ShortQuoteInput_KeyUp" KeyDown="ShortQuoteInput_KeyDown"/>
 
-                    <ItemsControl x:Name="ShortQuoteItems" ItemTemplate="{StaticResource ShortQuoteTemplate}" Grid.Column="1" Grid.Row="3"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="3">
+                        <ItemsControl x:Name="ShortQuoteItems" ItemTemplate="{StaticResource ShortQuoteTemplate}"/>
+                    </ScrollViewer>
 
                     <Button x:Name="okButtonS" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
                 </Grid>
@@ -135,9 +137,11 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox x:Name="LongQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="LongQuoteInput_KeyUp" KeyDown="LongQuoteInput_KeyDown"/>
-                    
-                    <ItemsControl x:Name="LongQuoteItems" ItemTemplate="{StaticResource LongQuoteTemplate}" Grid.Column="1" Grid.Row="3"/>
 
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="3">
+                        <ItemsControl x:Name="LongQuoteItems" ItemTemplate="{StaticResource LongQuoteTemplate}"/>
+                    </ScrollViewer>
+                    
                     <Button x:Name="okButtonL" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
                 </Grid>
             </TabItem>
