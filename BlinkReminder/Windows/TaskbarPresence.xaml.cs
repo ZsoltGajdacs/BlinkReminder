@@ -180,7 +180,7 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-            SerializeObj(userSettings, UserSettings.SETTINGSFILEPATH);
+            SerializeObj(userSettings, userSettings.SettingsFullPath);
         }
 
         private void AboutWindow_Closed(object sender, EventArgs e)

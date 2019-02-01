@@ -25,8 +25,9 @@ namespace BlinkReminder.Settings
         private const string TOMINUTELONG = @"mm\m\:ss\s";
         private const string TOHOUR = @"h\h\:mm\m\:ss\s";
 
-        // Const for serialization
-        internal const string SETTINGSFILEPATH = "Settings.brs";
+        // Settings data
+        private const string SETTINGS_FILENAME = "Settings.brs";
+        internal string SettingsFullPath { get; set; }
 
         // Times are interpreted as seconds
         private long _shortDisplayTime;
@@ -62,12 +63,15 @@ namespace BlinkReminder.Settings
         #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
-            if (File.Exists(SETTINGSFILEPATH) && new FileInfo(SETTINGSFILEPATH).Length > 0)
+            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            string settingsPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+
+            if (File.Exists(settingsPath) && new FileInfo(settingsPath).Length > 0)
             {
                 try
                 {
                     IFormatter formatter = new BinaryFormatter();
-                    FileStream stream = new FileStream(SETTINGSFILEPATH, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new FileStream(settingsPath, FileMode.Open, FileAccess.Read);
                     return (UserSettings)formatter.Deserialize(stream);
                 }
                 catch (Exception)
@@ -79,8 +83,6 @@ namespace BlinkReminder.Settings
             {
                 return new UserSettings();
             }
-
-
         });
 
         public static UserSettings Instance { get { return lazy.Value; } }
@@ -92,6 +94,9 @@ namespace BlinkReminder.Settings
         /// </summary>
         private UserSettings()
         {
+            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            SettingsFullPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+
             PropertyChanged += UserSettings_PropertyChanged;
 
             ShortDisplayTime = (long)CycleTimesEnum.ShortDisplayTime;
@@ -115,6 +120,9 @@ namespace BlinkReminder.Settings
         /// <param name="context"></param>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
+            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            SettingsFullPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+
             PropertyChanged += UserSettings_PropertyChanged;
 
             ShortDisplayTime = (long)info.GetValue("sdt", typeof(long));
