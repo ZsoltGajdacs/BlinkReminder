@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder.Windows"
         mc:Ignorable="d"
-        Title="About" x:Name="About" Height="150" Width="200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="About" x:Name="About" Height="100" Width="200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8">
     <StackPanel Orientation="Vertical">
-        <Label x:Name="authorLabel" Margin="0 5 0 3" FontSize="12"/>
-        <Label x:Name="versionLabel" Margin="0 0 0 3" FontSize="12"/>
-        <Label x:Name="updateLabel" Margin="0 0 0 3" FontSize="12"/>
+        <Label x:Name="versionLabel" Margin="0 5 0 3" FontSize="13"/>
+        <Label x:Name="updateLabel" Margin="0 0 0 3" FontSize="13"/>
     </StackPanel>
 </Window>

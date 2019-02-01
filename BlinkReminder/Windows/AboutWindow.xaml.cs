@@ -23,7 +23,6 @@ namespace BlinkReminder.Windows
         {
             InitializeComponent();
 
-            authorLabel.Content = "Created by Zsolt Gajdács";
             versionLabel.Content = version;
         }
     }
