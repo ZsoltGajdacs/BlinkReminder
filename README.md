@@ -6,12 +6,11 @@ I decided to make this, because I couldn't find a proper alternative to SafeEyes
 
 ## Current features
 * Displays a blocker window at regular intervals, keyboard disabled during that time
-* Settings:
+* Settings (Saved in AppData/Roaming):
   * Display and interval times
   * Skippablity of short and long rests
   * No rest while a full screen app is running
   * Can add/remove custom quotes
-* Settings are saved
 
 ## Planned features
 * Timer pause (the option is there but doesn't do anything currently)
