@@ -27,7 +27,8 @@ namespace BlinkReminder.Settings
 
         // Settings data
         private const string SETTINGS_FILENAME = "Settings.brs";
-        internal string SettingsFullPath { get; set; }
+        internal string SettingsFilePath { get; set; }
+        internal string SettingsDirPath { get; set; }
 
         // Times are interpreted as seconds
         private long _shortDisplayTime;
@@ -63,8 +64,7 @@ namespace BlinkReminder.Settings
         #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
-            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-            string settingsPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+            string settingsPath = GetSettingsLocation();
 
             if (File.Exists(settingsPath) && new FileInfo(settingsPath).Length > 0)
             {
@@ -94,8 +94,8 @@ namespace BlinkReminder.Settings
         /// </summary>
         private UserSettings()
         {
-            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-            SettingsFullPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+            SetSettingsDirLocation();
+            SettingsFilePath = GetSettingsLocation();
 
             PropertyChanged += UserSettings_PropertyChanged;
 
@@ -120,8 +120,8 @@ namespace BlinkReminder.Settings
         /// <param name="context"></param>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
-            FileInfo exeInfo = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-            SettingsFullPath = exeInfo.DirectoryName + "\\" + SETTINGS_FILENAME;
+            SetSettingsDirLocation();
+            SettingsFilePath = GetSettingsLocation();
 
             PropertyChanged += UserSettings_PropertyChanged;
 
@@ -139,6 +139,20 @@ namespace BlinkReminder.Settings
 
             rand = new Random();
         }
+        #endregion
+
+        #region Static methods
+
+        /// <summary>
+        /// Gives back the path of the settings file.
+        /// </summary>
+        /// <returns></returns>
+        private static string GetSettingsLocation()
+        {
+            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            return userAppData + "\\BlinkReminder\\" + SETTINGS_FILENAME;
+        }
+
         #endregion
 
         #region Startup methods
@@ -415,38 +429,26 @@ namespace BlinkReminder.Settings
         #endregion
 
         #region Quote getters
+        /// <summary>
+        /// Gives back a randomly chosen short quote
+        /// </summary>
+        /// <returns></returns>
         internal string GetShortQuote()
         {
-            if (_shortBreakQuotes.Count == 0)
-            {
-                return "Short break";
-            }
-            else if (_shortBreakQuotes.Count == 1)
-            {
-                return _shortBreakQuotes[0].QuoteText;
-            }
-            else
-            {
-                int quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
-                return _shortBreakQuotes[quoteIndex].QuoteText;
-            }
+            string defaultShortQuote = "Short break";
+
+            return GetQuote(ref _shortBreakQuotes, defaultShortQuote);
         }
 
+        /// <summary>
+        /// Gives back a randomly chosen long quote
+        /// </summary>
+        /// <returns></returns>
         internal string GetLongQuote()
         {
-            if (_longBreakQuotes.Count == 0)
-            {
-                return "Long break";
-            }
-            else if (_longBreakQuotes.Count == 1)
-            {
-                return _longBreakQuotes[0].QuoteText;
-            }
-            else
-            {
-                int quoteIndex = rand.Next(0, _longBreakQuotes.Count);
-                return _longBreakQuotes[quoteIndex].QuoteText;
-            }
+            string defaultLongQuote = "Long break";
+
+            return GetQuote(ref _longBreakQuotes, defaultLongQuote);
         }
         #endregion
 
@@ -466,6 +468,8 @@ namespace BlinkReminder.Settings
             info.AddValue("lbq", _longBreakQuotes.ToArray(), typeof(Quote[]));
         }
         #endregion
+
+        #region Helpers
 
         /// <summary>
         /// Converts the second based times to easily readable format
@@ -557,5 +561,50 @@ namespace BlinkReminder.Settings
             }
         }
 
+        /// <summary>
+        /// Gives back a randomly chosen quote from the given list
+        /// </summary>
+        /// <param name="quoteList"></param>
+        /// <returns></returns>
+        private string GetQuote(ref BindingList<Quote> quoteList, string defaultQuote)
+        {
+            if (quoteList.Count == 0)
+            {
+                return defaultQuote;
+            }
+            else if (quoteList.Count == 1)
+            {
+                if (quoteList[0].IsActive)
+                {
+                    return quoteList[0].QuoteText;
+                }
+                else
+                {
+                    return defaultQuote;
+                }
+            }
+            else
+            {
+                int quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
+
+                while (!quoteList[quoteIndex].IsActive)
+                {
+                    quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
+                }
+
+                return quoteList[quoteIndex].QuoteText;
+            }
+        }
+
+        /// <summary>
+        /// Sets the application settings directory property
+        /// </summary>
+        private void SetSettingsDirLocation()
+        {
+            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            SettingsDirPath = userAppData + "\\BlinkReminder";
+        }
+
+        #endregion
     }
 }

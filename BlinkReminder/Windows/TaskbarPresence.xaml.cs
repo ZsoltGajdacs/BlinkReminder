@@ -180,7 +180,7 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-            SerializeObj(userSettings, userSettings.SettingsFullPath);
+            SerializeObj(userSettings, userSettings.SettingsFilePath, userSettings.SettingsDirPath);
         }
 
         private void AboutWindow_Closed(object sender, EventArgs e)
@@ -365,13 +365,27 @@ namespace BlinkReminder.Windows
         /// </summary>
         /// <param name="o"></param>
         /// <param name="serializePath"></param>
-        private void SerializeObj(Object o, string serializePath)
+        private void SerializeObj(Object o, string serializePath, string parentDir)
         {
-            IFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(serializePath, FileMode.Create, FileAccess.Write);
+            DirectoryInfo dirInfo = new DirectoryInfo(parentDir);
 
-            formatter.Serialize(stream, o);
-            stream.Close();
+            if (!dirInfo.Exists)
+            {
+                dirInfo.Create();
+            }
+
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                FileStream stream = new FileStream(serializePath, FileMode.Create, FileAccess.Write);
+
+                formatter.Serialize(stream, o);
+                stream.Close();
+            }
+            catch (Exception)
+            {
+                // Should log here
+            }
         }
         #endregion
 

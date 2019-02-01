@@ -9,7 +9,7 @@
             <Border Background="#FFF8F8F8" BorderBrush="#FF545454" BorderThickness="1" CornerRadius="5,5,5,5" Margin="0 0 0 5">
                 <DockPanel LastChildFill="True">
                     <Image Tag="{Binding Path=Index, Mode=OneWay}" ToolTip="Delete Quote" Source="Windows\Images\Red_X.png" Width="15" Height="15" DockPanel.Dock="Right" Margin="0 0 5 0" MouseLeftButtonUp="ShortQuoteClick"/>
-                    <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" ToolTip="Activate/Deactivate Quote" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
                 </DockPanel>
             </Border>
@@ -19,7 +19,7 @@
             <Border Background="#FFF8F8F8" BorderBrush="#FF545454" BorderThickness="1" CornerRadius="5,5,5,5" Margin="0 0 0 5">
                 <DockPanel LastChildFill="True">
                     <Image Tag="{Binding Path=Index, Mode=OneWay}" ToolTip="Delete Quote" Source="Windows\Images\Red_X.png" Width="15" Height="15" DockPanel.Dock="Right" Margin="0 0 5 0" MouseLeftButtonUp="LongQuoteClick"/>
-                    <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}" ToolTip="Activate/Deactivate Quote" Margin="0 0 5 0" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Label HorizontalAlignment="Left" Content="{Binding Path=QuoteText, Mode=OneWay}" Margin="0 0 10 0" />
                 </DockPanel>
             </Border>
