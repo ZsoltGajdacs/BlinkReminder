@@ -42,16 +42,22 @@ namespace BlinkReminder.Settings
         private string _LongDisplayTimeFormatted;
         private string _longIntervalTimeFormatted;
 
+        // Pause time keeper
+        private int _pauseTime;
+
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
         private bool _isLongSkippable;
 
+        // For checking if breaks should occur when there is a fullscreen app running
+        private bool _shouldBrakeWhenFullScreen;
+
+        // For indefinite pause enablement
+        private bool _indefPauseEnabled;
+
         // For keeping the quotes that appear during breaks
         private BindingList<Quote> _shortBreakQuotes;
         private BindingList<Quote> _longBreakQuotes;
-
-        // For checking if breaks should occur when there is a fullscreen app running
-        private bool _shouldBrakeWhenFullScreen;
 
         // For selection which quote to show
         private Random rand;
@@ -107,6 +113,7 @@ namespace BlinkReminder.Settings
             IsShortSkippable = false;
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
+            IndefPauseEnabled = false;
 
             AddDefaultQuotes();
 
@@ -133,6 +140,7 @@ namespace BlinkReminder.Settings
             IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
             IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
             ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
+            IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
 
             _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
@@ -164,7 +172,7 @@ namespace BlinkReminder.Settings
             _shortBreakQuotes = new BindingList<Quote>()
             {
                 new Quote("Look out the window", true, true),
-                new Quote("Strech your legs", true, true),
+                new Quote("Stretch your legs", true, true),
                 new Quote("Close your eyes", true, true),
                 new Quote("Drink some water", true, true)
             };
@@ -404,6 +412,34 @@ namespace BlinkReminder.Settings
                 NotifyPropertyChanged();
             }
         }
+
+        public bool IndefPauseEnabled
+        {
+            get
+            {
+                return _indefPauseEnabled;
+            }
+
+            set
+            {
+                _indefPauseEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int PauseTime
+        {
+            get
+            {
+                return _pauseTime;
+            }
+
+            set
+            {
+                _pauseTime = value;
+                NotifyPropertyChanged();
+            }
+        }
         #endregion
 
         #region Milliseconds getters
@@ -463,6 +499,7 @@ namespace BlinkReminder.Settings
             info.AddValue("iss", _isShortSkippable, typeof(bool));
             info.AddValue("ils", _isLongSkippable, typeof(bool));
             info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
+            info.AddValue("ipe", _indefPauseEnabled, typeof(bool));
 
             info.AddValue("sbq", _shortBreakQuotes.ToArray(), typeof(Quote[]));
             info.AddValue("lbq", _longBreakQuotes.ToArray(), typeof(Quote[]));

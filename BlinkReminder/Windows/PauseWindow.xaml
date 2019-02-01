@@ -1,0 +1,18 @@
+﻿<Window x:Name="PauseView" x:Class="BlinkReminder.Windows.PauseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlinkReminder.Windows"
+        mc:Ignorable="d"
+        Title="Timer pause" Height="150" Width="320" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8" FontSize="14">
+    <StackPanel x:Name="mainStack" Orientation="Vertical">
+        <Label Content="Pause for how long? (minutes)" Margin="5 5 5 5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBox x:Name="pauseTimeTextBox" Text="{Binding PauseTime, Mode=TwoWay}" Margin="5 0 5 12"/>
+
+        <DockPanel LastChildFill="False">
+            <Button x:Name="TimedPauseBtn" Content="Pause for selected time" Margin="15 0 15 0" DockPanel.Dock="Left" Click="TimedPauseBtn_Click"/>
+            <Button x:Name="IndefPauseBtn" Content="Pause indefinitely" IsEnabled="False" Margin="0 0 15 0" DockPanel.Dock="Right" Click="IndefPauseBtn_Click"/>
+        </DockPanel>
+    </StackPanel>
+</Window>

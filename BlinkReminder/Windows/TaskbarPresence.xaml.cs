@@ -39,11 +39,13 @@ namespace BlinkReminder.Windows
         private Window settingsWindow;
         private Window blockerWindow;
         private Window aboutWindow;
+        private PauseWindow pauseWindow;
 
         //Timers
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
         private Timer tooltipRefreshTimer;
+        private Timer pauseTimer;
 
         //Timer Helpers
         private bool isShortIntervalTimerDone;
@@ -94,7 +96,12 @@ namespace BlinkReminder.Windows
 
         private void PauseItem_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (pauseWindow == null)
+            {
+                pauseWindow = new PauseWindow();
+                pauseWindow.Closed += PauseWindow_Closed;
+                int pauseTime = pauseWindow.ShowDialog();
+            }
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -186,6 +193,11 @@ namespace BlinkReminder.Windows
         private void AboutWindow_Closed(object sender, EventArgs e)
         {
             aboutWindow = null;
+        }
+
+        private void PauseWindow_Closed(object sender, EventArgs e)
+        {
+            pauseWindow = null;
         }
 
         #endregion

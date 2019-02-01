@@ -40,14 +40,18 @@
                         <!--12 Padding-->
                         <RowDefinition Height="20"/>
                         <!--13 longSkipChkBox-->
-                        <RowDefinition Height="10"/>
-                        <!--14 Padding-->
-                        <RowDefinition Height="*"/>
-                        <!--15 Fill-->
-                        <RowDefinition Height="20"/>
-                        <!--16 OkBtn-->
                         <RowDefinition Height="5"/>
-                        <!--17 Padding bottom-->
+                        <!--14 Padding-->
+                        <RowDefinition Height="20"/>
+                        <!--15 IndefPause-->
+                        <RowDefinition Height="10"/>
+                        <!--16 Padding-->
+                        <RowDefinition Height="*"/>
+                        <!--17 Fill-->
+                        <RowDefinition Height="20"/>
+                        <!--18 OkBtn-->
+                        <RowDefinition Height="5"/>
+                        <!--19 Padding bottom-->
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -84,8 +88,9 @@
                     <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" Content="Should a full screen application block rests?" Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" Content="Should a short rest be skippable?" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" Content="Should a long rest be skippable?" Grid.Column="1" Grid.Row="13" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                    <CheckBox x:Name="indefPauseChkbox" IsChecked="{Binding IndefPauseEnabled, Mode=TwoWay}" Content="Should indefinite pause be enabled?" Grid.Column="1" Grid.Row="15" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
-                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="16" Click="OkButton_Click" />
+                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="18" Click="OkButton_Click" />
                     
                 </Grid>
             </TabItem>
