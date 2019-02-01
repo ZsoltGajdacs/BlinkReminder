@@ -12,24 +12,36 @@ namespace BlinkReminder
 {
     public partial class App : Application
     {
+        /// <summary>
+        /// Deletes the Quote clicked on
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShortQuoteClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             UserSettings settings = UserSettings.Instance;
-            
-            // img's tag is the index of the list where the Quote is kept
+
+            // img's tag contains the quote's text
             Image img = sender as Image;
 
-            settings.ShortBreakQuotes.RemoveAt((int)img.Tag);
+            Quote quoteToRemove = settings.ShortBreakQuotes.Where(i => i.QuoteText.Equals((string)img.Tag)).Single();
+            settings.ShortBreakQuotes.Remove(quoteToRemove);
         }
 
+        /// <summary>
+        /// Deletes the Quote clicked on
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LongQuoteClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             UserSettings settings = UserSettings.Instance;
             
-            // img's tag is the index of the list where the Quote is kept
+            // img's tag contains the quote's text
             Image img = sender as Image;
 
-            settings.LongBreakQuotes.RemoveAt((int)img.Tag);
+            Quote quoteToRemove = settings.LongBreakQuotes.Where(i => i.QuoteText.Equals((string)img.Tag)).Single();
+            settings.LongBreakQuotes.Remove(quoteToRemove);
         }
     }
 }

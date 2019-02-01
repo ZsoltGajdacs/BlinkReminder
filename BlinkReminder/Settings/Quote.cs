@@ -11,20 +11,20 @@ namespace BlinkReminder.Settings
     [Serializable]
     public class Quote : INotifyPropertyChanged
     {
-        private int _index;
         private string _quoteText;
         private bool _isActive;
+        public bool IsShort { get; set; }
 
         public Quote()
         {
             // Needed for serialization
         }
 
-        public Quote(string quoteText, bool isActive, int index)
+        public Quote(string quoteText, bool isActive, bool isShort)
         {
-            _index = index;
             _quoteText = quoteText;
             _isActive = isActive;
+            IsShort = isShort;
         }
 
         #region Event handling
@@ -38,19 +38,6 @@ namespace BlinkReminder.Settings
         #endregion
 
         #region Properties
-        public int Index
-        {
-            get
-            {
-                return _index;
-            }
-
-            set
-            {
-                _index = value;
-            }
-        }
-
         public string QuoteText
         {
             get

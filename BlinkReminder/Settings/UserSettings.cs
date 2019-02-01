@@ -163,17 +163,17 @@ namespace BlinkReminder.Settings
         {
             _shortBreakQuotes = new BindingList<Quote>()
             {
-                new Quote("Look out the window", true, 0),
-                new Quote("Strech your legs", true, 1),
-                new Quote("Close your eyes", true, 2),
-                new Quote("Drink some water", true, 3)
+                new Quote("Look out the window", true, true),
+                new Quote("Strech your legs", true, true),
+                new Quote("Close your eyes", true, true),
+                new Quote("Drink some water", true, true)
             };
 
             _longBreakQuotes = new BindingList<Quote>()
             {
-                new Quote("Take a bit of walk", true, 0),
-                new Quote("Have a cup of tea/coffee", true, 1),
-                new Quote("Relax", true, 2)
+                new Quote("Take a bit of walk", true, false),
+                new Quote("Have a cup of tea/coffee", true, false),
+                new Quote("Relax", true, false)
             };
         }
 
@@ -585,11 +585,11 @@ namespace BlinkReminder.Settings
             }
             else
             {
-                int quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
+                int quoteIndex = rand.Next(0, quoteList.Count);
 
                 while (!quoteList[quoteIndex].IsActive)
                 {
-                    quoteIndex = rand.Next(0, _shortBreakQuotes.Count);
+                    quoteIndex = rand.Next(0, quoteList.Count);
                 }
 
                 return quoteList[quoteIndex].QuoteText;
