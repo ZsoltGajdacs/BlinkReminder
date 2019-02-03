@@ -132,6 +132,9 @@ namespace BlinkReminder.Settings
 
             PropertyChanged += UserSettings_PropertyChanged;
 
+            rand = new Random();
+
+            // ------------------- v0.5 settings -------------------
             ShortDisplayTime = (long)info.GetValue("sdt", typeof(long));
             ShortIntervalTime = (long)info.GetValue("sit", typeof(long));
             LongDisplayTime = (long)info.GetValue("ldt", typeof(long));
@@ -140,12 +143,22 @@ namespace BlinkReminder.Settings
             IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
             IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
             ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
-            IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
 
             _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
 
-            rand = new Random();
+            // Settings options after v0.5 must go in "try" blocks as they might be missing from the
+            // file on the users end.
+            //--------------------- v0.6 settings --------------------
+            try
+            {
+                IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
+            }
+            catch (Exception)
+            {
+                //Log here
+            }
+
         }
         #endregion
 
