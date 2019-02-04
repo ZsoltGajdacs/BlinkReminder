@@ -149,6 +149,7 @@
     <Compile Include="Helpers\Keyboard.cs" />
     <Compile Include="Helpers\RandIntMem.cs" />
     <Compile Include="Helpers\TextValidator.cs" />
+    <Compile Include="Helpers\TooltipHandler.cs" />
     <Compile Include="Settings\CycleTimesEnum.cs" />
     <Compile Include="Settings\Quote.cs" />
     <Compile Include="Settings\UserSettings.cs" />

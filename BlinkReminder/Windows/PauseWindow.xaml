@@ -8,7 +8,7 @@
         Title="Timer pause" Height="150" Width="320" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8" FontSize="14">
     <StackPanel x:Name="mainStack" Orientation="Vertical">
         <Label Content="Pause for how long? (minutes)" Margin="5 5 5 5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox x:Name="pauseTimeTextBox" Text="{Binding PauseTime, Mode=TwoWay}" Margin="5 0 5 12"/>
+        <TextBox x:Name="pauseTimeTextBox" Text="{Binding PauseTime, Mode=TwoWay}" Width="100" Margin="5 0 5 12" HorizontalAlignment="Center" PreviewTextInput="PauseTimeTextBox_PreviewTextInput" KeyUp="PauseTimeTextBox_KeyUp"/>
 
         <DockPanel LastChildFill="False">
             <Button x:Name="TimedPauseBtn" Content="Pause for selected time" Margin="15 0 15 0" DockPanel.Dock="Left" Click="TimedPauseBtn_Click"/>

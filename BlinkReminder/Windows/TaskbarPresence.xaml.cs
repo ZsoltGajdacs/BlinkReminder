@@ -174,7 +174,7 @@ namespace BlinkReminder.Windows
                 pauseWatch.Restart();
             }
             // if this is going on till resume is pushed
-            else
+            else if (pauseTime.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
             {
                 PauseItem.Header = "Resume";
                 PauseItem.Click -= PauseItem_Click;
@@ -185,7 +185,11 @@ namespace BlinkReminder.Windows
                 SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
                 StopTimers();
             }
-            
+            // Or the user just canceled
+            else
+            {
+                isPaused = false;
+            }
         }
 
         private void ResumeItem_Click(object sender, RoutedEventArgs e)
