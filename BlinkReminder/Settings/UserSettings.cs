@@ -147,14 +147,16 @@ namespace BlinkReminder.Settings
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
 
             // Check the amount of quotes to know how many can be shown without repetition
-            if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
+            // Commented out until flexible RandIntMem is implemented
+            /*if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
             {
                 rand = new RandIntMem(2);
             }
             else
             {
                 rand = new RandIntMem(1);
-            }
+            }*/
+            rand = new RandIntMem(1);
 
             // Settings options after v0.5 must go in "try" blocks as they might be missing from the
             // file on the users end.

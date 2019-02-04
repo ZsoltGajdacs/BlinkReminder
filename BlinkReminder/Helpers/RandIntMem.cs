@@ -41,7 +41,7 @@ namespace BlinkReminder.Helpers
         /// <returns></returns>
         internal int GetRandInt(int min, int max)
         {
-            if (max - min <= lastNums.Length)
+            if (max - min < lastNums.Length)
             {
                 throw new ArgumentOutOfRangeException("max", "Max - Min can't be less then the object's int memory");
             }
