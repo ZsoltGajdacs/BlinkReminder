@@ -165,7 +165,7 @@ namespace BlinkReminder.Windows
             TextBox textBox = sender as TextBox;
             if (textBox.Text.Equals("0"))
             {
-                textBox.Text = "1";
+                textBox.Text = null;
                 tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 seconds!");
             }
         }

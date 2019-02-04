@@ -44,7 +44,7 @@ namespace BlinkReminder.Settings
         private string _longIntervalTimeFormatted;
 
         // Pause time keeper
-        private int _pauseTime;
+        private int? _pauseTime;
 
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
@@ -450,7 +450,7 @@ namespace BlinkReminder.Settings
             }
         }
 
-        public int PauseTime
+        public int? PauseTime
         {
             get
             {

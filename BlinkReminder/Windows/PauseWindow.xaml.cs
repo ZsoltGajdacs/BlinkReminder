@@ -74,9 +74,16 @@ namespace BlinkReminder.Windows
 
         private void TimedPauseBtn_Click(object sender, RoutedEventArgs e)
         {
-            pauseTime = userSettings.PauseTime;
-            btnClicked = true;
-            Close();
+            if (userSettings.PauseTime != null)
+            {
+                pauseTime = (int)userSettings.PauseTime;
+                btnClicked = true;
+                Close();
+            }
+            else
+            {
+                tooltipHandler.ShowTooltipOnTextBox(ref pauseTimeTextBox, "Please enter a value");
+            }
         }
 
         private void PauseTimeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -89,7 +96,7 @@ namespace BlinkReminder.Windows
             TextBox textBox = sender as TextBox;
             if (textBox.Text.Equals("0"))
             {
-                textBox.Text = "1";
+                textBox.Text = null;
                 tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 minutes!");
             }
         }
