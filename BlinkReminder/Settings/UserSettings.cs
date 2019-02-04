@@ -213,7 +213,7 @@ namespace BlinkReminder.Settings
 
         private void UserSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            TimeConverter(e.PropertyName);
+            TimeFormatter(e.PropertyName);
         }
 
         #endregion
@@ -525,7 +525,7 @@ namespace BlinkReminder.Settings
         /// Converts the second based times to easily readable format
         /// </summary>
         /// <param name="propertyName"></param>
-        private void TimeConverter(string propertyName)
+        private void TimeFormatter(string propertyName)
         {
             TimeSpan time;
             switch (propertyName)
@@ -598,6 +598,10 @@ namespace BlinkReminder.Settings
                     if (time < TimeSpan.FromMinutes(60))
                     {
                         LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
+                    }
+                    else if (time < TimeSpan.FromMinutes(10))
+                    {
+                        LongIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
                     else
                     {

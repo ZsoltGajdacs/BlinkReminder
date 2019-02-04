@@ -1,4 +1,5 @@
-﻿using BlinkReminder.Settings;
+﻿using BlinkReminder.Helpers;
+using BlinkReminder.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,19 +25,19 @@ namespace BlinkReminder.Windows
         private static string QUOTE_INPUT_PLACEHOLDER = "Add new quote here";
 
         private UserSettings settings;
-        private ToolTip tt;
+        private ToolTip toolTip;
+        private TextBox tBWithOpenTT; // This one will keep the TB with an open Tooltip
 
         public SettingsWindow(ref UserSettings settings)
         {
             InitializeComponent();
             this.settings = settings;
 
-            ShortQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
-            LongQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
-
+            SetDefaults();
             SetDataBinding();
         }
 
+        #region Startup methods
         private void SetDataBinding()
         {
             SettingsGrid.DataContext = settings;
@@ -44,10 +45,23 @@ namespace BlinkReminder.Windows
             LongQuoteItems.ItemsSource = settings.LongBreakQuotes;
         }
 
+        private void SetDefaults()
+        {
+            toolTip = new ToolTip();
+            toolTip.Closed += Tt_Closed;
+            toolTip.StaysOpen = false;
+
+            ShortQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
+            LongQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
+        }
+        #endregion
+
+        #region Click Events
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
+        #endregion
 
         #region Quote Input Key events
 
@@ -100,6 +114,7 @@ namespace BlinkReminder.Windows
         }
         #endregion
 
+        #region Quote Support
         /// <summary>
         /// Adds a new quote the passed list if it doesn't already exist
         /// </summary>
@@ -116,36 +131,17 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                tt = new ToolTip();
-                tt.Closed += Tt_Closed;
+                string quoteMsg = "Quote already added";
 
                 if (quote.IsShort)
                 {
-                    ShortQuoteInput.ToolTip = tt;
-                    tt.Content = "Quote already added";
-                    tt.StaysOpen = false;
-                    tt.IsOpen = true;
+                    ShowTooltipOnTextBox(ref ShortQuoteInput, quoteMsg);
                 }
                 else
                 {
-                    LongQuoteInput.ToolTip = tt;
-                    tt.Content = "Quote already added";
-                    tt.StaysOpen = false;
-                    tt.IsOpen = true;
+                    ShowTooltipOnTextBox(ref LongQuoteInput, quoteMsg);
                 }
             }
-        }
-
-        /// <summary>
-        /// Runs when the tooltip of the input controls is closed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Tt_Closed(object sender, RoutedEventArgs e)
-        {
-            tt = null;
-            ShortQuoteInput.ToolTip = null;
-            LongQuoteInput.ToolTip = null;
         }
 
         /// <summary>
@@ -160,5 +156,52 @@ namespace BlinkReminder.Windows
                 textBox.Text = String.Empty;
             }
         }
+        #endregion
+
+        #region ToolTip handling
+        /// <summary>
+        /// Shows a Tooltip with the given message on the given Textbox
+        /// </summary>
+        /// <param name="textBox"></param>
+        /// <param name="msg"></param>
+        private void ShowTooltipOnTextBox (ref TextBox textBox, string msg)
+        {
+            // Get the reference address of the tooltip so the tooltip can be removed later
+            tBWithOpenTT = textBox;
+
+            // Show tooltip
+            tBWithOpenTT.ToolTip = toolTip;
+            toolTip.Content = msg;
+            toolTip.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Runs when the tooltip of one of the input controls is closed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tt_Closed(object sender, RoutedEventArgs e)
+        {
+            toolTip.IsOpen = false;
+            tBWithOpenTT.ToolTip = null;
+        }
+        #endregion
+
+        #region Input check of display/interval values
+        private void TimesTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextValidator.IsNumsOnly(e.Text);
+        }
+
+        private void TimesTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox.Text.Equals("0"))
+            {
+                textBox.Text = "1";
+                ShowTooltipOnTextBox(ref textBox, "Can't have 0 seconds!");
+            }
+        }
+        #endregion
     }
 }
