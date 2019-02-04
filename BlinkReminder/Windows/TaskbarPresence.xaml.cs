@@ -63,7 +63,7 @@ namespace BlinkReminder.Windows
         // Settings singleton
         private UserSettings settings;
 
-        // For identifying the fullscreen window that can block the blockerWindow
+        // For identifying the fullscreen window that blocks the blockerWindow
         Process foreProc;
 
         public TaskbarPresence()
@@ -176,10 +176,27 @@ namespace BlinkReminder.Windows
             // if this is going on till resume is pushed
             else
             {
+                PauseItem.Header = "Resume";
+                PauseItem.Click -= PauseItem_Click;
+                PauseItem.Click += ResumeItem_Click;
+
+                tooltipRefreshTimer.Stop();
+
                 SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
                 StopTimers();
             }
             
+        }
+
+        private void ResumeItem_Click(object sender, RoutedEventArgs e)
+        {
+            PauseItem.Header = "Pause";
+            PauseItem.Click += PauseItem_Click;
+            PauseItem.Click -= ResumeItem_Click;
+
+            tooltipRefreshTimer.Start();
+
+            ResumeTimers();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
