@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlinkReminder.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -60,7 +61,7 @@ namespace BlinkReminder.Settings
         private BindingList<Quote> _longBreakQuotes;
 
         // For selection which quote to show
-        private Random rand;
+        private RandIntMem rand;
 
         // Event handler for MVVM support
         [field: NonSerializedAttribute()]
@@ -117,7 +118,7 @@ namespace BlinkReminder.Settings
 
             AddDefaultQuotes();
 
-            rand = new Random();
+            rand = new RandIntMem(2);
         }
 
         /// <summary>
@@ -132,8 +133,6 @@ namespace BlinkReminder.Settings
 
             PropertyChanged += UserSettings_PropertyChanged;
 
-            rand = new Random();
-
             // ------------------- v0.5 settings -------------------
             ShortDisplayTime = (long)info.GetValue("sdt", typeof(long));
             ShortIntervalTime = (long)info.GetValue("sit", typeof(long));
@@ -147,6 +146,16 @@ namespace BlinkReminder.Settings
             _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
 
+            // Check the amount of quotes to know how many can be shown without repetition
+            if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
+            {
+                rand = new RandIntMem(2);
+            }
+            else
+            {
+                rand = new RandIntMem(1);
+            }
+
             // Settings options after v0.5 must go in "try" blocks as they might be missing from the
             // file on the users end.
             //--------------------- v0.6 settings --------------------
@@ -158,7 +167,6 @@ namespace BlinkReminder.Settings
             {
                 //Log here
             }
-
         }
         #endregion
 
@@ -639,12 +647,12 @@ namespace BlinkReminder.Settings
             }
             else
             {
-                int quoteIndex = rand.Next(0, quoteList.Count);
+                int quoteIndex;
 
-                while (!quoteList[quoteIndex].IsActive)
+                do
                 {
-                    quoteIndex = rand.Next(0, quoteList.Count);
-                }
+                    quoteIndex = rand.GetRandInt(0, quoteList.Count - 1);
+                } while (!quoteList[quoteIndex].IsActive);
 
                 return quoteList[quoteIndex].QuoteText;
             }
