@@ -35,6 +35,7 @@ namespace BlinkReminder.Windows
 
             SetDefaults();
             SetDataBinding();
+            CheckDisabledState();
         }
 
         #region Startup methods
@@ -49,6 +50,21 @@ namespace BlinkReminder.Windows
         {
             ShortQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
             LongQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
+        }
+
+        private void CheckDisabledState()
+        {
+            if (settings.LongIntervalTime == 0)
+            {
+                longDispMinuteLabel.IsEnabled = false;
+                longDispText.IsEnabled = false;
+            }
+
+            if (settings.ShortIntervalTime == 0)
+            {
+                shortDispMinuteLabel.IsEnabled = false;
+                shortDispText.IsEnabled = false;
+            }
         }
         #endregion
 
@@ -167,6 +183,36 @@ namespace BlinkReminder.Windows
             {
                 textBox.Text = null;
                 tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 seconds!");
+            }
+        }
+        #endregion
+
+        #region Timer disable support
+        private void ShortIntervalText_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (shortIntervalText.Text.Equals("0"))
+            {
+                shortDispMinuteLabel.IsEnabled = false;
+                shortDispText.IsEnabled = false;
+            }
+            else
+            {
+                shortDispMinuteLabel.IsEnabled = true;
+                shortDispText.IsEnabled = true;
+            }
+        }
+
+        private void LongIntervalText_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (longIntervalText.Text.Equals("0"))
+            {
+                longDispMinuteLabel.IsEnabled = false;
+                longDispText.IsEnabled = false;
+            }
+            else
+            {
+                longDispMinuteLabel.IsEnabled = true;
+                longDispText.IsEnabled = true;
             }
         }
         #endregion

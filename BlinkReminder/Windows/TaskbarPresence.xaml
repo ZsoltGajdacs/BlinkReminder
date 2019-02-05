@@ -15,7 +15,7 @@
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <!--<MenuItem Header="Start short break" Click="ShortBreak_Click"/>-->
-                    <MenuItem Header="Start long break" Click="LongBreak_Click"/>
+                    <MenuItem x:Name="LongBreakStartItem" Header="Start long break" Click="LongBreak_Click"/>
                     <MenuItem x:Name="PauseItem" Header="Pause" Click="PauseItem_Click"/>
                     <Separator />
                     <MenuItem Header="Settings" Click="Settings_Click"/>

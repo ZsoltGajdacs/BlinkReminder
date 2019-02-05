@@ -12,6 +12,7 @@ using BlinkReminder.Helpers;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Windows.Controls;
 
 namespace BlinkReminder.Windows
 {
@@ -29,6 +30,7 @@ namespace BlinkReminder.Windows
         private const string TOOLTIP_PAUSE_MSG_BEGIN = "Timers are paused for ";
         private const string TOOLTIP_MSG_END = " minutes";
         private const string TOOLTIP_INDEF_PAUSE = "Timers are paused until resume is clicked";
+        private const string TOOLTIP_LONG_DISABLED = "Long breaks are disabled";
         private const int ONE_MINUTE_IN_MS = 60000;
 
         // Component holder for disposal
@@ -80,15 +82,33 @@ namespace BlinkReminder.Windows
             settings = UserSettings.Instance;
             settings.PropertyChanged += UserSettings_PropertyChanged;
 
+            // Stopwatches for pause support
             shortTimerWatch = new Stopwatch();
             longTimerWatch = new Stopwatch();
 
+            // Initialize short, long and taskbar timers
+            shortIntervalTimer = new Timer();
+            shortIntervalTimer.AutoReset = false;
+            shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
+
+            longIntervalTimer = new Timer();
+            longIntervalTimer.AutoReset = false;
+            longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
+
+            tooltipRefreshTimer = new Timer();
+            tooltipRefreshTimer.AutoReset = true;
+            tooltipRefreshTimer.Elapsed += TaskbarTimer_Elapsed;
+
+            // Component for disposal
             components = new Container();
+
+            // Add to Component holder for proper disposal later
+            components.Add(shortIntervalTimer);
+            components.Add(longIntervalTimer);
+            components.Add(tooltipRefreshTimer);
 
             isShortIntervalTimerDone = false;
             isLongIntervalTimerDone = false;
-
-            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
         }
 
         /// <summary>
@@ -97,37 +117,39 @@ namespace BlinkReminder.Windows
         private void StartDefaultTimers()
         {
             // ------------- Short Interval ----------------
-            shortIntervalTimer = new Timer(settings.GetShortIntervalMillisecond())
+            long shortTime = settings.GetShortIntervalMillisecond();
+
+            if (shortTime > 0)
             {
-                AutoReset = false
-            };
-            shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
-            shortIntervalTimer.Start();
-            // Timer for pause support
-            shortTimerWatch.Start();
+                shortIntervalTimer.Interval = shortTime;
+                shortIntervalTimer.Start();
+                shortTimerWatch.Start();
+            }
 
             // ------------- Long Interval -----------------
-            longIntervalTimer = new Timer(settings.GetLongIntervalMillisecond())
+            long longTime = settings.GetLongIntervalMillisecond();
+
+            if (longTime > 0)
             {
-                AutoReset = false
-            };
-            longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
-            longIntervalTimer.Start();
-            // Timer for pause support
-            longTimerWatch.Start();
+                longIntervalTimer.Interval = longTime;
+                longIntervalTimer.Start();
+                longTimerWatch.Start();
+            }
 
             // ------------- Taskbar time count --------------
-            tooltipRefreshTimer = new Timer(ONE_MINUTE_IN_MS) // Fires every minute
-            {
-                AutoReset = true
-            };
-            tooltipRefreshTimer.Elapsed += TaskbarTimer_Elapsed;
-            tooltipRefreshTimer.Start();
 
-            // Add to Component holder for proper disposal later
-            components.Add(shortIntervalTimer);
-            components.Add(longIntervalTimer);
-            components.Add(tooltipRefreshTimer);
+            if (longTime > 0)
+            {
+                tooltipRefreshTimer.Interval = ONE_MINUTE_IN_MS;
+                tooltipRefreshTimer.Start();
+
+                SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+            }
+            else
+            {
+                SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
+                DisableTaskbarOption(ref LongBreakStartItem);
+            }
         }
         #endregion
 
@@ -372,17 +394,42 @@ namespace BlinkReminder.Windows
             switch (changedProperty)
             {
                 case "ShortIntervalTime":
-                    ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                    long shortInterval = settings.GetShortIntervalMillisecond();
 
-                    shortTimerWatch.Restart();
+                    if (shortInterval > 0)
+                    {
+                        ResetTimer(ref shortIntervalTimer, shortInterval);
+                        shortTimerWatch.Restart();
+                    }
+                    else
+                    {
+                        shortIntervalTimer.Stop();
+                        shortTimerWatch.Reset();
+                    }
+
                     break;
 
                 case "LongIntervalTime":
-                    ResetTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
-                    SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
-                    ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
+                    long longInterval = settings.GetLongIntervalMillisecond();
 
-                    longTimerWatch.Restart();
+                    if (longInterval > 0)
+                    {
+                        ResetTimer(ref longIntervalTimer, longInterval);
+                        ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
+                        longTimerWatch.Restart();
+
+                        EnableTaskbarOption(ref LongBreakStartItem);
+                        SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+                    }
+                    else
+                    {
+                        longIntervalTimer.Stop();
+                        longTimerWatch.Reset();
+                        tooltipRefreshTimer.Stop();
+                        SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
+                        DisableTaskbarOption(ref LongBreakStartItem);
+                    }
+                    
                     break;
 
                 default:
@@ -486,6 +533,7 @@ namespace BlinkReminder.Windows
             if (isShortIntervalTimerDone)
             {
                 ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                shortTimerWatch.Restart();
                 isShortIntervalTimerDone = false;
             }
 
@@ -493,6 +541,13 @@ namespace BlinkReminder.Windows
             {
                 ResetTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
                 ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
+                longTimerWatch.Restart();
+
+                if (settings.GetShortIntervalMillisecond() > 0)
+                {
+                    ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                }
+
                 isLongIntervalTimerDone = false;
             }
         }
@@ -540,12 +595,34 @@ namespace BlinkReminder.Windows
         #endregion
 
         #region Taskbar manipulation
+        /// <summary>
+        /// Sets the taskbar tooltip to the given text
+        /// </summary>
+        /// <param name="text"></param>
         private void SetTaskbarTooltip(string text)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 taskbarIcon.ToolTipText = text;
             }));
+        }
+
+        /// <summary>
+        /// Disables the given taskbar MenuItem
+        /// </summary>
+        /// <param name="option"></param>
+        private void DisableTaskbarOption(ref MenuItem option)
+        {
+            option.IsEnabled = false;
+        }
+
+        /// <summary>
+        /// Enable the given taskbar MenuItem
+        /// </summary>
+        /// <param name="option"></param>
+        private void EnableTaskbarOption(ref MenuItem option)
+        {
+            option.IsEnabled = true;
         }
         #endregion
 

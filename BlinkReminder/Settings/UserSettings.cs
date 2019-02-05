@@ -26,6 +26,9 @@ namespace BlinkReminder.Settings
         private const string TOMINUTELONG = @"mm\m\:ss\s";
         private const string TOHOUR = @"h\h\:mm\m\:ss\s";
 
+        // Text Consts
+        private const string DISABLED_TEXT = "Timer disabled";
+
         // Settings data
         private const string SETTINGS_FILENAME = "Settings.brs";
         internal string SettingsFilePath { get; set; }
@@ -157,6 +160,17 @@ namespace BlinkReminder.Settings
                 rand = new RandIntMem(1);
             }*/
             rand = new RandIntMem(1);
+
+            // Manually set long and short interval helper texts if they are set to zero
+            if (ShortIntervalTime == 0)
+            {
+                ShortIntervalTimeFormatted = DISABLED_TEXT;
+            }
+
+            if (LongIntervalTime == 0)
+            {
+                LongIntervalTimeFormatted = DISABLED_TEXT;
+            }
 
             // Settings options after v0.5 must go in "try" blocks as they might be missing from the
             // file on the users end.
@@ -538,6 +552,7 @@ namespace BlinkReminder.Settings
         private void TimeFormatter(string propertyName)
         {
             TimeSpan time;
+
             switch (propertyName)
             {
                 case ("ShortDisplayTime"):
@@ -565,7 +580,11 @@ namespace BlinkReminder.Settings
                 case ("ShortIntervalTime"):
                     time = TimeSpan.FromSeconds(ShortIntervalTime);
 
-                    if (time < TimeSpan.FromSeconds(60))
+                    if (time == TimeSpan.Zero)
+                    {
+                        ShortIntervalTimeFormatted = DISABLED_TEXT;
+                    }
+                    else if (time < TimeSpan.FromSeconds(60))
                     {
                         ShortIntervalTimeFormatted = time.ToString(TOSECONDLONG);
                     }
@@ -605,7 +624,11 @@ namespace BlinkReminder.Settings
                 case ("LongIntervalTime"):
                     time = TimeSpan.FromSeconds(LongIntervalTime);
 
-                    if (time < TimeSpan.FromMinutes(60))
+                    if (time == TimeSpan.Zero)
+                    {
+                        LongIntervalTimeFormatted = DISABLED_TEXT;
+                    }
+                    else if (time < TimeSpan.FromMinutes(60))
                     {
                         LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
                     }
