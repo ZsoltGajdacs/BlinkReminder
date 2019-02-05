@@ -184,11 +184,31 @@ namespace BlinkReminder.Windows
                 textBox.Text = null;
                 tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 seconds!");
             }
+
+            SaveOnEnter(sender, e);
+        }
+
+        /// <summary>
+        /// Saves the textbox's value on Enter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveOnEnter(object sender, KeyEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (e.Key == Key.Enter)
+            {
+                BindingExpression textBindingExpr = textBox.GetBindingExpression(TextBox.TextProperty);
+
+                if (textBindingExpr == null) return;
+
+                textBindingExpr.UpdateSource();
+            }
         }
         #endregion
 
         #region Timer disable support
-        private void ShortIntervalText_LostFocus(object sender, RoutedEventArgs e)
+        private void ShortIntervalText_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             if (shortIntervalText.Text.Equals("0"))
             {
@@ -202,7 +222,7 @@ namespace BlinkReminder.Windows
             }
         }
 
-        private void LongIntervalText_LostFocus(object sender, RoutedEventArgs e)
+        private void LongIntervalText_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             if (longIntervalText.Text.Equals("0"))
             {
