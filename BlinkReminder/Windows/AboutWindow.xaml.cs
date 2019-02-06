@@ -25,7 +25,7 @@ namespace BlinkReminder.Windows
         private static readonly string VERSION_LABEL = "Version:";
         private static readonly string VERSION_CHECK_INIT_LABEL = "Checking update....";
         private static readonly string DOWNLOAD_LINK_TEXT = "Click to download the update";
-        private static readonly string ISSUE_LINK_TEXT = "You can report bugs here";
+        private static readonly string ISSUE_LINK_TEXT = "You can report bugs here (GitHub)";
         private static readonly string ISSUE_LINK_ADDRESS = "https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose";
 
         private UpdateCheck update;
@@ -49,6 +49,7 @@ namespace BlinkReminder.Windows
 
             Run linkText = new Run(ISSUE_LINK_TEXT);
             Hyperlink issueLink = new Hyperlink(linkText);
+            issueLink.RequestNavigate += HyperLink_RequestNavigate;
             issueLink.NavigateUri = new Uri(ISSUE_LINK_ADDRESS);
             issueLabel.Content = issueLink;
         }
@@ -61,6 +62,7 @@ namespace BlinkReminder.Windows
             {
                 Run linkName = new Run(DOWNLOAD_LINK_TEXT);
                 Hyperlink downloadLink = new Hyperlink(linkName);
+                downloadLink.RequestNavigate += HyperLink_RequestNavigate;
                 downloadLink.NavigateUri = new Uri(result);
                 
                 updateLabel.Content = downloadLink;
@@ -76,9 +78,9 @@ namespace BlinkReminder.Windows
             Close();
         }
 
-        private void HyperLink_Click(object sender, RoutedEventArgs e)
+        private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            // Open a new tab with the address in the default browser here
+            System.Diagnostics.Process.Start(e.Uri.ToString());
         }
     }
 }

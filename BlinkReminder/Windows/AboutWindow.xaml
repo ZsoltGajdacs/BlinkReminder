@@ -9,8 +9,8 @@
     <StackPanel Orientation="Vertical">
         <Label x:Name="authorLabel" HorizontalAlignment="Center" Margin="0 5 0 0"/>
         <Label x:Name="versionLabel" HorizontalAlignment="Center"/>
-        <Label x:Name="updateLabel" HorizontalAlignment="Center" Margin="5 0 5 0" Hyperlink.Click="HyperLink_Click"/>
-        <Label x:Name="issueLabel" HorizontalAlignment="Center" Margin="5 0 5 0" Hyperlink.Click="HyperLink_Click"/>
+        <Label x:Name="updateLabel" HorizontalAlignment="Center" Margin="5 0 5 0" />
+        <Label x:Name="issueLabel" HorizontalAlignment="Center" Margin="5 0 5 0" />
         <Button x:Name="okBtn" Content="Close" Width="80" Margin="0 5 0 5" Click="OkBtn_Click" />
     </StackPanel>
 </Window>
