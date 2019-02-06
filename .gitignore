@@ -265,3 +265,4 @@ __pycache__/
 *.cab
 output-info.ini
 cacheindex.txt
+BRSetup-SetupFiles/
