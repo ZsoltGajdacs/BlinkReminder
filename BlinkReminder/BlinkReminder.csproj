@@ -99,6 +99,9 @@
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -150,6 +153,7 @@
     <Compile Include="Helpers\RandIntMem.cs" />
     <Compile Include="Helpers\TextValidator.cs" />
     <Compile Include="Helpers\TooltipHandler.cs" />
+    <Compile Include="Helpers\UpdateCheck.cs" />
     <Compile Include="Settings\CycleTimesEnum.cs" />
     <Compile Include="Settings\Quote.cs" />
     <Compile Include="Settings\UserSettings.cs" />

@@ -9,9 +9,11 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\packages\Newtonsoft.Json.12.0.1\lib\net45"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config" Value="BlinkReminder.exe.config"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="Hardcodet.Wpf.TaskbarNotification.dll"/>
+    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll" Value="Newtonsoft.Json.dll"/>
     <ROW Property="AI_REQUIRED_DOTNET_DISPLAY" MultiBuildValue="DefaultBuild:4.7.2" ValueLocId="-"/>
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.7.2" ValueLocId="-"/>
     <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:2"/>
@@ -21,10 +23,10 @@
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/ZsoltGajdacs/BlinkReminder/releases"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="Manufacturer" Value="ZsGWorks"/>
-    <ROW Property="ProductCode" Value="1033:{4CFF53F2-1B2F-469F-9538-2B8541032134} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{719EDE6B-2B1D-456A-95FB-EEA65C33C7F5} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlinkReminder"/>
-    <ROW Property="ProductVersion" Value="0.6.1" Type="32"/>
+    <ROW Property="ProductVersion" Value="0.6.2" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CED82C3D-3135-468B-84C3-73AF11ECFFDA}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -43,7 +45,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="BlinkReminder_PrimaryOutput" ComponentId="{C3948208-1896-4CB4-852D-A0DA79616C50}" Directory_="APPDIR" Attributes="0" KeyPath="BlinkReminder.exe"/>
-    <ROW Component="BlinkReminder_References" ComponentId="{4038E3ED-F71A-4551-B3D2-D49216AE661F}" Directory_="APPDIR" Attributes="0" KeyPath="Hardcodet.Wpf.TaskbarNotification.dll"/>
+    <ROW Component="BlinkReminder_References" ComponentId="{4038E3ED-F71A-4551-B3D2-D49216AE661F}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll"/>
     <ROW Component="ProductInformation" ComponentId="{BB3D97E5-A824-4FCC-96C7-B6490E7A51DC}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{96DD868A-8CE8-4600-A1F2-05218CFCE9B9}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
@@ -53,13 +55,15 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="BlinkReminder.exe" Component_="BlinkReminder_PrimaryOutput" FileName="BLINKR~1.EXE|[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_BlinkReminder.exe&gt;" SelfReg="false" NextFile="Hardcodet.Wpf.TaskbarNotification.dll" DigSign="true"/>
-    <ROW File="BlinkReminder.exe.config" Component_="BlinkReminder_PrimaryOutput" FileName="BLINKR~2.CON|[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_BlinkReminder.exe.config&gt;" SelfReg="false"/>
+    <ROW File="BlinkReminder.exe.config" Component_="BlinkReminder_PrimaryOutput" FileName="BLINKR~2.CON|[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_BlinkReminder.exe.config&gt;" SelfReg="false" NextFile="Newtonsoft.Json.dll"/>
     <ROW File="Hardcodet.Wpf.TaskbarNotification.dll" Component_="BlinkReminder_References" FileName="HARDCO~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll&gt;" SelfReg="false" NextFile="BlinkReminder.exe.config"/>
+    <ROW File="Newtonsoft.Json.dll" Component_="BlinkReminder_References" FileName="NEWTON~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Newtonsoft.Json.dll&gt;" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
     <ROW Name="AI_APPPATH_PERBUILD_BlinkReminder.exe" Path="[|AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe]\[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_BlinkReminder.exe.config" Path="[|AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config]\[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]" Type="2" Content="0"/>
+    <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll]" Type="2" Content="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
@@ -181,5 +185,6 @@
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="PrimaryOutput" OutputFile="BlinkReminder.exe" OutputFileShortcut="BlinkReminder"/>
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Hardcodet.Wpf.TaskbarNotification.dll"/>
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="PrimaryOutput" OutputFile="BlinkReminder.exe.config"/>
+    <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Newtonsoft.Json.dll"/>
   </COMPONENT>
 </DOCUMENT>

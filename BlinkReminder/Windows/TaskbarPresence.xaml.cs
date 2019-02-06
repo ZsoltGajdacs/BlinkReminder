@@ -26,11 +26,14 @@ namespace BlinkReminder.Windows
         private readonly int MAJVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMajorPart;
         private readonly int MINVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMinorPart;
         private readonly int REVVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileBuildPart;
-        private const string TOOLTIP_MSG_BEGIN = "Time until next long break: ";
-        private const string TOOLTIP_PAUSE_MSG_BEGIN = "Timers are paused for ";
+
+        private const string TOOLTIP_LONG_MSG_BEGIN = "Long break in ";
+        private const string TOOLTIP_SHORT_MSG_BEGIN = "Short break in ";
+        private const string TOOLTIP_PAUSE_MSG_BEGIN = "Breaks are paused for ";
         private const string TOOLTIP_MSG_END = " minutes";
-        private const string TOOLTIP_INDEF_PAUSE = "Timers are paused until resume is clicked";
+        private const string TOOLTIP_INDEF_PAUSE = "Breaks are paused until resume is clicked";
         private const string TOOLTIP_LONG_DISABLED = "Long breaks are disabled";
+        private const string TOOLTIP_SHORT_DISABLED = "Short breaks are disabled";
         private const int ONE_MINUTE_IN_MS = 60000;
 
         // Component holder for disposal
@@ -143,7 +146,7 @@ namespace BlinkReminder.Windows
                 tooltipRefreshTimer.Interval = ONE_MINUTE_IN_MS;
                 tooltipRefreshTimer.Start();
 
-                SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+                SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
             }
             else
             {
@@ -232,11 +235,11 @@ namespace BlinkReminder.Windows
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            string versionText = "Version: " + MAJVERSION + "." + MINVERSION + "." + REVVERSION;
+            int[] versionNums = new int[] { MAJVERSION, MINVERSION, REVVERSION };
 
             if (aboutWindow == null)
             {
-                aboutWindow = new AboutWindow(versionText);
+                aboutWindow = new AboutWindow(ref versionNums);
                 aboutWindow.Closed += AboutWindow_Closed;
                 aboutWindow.Show();
             }
@@ -296,7 +299,7 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
+                SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
             }
         }
 
@@ -419,7 +422,7 @@ namespace BlinkReminder.Windows
                         longTimerWatch.Restart();
 
                         EnableTaskbarOption(ref LongBreakStartItem);
-                        SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+                        SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
                     }
                     else
                     {
@@ -454,7 +457,7 @@ namespace BlinkReminder.Windows
         /// </summary>
         private void SetBackTooltipTimer()
         {
-            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+            SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
             tooltipRefreshTimer.Stop();
         }
 
@@ -502,7 +505,7 @@ namespace BlinkReminder.Windows
             // Reset them
             ResetTimer(ref shortIntervalTimer, (long)shortRemain.TotalMilliseconds);
             ResetTimer(ref longIntervalTimer, (long)longRemain.TotalMilliseconds);
-            SetTaskbarTooltip(TOOLTIP_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
+            SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
 
             shortTimerWatch.Start();
             longTimerWatch.Start();
