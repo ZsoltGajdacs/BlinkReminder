@@ -1,0 +1,24 @@
+-------------------- v0.6.1 -----------------------
+- Short breaks timers are restarted after a long break (no double breaks close to each other anymore)
+- Setting short or long interval times to zero in settings will now disable that timer
+- When setting new value to interval/display time pressing enter will save it (previously the user had to click to another input field or the OK button)
+
+-------------------- v0.6 -------------------------
+- Breaks can be paused for a set time, or indefinitely
+- Input checks where there is input
+
+-------------------- v0.5 -------------------------
+- Settings saved in Appdata/Roaming/BlinkReminder
+- Can add custom quotes to long and short breaks
+
+-------------------- v0.4 -------------------------
+- Break length and Interval times are displayed formatted beside their control
+- Can set if a break can be skipped or not
+- Can set if a full screen app should block breaks
+
+-------------------- v0.3.1 -----------------------
+- Long breaks fixed
+
+-------------- v0.3 First Release -----------------
+- Short breaks working
+- Break length and interval times can be set in settings
