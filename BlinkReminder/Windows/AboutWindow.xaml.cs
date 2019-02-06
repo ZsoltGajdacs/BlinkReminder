@@ -22,9 +22,11 @@ namespace BlinkReminder.Windows
     {
         // Consts
         private static readonly string AUTHOR_LABEL = "Author: Zsolt Gajdács";
-        private static readonly string VERSION_LABEL = "Current version:";
+        private static readonly string VERSION_LABEL = "Version:";
         private static readonly string VERSION_CHECK_INIT_LABEL = "Checking update....";
-        private static readonly string DOWNLOAD_LINK_TEXT = "Click to download the new version's installer";
+        private static readonly string DOWNLOAD_LINK_TEXT = "Click to download the update";
+        private static readonly string ISSUE_LINK_TEXT = "You can report bugs here";
+        private static readonly string ISSUE_LINK_ADDRESS = "https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose";
 
         private UpdateCheck update;
 
@@ -35,11 +37,20 @@ namespace BlinkReminder.Windows
             update = new UpdateCheck(ref versionNums);
             string versionText = versionNums[0] + "." + versionNums[1] + "." + versionNums[2];
 
+            SetTexts(ref versionText);
+            CheckUpdate(versionText);
+        }
+
+        private void SetTexts(ref string versionText)
+        {
             authorLabel.Content = AUTHOR_LABEL;
             versionLabel.Content = VERSION_LABEL + " " + versionText;
             updateLabel.Content = VERSION_CHECK_INIT_LABEL;
 
-            CheckUpdate(versionText);
+            Run linkText = new Run(ISSUE_LINK_TEXT);
+            Hyperlink issueLink = new Hyperlink(linkText);
+            issueLink.NavigateUri = new Uri(ISSUE_LINK_ADDRESS);
+            issueLabel.Content = issueLink;
         }
 
         private async void CheckUpdate(string versionText)
@@ -53,7 +64,6 @@ namespace BlinkReminder.Windows
                 downloadLink.NavigateUri = new Uri(result);
                 
                 updateLabel.Content = downloadLink;
-                updateLabel.HorizontalAlignment = HorizontalAlignment.Center;
             }
             else
             {
@@ -64,6 +74,11 @@ namespace BlinkReminder.Windows
         private void OkBtn_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void HyperLink_Click(object sender, RoutedEventArgs e)
+        {
+            // Open a new tab with the address in the default browser here
         }
     }
 }

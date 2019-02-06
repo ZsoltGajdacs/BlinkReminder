@@ -6,8 +6,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Debug"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Debug"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\packages\Newtonsoft.Json.12.0.1\lib\net45"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>

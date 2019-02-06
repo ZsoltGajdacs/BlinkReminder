@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder.Windows"
         mc:Ignorable="d"
-        Title="About" x:Name="AboutView" Height="160" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8">
+        Title="About" x:Name="AboutView" MinHeight="150" MinWidth="250" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8" FontSize="14" SizeToContent="WidthAndHeight">
     <StackPanel Orientation="Vertical">
-        <Label x:Name="authorLabel" Margin="0 5 0 0" FontSize="14"/>
-        <Label x:Name="versionLabel" FontSize="14"/>
-        <Label x:Name="updateLabel" HorizontalAlignment="Center" FontSize="14"/>
-        <Button x:Name="okBtn" Content="Close" Width="80" Margin="0 0 0 3" FontSize="14" Click="OkBtn_Click" />
+        <Label x:Name="authorLabel" HorizontalAlignment="Center" Margin="0 5 0 0"/>
+        <Label x:Name="versionLabel" HorizontalAlignment="Center"/>
+        <Label x:Name="updateLabel" HorizontalAlignment="Center" Margin="5 0 5 0" Hyperlink.Click="HyperLink_Click"/>
+        <Label x:Name="issueLabel" HorizontalAlignment="Center" Margin="5 0 5 0" Hyperlink.Click="HyperLink_Click"/>
+        <Button x:Name="okBtn" Content="Close" Width="80" Margin="0 5 0 5" Click="OkBtn_Click" />
     </StackPanel>
 </Window>

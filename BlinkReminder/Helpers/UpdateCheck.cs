@@ -17,9 +17,9 @@ namespace BlinkReminder.Helpers
         // Consts
         private static readonly string PRODUCT_NAME = "BlinkReminder";
         private static readonly string RELEASES_URL = "https://api.github.com/repos/ZsoltGajdacs/BlinkReminder/releases";
-        private static readonly string CHECK_FAILED = "Update check failed:";
+        private static readonly string CHECK_FAILED = "Check failed:";
         private static readonly string PROTOCOL_ERROR = "Protocol Error";
-        private static readonly string CONNECTION_ERROR = "No Internet connection";
+        private static readonly string CONNECTION_ERROR = "Couldn't connect to GitHub";
         private static readonly string API_ERROR = "Github API mismatch";
         private static readonly string NO_UPDATE = "No new version";
 
@@ -46,10 +46,17 @@ namespace BlinkReminder.Helpers
                 // log
                 return CHECK_FAILED + " " + PROTOCOL_ERROR;
             }
-            catch (Exception)
+            catch (HttpRequestException e)
             {
                 //log
-                return CHECK_FAILED + " " + CONNECTION_ERROR;
+                if (e.Message.Contains("40"))
+                {
+                    return CHECK_FAILED + " " + API_ERROR;
+                }
+                else
+                {
+                    return CHECK_FAILED + " " + CONNECTION_ERROR;
+                }
             }
 
             return ParseJsonForDownloadUrl(content);
