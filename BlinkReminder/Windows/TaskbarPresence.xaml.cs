@@ -36,9 +36,6 @@ namespace BlinkReminder.Windows
         private const string TOOLTIP_SHORT_DISABLED = "Short breaks are disabled";
         private const int ONE_MINUTE_IN_MS = 60000;
 
-        // Component holder for disposal
-        private IContainer components;
-
         // Keyboard input catcher
         private KeyboardHook keyTrap;
 
@@ -101,14 +98,6 @@ namespace BlinkReminder.Windows
             tooltipRefreshTimer = new Timer();
             tooltipRefreshTimer.AutoReset = true;
             tooltipRefreshTimer.Elapsed += TaskbarTimer_Elapsed;
-
-            // Component for disposal
-            components = new Container();
-
-            // Add to Component holder for proper disposal later
-            components.Add(shortIntervalTimer);
-            components.Add(longIntervalTimer);
-            components.Add(tooltipRefreshTimer);
 
             isShortIntervalTimerDone = false;
             isLongIntervalTimerDone = false;
@@ -524,8 +513,6 @@ namespace BlinkReminder.Windows
             };
             pauseTimer.Elapsed += PauseTimer_Elapsed;
             pauseTimer.Start();
-
-            components.Add(pauseTimer);
         }
 
         /// <summary>
@@ -668,7 +655,10 @@ namespace BlinkReminder.Windows
             {
                 if (disposing)
                 {
-                    components.Dispose();
+                    shortIntervalTimer.Dispose();
+                    longIntervalTimer.Dispose();
+                    tooltipRefreshTimer.Dispose();
+                    pauseTimer.Dispose();
                     taskbarIcon.Dispose();
 
                     if (keyTrap != null)
