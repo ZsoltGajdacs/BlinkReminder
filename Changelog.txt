@@ -1,3 +1,8 @@
+-------------------- v0.6.2 -----------------------
+- Added update check and bug report link to About
+- Corrected fixed length of quote text display (it can now be as long as the screen)
+- Simplified taskbar tooltip display of next long break time
+
 -------------------- v0.6.1 -----------------------
 - Short breaks timers are restarted after a long break (no double breaks close to each other anymore)
 - Setting short or long interval times to zero in settings will now disable that timer
