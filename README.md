@@ -14,13 +14,14 @@ Write! :)
 * Displays a blocker window at regular intervals, keyboard disabled during that time
   * Short breaks are default not skippable
   * Long breaks can be skipped by default
+  * Both breaks can be disabled in settings, by giving them an interval time of zero
 * If a full screen application is running breaks are not shown
 * Can be paused for a certain time, or indefinitely (that is until resume is clicked, or the app restarted)
 * Custom quotes for the breaks, can be added in settings
 * Most things can be changed in settings (Saved in AppData/Roaming)
+* Can check for update or go to bug report site (Issue opener here on GitHub) in About
 
 ## Planned features
-* Update check in About
 * Statistics about usage
 * Long breaks lock the machine
 * Multi display support
