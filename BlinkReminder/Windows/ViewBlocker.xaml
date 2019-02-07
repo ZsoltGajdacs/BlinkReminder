@@ -18,16 +18,14 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />  <!--0-->
-            <ColumnDefinition Width="50" /><!--1-->
-            <ColumnDefinition Width="150" /><!--2-->
-            <ColumnDefinition Width="50" /><!--3-->
-            <ColumnDefinition Width="*" />  <!--4-->
+            <ColumnDefinition Width="*"/>   <!--0-->
+            <ColumnDefinition Width="150"/> <!--1-->
+            <ColumnDefinition Width="*"/>   <!--2-->
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center"/>
-        <TextBlock x:Name="counterText" Grid.Column="2" Grid.Row="3" Text="{Binding TimeToDisplay, Mode=OneWay}" Foreground="White" TextAlignment="Center"/>
+        <TextBlock x:Name="quoteText" Foreground="White" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center"/>
+        <TextBlock x:Name="counterText" Grid.Column="1" Grid.Row="3" Text="{Binding TimeToDisplay, Mode=OneWay}" Foreground="White" TextAlignment="Center"/>
 
-        <Button x:Name="skipButton" Content="Skip Break" Grid.Column="2" Grid.Row="5" Click="SkipButton_Click"/>
+        <Button x:Name="skipButton" Content="Skip Break" Grid.Column="1" Grid.Row="5" Click="SkipButton_Click"/>
     </Grid>
 </Window>
