@@ -25,4 +25,5 @@ Write! :)
 * Statistics about usage
 * Long breaks lock the machine
 * Multi display support
+* Home / Office mode
 * Better looks
