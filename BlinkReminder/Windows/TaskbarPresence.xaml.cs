@@ -9,10 +9,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using BlinkReminder.Helpers;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using System.Windows.Controls;
+using NLog.Layouts;
+using NLog;
 
 namespace BlinkReminder.Windows
 {
@@ -46,6 +45,8 @@ namespace BlinkReminder.Windows
         private PauseWindow pauseWindow;
 
         // Stopwatches
+        // TODO: Replace these with simple counters
+        // REASON: Performance + sleep causes problems
         private Stopwatch shortTimerWatch;
         private Stopwatch longTimerWatch;
         private Stopwatch pauseWatch;
@@ -68,6 +69,9 @@ namespace BlinkReminder.Windows
         // For identifying the fullscreen window that blocks the blockerWindow
         Process foreProc;
 
+        // NLog logging
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public TaskbarPresence()
         {
             InitializeComponent();
@@ -78,9 +82,18 @@ namespace BlinkReminder.Windows
         #region Startup support
         private void SetDefaultValues()
         {
-            // Get Single settings instance and subscribe to it's event
+            // Get single settings instance and subscribe to it's event
             settings = UserSettings.Instance;
             settings.PropertyChanged += UserSettings_PropertyChanged;
+
+            // Configure logger
+            var config = new NLog.Config.LoggingConfiguration();
+            var logfile = new NLog.Targets.FileTarget("logfile") {
+                FileName = settings.SettingsDirPath + "\\brlog.log",
+                Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}")
+            };
+            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+            NLog.LogManager.Configuration = config;
 
             // Stopwatches for pause support
             shortTimerWatch = new Stopwatch();
@@ -146,11 +159,6 @@ namespace BlinkReminder.Windows
         #endregion
 
         #region Click Events
-
-        private void ShortBreak_Click(object sender, RoutedEventArgs e)
-        {
-            ShortCycleTimer_Elapsed(sender, e);
-        }
 
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
@@ -313,7 +321,7 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-            SerializeObj(settings, settings.SettingsFilePath, settings.SettingsDirPath);
+            Serializer.SerializeObj(settings, settings.SettingsFilePath, settings.SettingsDirPath);
         }
 
         private void AboutWindow_Closed(object sender, EventArgs e)
@@ -613,36 +621,6 @@ namespace BlinkReminder.Windows
         private void EnableTaskbarOption(ref MenuItem option)
         {
             option.IsEnabled = true;
-        }
-        #endregion
-
-        #region Serialization
-        /// <summary>
-        /// Serializes the given object to the given path
-        /// </summary>
-        /// <param name="o"></param>
-        /// <param name="serializePath"></param>
-        private void SerializeObj(Object o, string serializePath, string parentDir)
-        {
-            DirectoryInfo dirInfo = new DirectoryInfo(parentDir);
-
-            if (!dirInfo.Exists)
-            {
-                dirInfo.Create();
-            }
-
-            try
-            {
-                IFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(serializePath, FileMode.Create, FileAccess.Write);
-
-                formatter.Serialize(stream, o);
-                stream.Close();
-            }
-            catch (Exception)
-            {
-                // Should log here
-            }
         }
         #endregion
 
