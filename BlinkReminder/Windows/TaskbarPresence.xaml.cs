@@ -90,7 +90,10 @@ namespace BlinkReminder.Windows
             var config = new NLog.Config.LoggingConfiguration();
             var logfile = new NLog.Targets.FileTarget("logfile") {
                 FileName = settings.SettingsDirPath + "\\brlog.log",
-                Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}")
+                Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}"),
+                ArchiveOldFileOnStartup = true,
+                MaxArchiveFiles = 5,
+                ArchiveNumbering = NLog.Targets.ArchiveNumberingMode.DateAndSequence
             };
             config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
             NLog.LogManager.Configuration = config;
