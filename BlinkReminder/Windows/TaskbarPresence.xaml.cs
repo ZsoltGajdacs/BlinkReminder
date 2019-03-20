@@ -77,6 +77,8 @@ namespace BlinkReminder.Windows
             InitializeComponent();
             SetDefaultValues();
             StartDefaultTimers();
+
+            logger.Debug("Startup successful");
         }
 
         #region Startup support

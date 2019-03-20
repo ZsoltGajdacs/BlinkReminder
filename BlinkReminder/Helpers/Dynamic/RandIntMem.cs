@@ -9,7 +9,7 @@ namespace BlinkReminder.Helpers
     /// <summary>
     /// For random integer generaton, with the last n number not being repeated
     /// </summary>
-    class RandIntMem
+    internal class RandIntMem
     {
         private readonly Random random = new Random();
         private int[] lastNums;

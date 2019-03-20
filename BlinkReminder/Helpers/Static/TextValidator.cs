@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlinkReminder.Helpers
 {
-    static class TextValidator
+    internal static class TextValidator
     {
         private static readonly string onlyNums = "[0-9]";
 
