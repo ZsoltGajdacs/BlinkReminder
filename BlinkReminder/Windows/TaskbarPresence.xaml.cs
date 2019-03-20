@@ -12,6 +12,7 @@ using BlinkReminder.Helpers;
 using System.Windows.Controls;
 using NLog.Layouts;
 using NLog;
+using System.Collections.Generic;
 
 namespace BlinkReminder.Windows
 {
@@ -195,7 +196,10 @@ namespace BlinkReminder.Windows
                 }
 
                 SetTaskbarTooltip(TOOLTIP_PAUSE_MSG_BEGIN + TimeToPauseEnd() + TOOLTIP_MSG_END);
-                StopTimers();
+
+                List<Timer> timersToStop = new List<Timer>() {shortIntervalTimer, longIntervalTimer };
+                TimerHandler.StopTimers(ref timersToStop);
+
                 StartPauseTimer(pauseTime.TotalMilliseconds);
 
                 pauseWatch.Restart();
@@ -210,7 +214,9 @@ namespace BlinkReminder.Windows
                 tooltipRefreshTimer.Stop();
 
                 SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
-                StopTimers();
+
+                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer };
+                TimerHandler.StopTimers(ref timersToStop);
             }
             // Or the user just canceled
             else
@@ -403,7 +409,7 @@ namespace BlinkReminder.Windows
 
                     if (shortInterval > 0)
                     {
-                        ResetTimer(ref shortIntervalTimer, shortInterval);
+                        TimerHandler.ResetTimer(ref shortIntervalTimer, shortInterval);
                         shortTimerWatch.Restart();
                     }
                     else
@@ -419,8 +425,8 @@ namespace BlinkReminder.Windows
 
                     if (longInterval > 0)
                     {
-                        ResetTimer(ref longIntervalTimer, longInterval);
-                        ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
+                        TimerHandler.ResetTimer(ref longIntervalTimer, longInterval);
+                        TimerHandler.ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
                         longTimerWatch.Restart();
 
                         EnableTaskbarOption(ref LongBreakStartItem);
@@ -443,36 +449,12 @@ namespace BlinkReminder.Windows
         }
 
         /// <summary>
-        /// Resets the given timer to the given time
-        /// </summary>
-        /// <param name="timer"></param>
-        /// <param name="time"></param>
-        private void ResetTimer(ref Timer timer, long time)
-        {
-            timer.Stop();
-            timer.Interval = time;
-            timer.Start();
-        }
-
-        /// <summary>
         /// Stops the timer and sets the currently set long interval
         /// </summary>
         private void SetBackTooltipTimer()
         {
             SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
             tooltipRefreshTimer.Stop();
-        }
-
-        /// <summary>
-        /// Stops long and short timers
-        /// </summary>
-        private void StopTimers()
-        {
-            shortTimerWatch.Stop();
-            longTimerWatch.Stop();
-
-            shortIntervalTimer.Stop();
-            longIntervalTimer.Stop();
         }
 
         /// <summary>
@@ -505,8 +487,8 @@ namespace BlinkReminder.Windows
             }
 
             // Reset them
-            ResetTimer(ref shortIntervalTimer, (long)shortRemain.TotalMilliseconds);
-            ResetTimer(ref longIntervalTimer, (long)longRemain.TotalMilliseconds);
+            TimerHandler.ResetTimer(ref shortIntervalTimer, (long)shortRemain.TotalMilliseconds);
+            TimerHandler.ResetTimer(ref longIntervalTimer, (long)longRemain.TotalMilliseconds);
             SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
 
             shortTimerWatch.Start();
@@ -519,7 +501,6 @@ namespace BlinkReminder.Windows
         /// <param name="amountMillisec"></param>
         private void StartPauseTimer(double amountMillisec)
         {
-
             pauseTimer = new Timer(amountMillisec)
             {
                 AutoReset = false
@@ -535,20 +516,20 @@ namespace BlinkReminder.Windows
         {
             if (isShortIntervalTimerDone)
             {
-                ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                TimerHandler.ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
                 shortTimerWatch.Restart();
                 isShortIntervalTimerDone = false;
             }
 
             if (isLongIntervalTimerDone)
             {
-                ResetTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
-                ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
+                TimerHandler.ResetTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
+                TimerHandler.ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
                 longTimerWatch.Restart();
 
                 if (settings.GetShortIntervalMillisecond() > 0)
                 {
-                    ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                    TimerHandler.ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
                 }
 
                 isLongIntervalTimerDone = false;
