@@ -30,11 +30,12 @@ namespace BlinkReminder.Windows
 
         private UpdateCheck update;
 
-        public AboutWindow(ref int[] versionNums)
+        internal AboutWindow(ref UpdateCheck updater)
         {
             InitializeComponent();
 
-            update = new UpdateCheck(ref versionNums);
+            this.update = updater;
+            int[] versionNums= update.CurrentVersionArr;
             string versionText = versionNums[0] + "." + versionNums[1] + "." + versionNums[2];
 
             SetTexts(ref versionText);

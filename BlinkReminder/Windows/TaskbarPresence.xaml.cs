@@ -49,17 +49,20 @@ namespace BlinkReminder.Windows
         private TimeSpan longBreakLengthSoFar;
         private TimeSpan pauseLengthSoFar;
 
-        //Timers
+        // Timers
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
         private Timer minuteTimer;
         private Timer pauseTimer;
 
-        //Timer Helpers
+        // Timer Helpers
         private bool isShortIntervalTimerDone;
         private bool isLongIntervalTimerDone;
         private bool isPaused;
         private TimeSpan pauseTotalLength;
+
+        // Update checker
+        private UpdateCheck updater;
 
         // Settings singleton
         private UserSettings settings;
@@ -116,8 +119,8 @@ namespace BlinkReminder.Windows
             minuteTimer.AutoReset = true;
             minuteTimer.Elapsed += MinuteTimer_Elasped;
 
-            isShortIntervalTimerDone = false;
-            isLongIntervalTimerDone = false;
+            // Set up update checker
+            updater = new UpdateCheck(new int[] { MAJVERSION, MINVERSION, REVVERSION });
         }
 
         /// <summary>
@@ -234,11 +237,9 @@ namespace BlinkReminder.Windows
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            int[] versionNums = new int[] { MAJVERSION, MINVERSION, REVVERSION };
-
             if (aboutWindow == null)
             {
-                aboutWindow = new AboutWindow(ref versionNums);
+                aboutWindow = new AboutWindow(ref updater);
                 aboutWindow.Closed += AboutWindow_Closed;
                 aboutWindow.Show();
             }

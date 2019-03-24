@@ -1,19 +1,12 @@
 ﻿using BlinkReminder.Helpers;
 using BlinkReminder.Settings;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows
 {
@@ -27,7 +20,7 @@ namespace BlinkReminder.Windows
         private UserSettings settings;
         private TooltipHandler tooltipHandler;
 
-        public SettingsWindow(ref UserSettings settings)
+        internal SettingsWindow(ref UserSettings settings)
         {
             InitializeComponent();
             this.settings = settings;

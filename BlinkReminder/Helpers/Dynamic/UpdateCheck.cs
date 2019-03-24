@@ -24,8 +24,9 @@ namespace BlinkReminder.Helpers
         private static readonly string NO_UPDATE = "No new version";
 
         private readonly int[] currentVersionArr;
+        public int[] CurrentVersionArr => currentVersionArr;
 
-        internal UpdateCheck(ref int[] versionNums)
+        internal UpdateCheck(int[] versionNums)
         {
             currentVersionArr = versionNums;
         }
@@ -103,17 +104,17 @@ namespace BlinkReminder.Helpers
             string[] gitVerArr = tag.Substring(1).Split('.');
 
             // Major version comparison
-            if (int.Parse (gitVerArr[0]) > currentVersionArr[0])
+            if (int.Parse (gitVerArr[0]) > CurrentVersionArr[0])
             {
                 return true;
             }
             // Minor version comparison
-            else if (int.Parse(gitVerArr[1]) > currentVersionArr[1])
+            else if (int.Parse(gitVerArr[1]) > CurrentVersionArr[1])
             {
                 return true;
             }
             // Revision version comparison
-            else if (int.Parse(gitVerArr[2]) > currentVersionArr[2])
+            else if (int.Parse(gitVerArr[2]) > CurrentVersionArr[2])
             {
                 return true;
             }
