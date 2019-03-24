@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace BlinkReminder.Settings
 {
     /// <summary>
     /// Default cycle times, interpreted as seconds
     /// </summary>
-    enum CycleTimesEnum
+    internal enum CycleTimesEnum
     {
         ShortDisplayTime = 8, //8s
         ShortIntervalTime = 600, //10m

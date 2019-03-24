@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlinkReminder.Settings
 {
     [Serializable]
-    public class Quote : INotifyPropertyChanged
+    internal class Quote : INotifyPropertyChanged
     {
         private string _quoteText;
         private bool _isActive;

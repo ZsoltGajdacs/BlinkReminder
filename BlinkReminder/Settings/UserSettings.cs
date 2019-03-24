@@ -1,14 +1,11 @@
 ﻿using BlinkReminder.Helpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlinkReminder.Settings
 {
@@ -16,7 +13,7 @@ namespace BlinkReminder.Settings
     /// Keeps the current settings
     /// </summary>
     [Serializable]
-    public class UserSettings : INotifyPropertyChanged, ISerializable
+    internal class UserSettings : INotifyPropertyChanged, ISerializable
     {
         #region Data members
         // Consts for TimeSpan ToString

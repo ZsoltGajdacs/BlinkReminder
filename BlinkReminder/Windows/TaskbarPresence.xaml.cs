@@ -1,8 +1,5 @@
 ﻿using BlinkReminder.Settings;
 using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.ComponentModel;
@@ -322,6 +319,9 @@ namespace BlinkReminder.Windows
             ResetElaspedTimer(); // Restart the clock that started the window that closed
             ZeroFinishedTimeCounter(); //Reset the related stopwatch too
             TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS); // Reset the minute timer, so the counts are more precise
+
+            // Set back the taskbarWindow to be the main one
+            Application.Current.MainWindow = this;
         }
 
         private void SettingsWindow_Closed(object sender, EventArgs e)
