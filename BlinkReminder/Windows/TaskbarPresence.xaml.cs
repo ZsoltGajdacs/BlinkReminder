@@ -27,14 +27,13 @@ namespace BlinkReminder.Windows
         private readonly int MINVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMinorPart;
         private readonly int REVVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileBuildPart;
 
-        private const string TOOLTIP_LONG_MSG_BEGIN = "Long break in ";
-        private const string TOOLTIP_SHORT_MSG_BEGIN = "Short break in ";
-        private const string TOOLTIP_PAUSE_MSG_BEGIN = "Breaks are paused for ";
-        private const string TOOLTIP_MSG_END = " minutes";
+        private const string TOOLTIP_LONG_MSG = " minutes to long break";
+        private const string TOOLTIP_SHORT_MSG = " minutes to short break";
+        private const string TOOLTIP_PAUSE_MSG = " minutes until break end";
         private const string TOOLTIP_INDEF_PAUSE = "Breaks are paused until resume is clicked";
         private const string TOOLTIP_LONG_DISABLED = "Long breaks are disabled";
         private const string TOOLTIP_SHORT_DISABLED = "Short breaks are disabled";
-        private const int ONE_MINUTE_IN_MS = 60000;
+        private const int HALF_MINUTE_IN_MS = 30000;
 
         // Keyboard input catcher
         private KeyboardHook keyTrap;
@@ -45,24 +44,22 @@ namespace BlinkReminder.Windows
         private Window aboutWindow;
         private PauseWindow pauseWindow;
 
-        // Stopwatches
-        // TODO: Replace these with simple counters
-        // REASON: Performance + sleep causes problems
-        private Stopwatch shortTimerWatch;
-        private Stopwatch longTimerWatch;
-        private Stopwatch pauseWatch;
+        // Counters for pause
+        private TimeSpan shortBreakLengthSoFar;
+        private TimeSpan longBreakLengthSoFar;
+        private TimeSpan pauseLengthSoFar;
 
         //Timers
         private Timer shortIntervalTimer;
         private Timer longIntervalTimer;
-        private Timer tooltipRefreshTimer;
+        private Timer minuteTimer;
         private Timer pauseTimer;
 
         //Timer Helpers
         private bool isShortIntervalTimerDone;
         private bool isLongIntervalTimerDone;
         private bool isPaused;
-        private TimeSpan pauseTime;
+        private TimeSpan pauseTotalLength;
 
         // Settings singleton
         private UserSettings settings;
@@ -101,11 +98,7 @@ namespace BlinkReminder.Windows
             config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
             NLog.LogManager.Configuration = config;
 
-            // Stopwatches for pause support
-            shortTimerWatch = new Stopwatch();
-            longTimerWatch = new Stopwatch();
-
-            // Initialize short, long and taskbar timers
+            // Initialize short, long, pause and minute timers
             shortIntervalTimer = new Timer();
             shortIntervalTimer.AutoReset = false;
             shortIntervalTimer.Elapsed += ShortCycleTimer_Elapsed;
@@ -114,9 +107,13 @@ namespace BlinkReminder.Windows
             longIntervalTimer.AutoReset = false;
             longIntervalTimer.Elapsed += LongCycleTimer_Elapsed;
 
-            tooltipRefreshTimer = new Timer();
-            tooltipRefreshTimer.AutoReset = true;
-            tooltipRefreshTimer.Elapsed += TaskbarTimer_Elapsed;
+            pauseTimer = new Timer();
+            pauseTimer.AutoReset = false;
+            pauseTimer.Elapsed += PauseTimer_Elapsed;
+
+            minuteTimer = new Timer();
+            minuteTimer.AutoReset = true;
+            minuteTimer.Elapsed += MinuteTimer_Elasped;
 
             isShortIntervalTimerDone = false;
             isLongIntervalTimerDone = false;
@@ -134,7 +131,6 @@ namespace BlinkReminder.Windows
             {
                 shortIntervalTimer.Interval = shortTime;
                 shortIntervalTimer.Start();
-                shortTimerWatch.Start();
             }
 
             // ------------- Long Interval -----------------
@@ -144,17 +140,16 @@ namespace BlinkReminder.Windows
             {
                 longIntervalTimer.Interval = longTime;
                 longIntervalTimer.Start();
-                longTimerWatch.Start();
             }
 
-            // ------------- Taskbar time count --------------
+            // ------------- Minute counter for pause and taskbar --------------
+
+            minuteTimer.Interval = HALF_MINUTE_IN_MS;
+            minuteTimer.Start();
 
             if (longTime > 0)
             {
-                tooltipRefreshTimer.Interval = ONE_MINUTE_IN_MS;
-                tooltipRefreshTimer.Start();
-
-                SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+                SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
             }
             else
             {
@@ -178,44 +173,36 @@ namespace BlinkReminder.Windows
                 pauseWindow = new PauseWindow();
                 pauseWindow.Closed += PauseWindow_Closed;
             }
+            else
+            {
+                pauseWindow.Activate();
+            }
 
-            pauseTime = TimeSpan.FromMinutes(pauseWindow.ShowDialog());
+            pauseTotalLength = TimeSpan.FromMinutes(pauseWindow.ShowDialog());
 
             isPaused = true;
 
             // If the user chose timed pause
-            if (pauseTime.TotalSeconds > 0)
+            if (pauseTotalLength.TotalSeconds > 0)
             {
-                if (pauseWatch == null)
-                {
-                    pauseWatch = new Stopwatch();
-                }
-                else
-                {
-                    pauseWatch.Reset();
-                }
+                // Zero out the counter to know how long the pause should be going on
+                TimerHandler.ResetCounterTime(ref pauseLengthSoFar);
 
-                SetTaskbarTooltip(TOOLTIP_PAUSE_MSG_BEGIN + TimeToPauseEnd() + TOOLTIP_MSG_END);
+                ActivateResumeBtn();
+                SetTaskbarTooltip(TimeToPauseEnd() + TOOLTIP_PAUSE_MSG);
 
-                List<Timer> timersToStop = new List<Timer>() {shortIntervalTimer, longIntervalTimer };
+                List<Timer> timersToStop = new List<Timer>() {shortIntervalTimer, longIntervalTimer};
                 TimerHandler.StopTimers(ref timersToStop);
 
-                StartPauseTimer(pauseTime.TotalMilliseconds);
-
-                pauseWatch.Restart();
+                TimerHandler.RestartTimer(ref pauseTimer, pauseTotalLength.TotalMilliseconds);
             }
             // if this is going on till resume is pushed
-            else if (pauseTime.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
+            else if (pauseTotalLength.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
             {
-                PauseItem.Header = "Resume";
-                PauseItem.Click -= PauseItem_Click;
-                PauseItem.Click += ResumeItem_Click;
-
-                tooltipRefreshTimer.Stop();
-
+                ActivateResumeBtn();
                 SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
 
-                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer };
+                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer, minuteTimer };
                 TimerHandler.StopTimers(ref timersToStop);
             }
             // Or the user just canceled
@@ -227,12 +214,7 @@ namespace BlinkReminder.Windows
 
         private void ResumeItem_Click(object sender, RoutedEventArgs e)
         {
-            PauseItem.Header = "Pause";
-            PauseItem.Click += PauseItem_Click;
-            PauseItem.Click -= ResumeItem_Click;
-
-            tooltipRefreshTimer.Start();
-
+            ActivatePauseBtn();
             ResumeTimers();
         }
 
@@ -269,16 +251,15 @@ namespace BlinkReminder.Windows
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
             isLongIntervalTimerDone = true;
-            SetBackTooltipTimer();
+            SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
 
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
                 ResetElaspedTimer();
-                RestartStopwatchForElaspedTimer();
+                ZeroFinishedTimeCounter();
             }
             else
             {
-                longTimerWatch.Stop();
                 ShowViewBlocker(settings.GetLongDisplayMillisecond(), settings.IsLongSkippable, settings.GetLongQuote());
             }
         }
@@ -290,31 +271,34 @@ namespace BlinkReminder.Windows
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
                 ResetElaspedTimer();
-                RestartStopwatchForElaspedTimer();
+                ZeroFinishedTimeCounter();
             }
             else
             {
-                shortTimerWatch.Stop();
                 ShowViewBlocker(settings.GetShortDisplayMillisecond(), settings.IsShortSkippable, settings.GetShortQuote());
             }
         }
 
-        private void TaskbarTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void MinuteTimer_Elasped(object sender, ElapsedEventArgs e)
         {
             if (isPaused)
             {
-                SetTaskbarTooltip(TOOLTIP_PAUSE_MSG_BEGIN + TimeToPauseEnd() + TOOLTIP_MSG_END);
+                SetTaskbarTooltip(TimeToPauseEnd() + TOOLTIP_PAUSE_MSG);
+                TimerHandler.IncrementCounterTime(ref pauseLengthSoFar, HALF_MINUTE_IN_MS);
             }
             else
             {
-                SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
+                SetTaskbarTooltip(TimeToNextLongBreak() + TOOLTIP_LONG_MSG);
+                TimerHandler.IncrementCounterTime(ref shortBreakLengthSoFar, HALF_MINUTE_IN_MS);
+                TimerHandler.IncrementCounterTime(ref longBreakLengthSoFar, HALF_MINUTE_IN_MS);
             }
         }
 
         private void PauseTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            pauseWatch.Stop();
+            TimerHandler.ResetCounterTime(ref pauseLengthSoFar);
             ResumeTimers();
+            ActivatePauseBtn();
         }
 
         #endregion
@@ -326,7 +310,8 @@ namespace BlinkReminder.Windows
             blockerWindow = null;
             keyTrap?.Dispose(); // Release keyboard trap
             ResetElaspedTimer(); // Restart the clock that started the window that closed
-            RestartStopwatchForElaspedTimer(); //Reset the related stopwatch too
+            ZeroFinishedTimeCounter(); //Reset the related stopwatch too
+            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS); // Reset the minute timer, so the counts are more precise
         }
 
         private void SettingsWindow_Closed(object sender, EventArgs e)
@@ -409,14 +394,15 @@ namespace BlinkReminder.Windows
 
                     if (shortInterval > 0)
                     {
-                        TimerHandler.ResetTimer(ref shortIntervalTimer, shortInterval);
-                        shortTimerWatch.Restart();
+                        TimerHandler.RestartTimer(ref shortIntervalTimer, shortInterval);
                     }
+                    // If disabled
                     else
                     {
                         shortIntervalTimer.Stop();
-                        shortTimerWatch.Reset();
                     }
+
+                    TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
 
                     break;
 
@@ -425,36 +411,29 @@ namespace BlinkReminder.Windows
 
                     if (longInterval > 0)
                     {
-                        TimerHandler.ResetTimer(ref longIntervalTimer, longInterval);
-                        TimerHandler.ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
-                        longTimerWatch.Restart();
+                        TimerHandler.RestartTimer(ref longIntervalTimer, longInterval);
 
                         EnableTaskbarOption(ref LongBreakStartItem);
-                        SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
+                        SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
                     }
+                    // If disabled
                     else
                     {
                         longIntervalTimer.Stop();
-                        longTimerWatch.Reset();
-                        tooltipRefreshTimer.Stop();
                         SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
                         DisableTaskbarOption(ref LongBreakStartItem);
                     }
-                    
+
+                    TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
+
                     break;
 
                 default:
                     break;
             }
-        }
 
-        /// <summary>
-        /// Stops the timer and sets the currently set long interval
-        /// </summary>
-        private void SetBackTooltipTimer()
-        {
-            SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + (settings.LongIntervalTime / 60) + TOOLTIP_MSG_END);
-            tooltipRefreshTimer.Stop();
+            // Since there were changes restart the minute timer as well
+            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS);
         }
 
         /// <summary>
@@ -472,8 +451,8 @@ namespace BlinkReminder.Windows
             TimeSpan shortIntervalTime = TimeSpan.FromMilliseconds(settings.GetShortIntervalMillisecond());
 
             // Calculate remaining times
-            TimeSpan longRemain = longIntervalTime - longTimerWatch.Elapsed;
-            TimeSpan shortRemain = shortIntervalTime - shortTimerWatch.Elapsed;
+            TimeSpan longRemain = longIntervalTime - longBreakLengthSoFar;
+            TimeSpan shortRemain = shortIntervalTime - shortBreakLengthSoFar;
 
             // Handle the case when the user changed the settings while in pause
             if (longRemain < TimeSpan.Zero)
@@ -487,26 +466,11 @@ namespace BlinkReminder.Windows
             }
 
             // Reset them
-            TimerHandler.ResetTimer(ref shortIntervalTimer, (long)shortRemain.TotalMilliseconds);
-            TimerHandler.ResetTimer(ref longIntervalTimer, (long)longRemain.TotalMilliseconds);
-            SetTaskbarTooltip(TOOLTIP_LONG_MSG_BEGIN + TimeToNextLongBreak() + TOOLTIP_MSG_END);
+            TimerHandler.RestartTimer(ref shortIntervalTimer, shortRemain.TotalMilliseconds);
+            TimerHandler.RestartTimer(ref longIntervalTimer, longRemain.TotalMilliseconds);
+            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS);
 
-            shortTimerWatch.Start();
-            longTimerWatch.Start();
-        }
-
-        /// <summary>
-        /// Starts the pauseTimer with the given millisecond amount
-        /// </summary>
-        /// <param name="amountMillisec"></param>
-        private void StartPauseTimer(double amountMillisec)
-        {
-            pauseTimer = new Timer(amountMillisec)
-            {
-                AutoReset = false
-            };
-            pauseTimer.Elapsed += PauseTimer_Elapsed;
-            pauseTimer.Start();
+            SetTaskbarTooltip(TimeToNextLongBreak() + TOOLTIP_LONG_MSG); 
         }
 
         /// <summary>
@@ -516,38 +480,43 @@ namespace BlinkReminder.Windows
         {
             if (isShortIntervalTimerDone)
             {
-                TimerHandler.ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
-                shortTimerWatch.Restart();
+                TimerHandler.RestartTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
+
                 isShortIntervalTimerDone = false;
             }
 
             if (isLongIntervalTimerDone)
             {
-                TimerHandler.ResetTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
-                TimerHandler.ResetTimer(ref tooltipRefreshTimer, ONE_MINUTE_IN_MS);
-                longTimerWatch.Restart();
+                TimerHandler.RestartTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
+                TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
 
+                // Restart the short timer too....
                 if (settings.GetShortIntervalMillisecond() > 0)
                 {
-                    TimerHandler.ResetTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                    TimerHandler.RestartTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                    TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
                 }
 
                 isLongIntervalTimerDone = false;
             }
+
+            // For "accuracy's" sake restart the minute timer too
+            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS);
         }
 
         /// <summary>
-        /// Resets the stopwatch whose timer has elasped
+        /// Zeros out the counter whose timer is done
         /// </summary>
-        private void RestartStopwatchForElaspedTimer()
+        private void ZeroFinishedTimeCounter()
         {
             if (isShortIntervalTimerDone)
             {
-                shortTimerWatch.Restart();
+                TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
             }
             else if (isLongIntervalTimerDone)
             {
-                longTimerWatch.Restart();
+                TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
             }
         }
 
@@ -557,9 +526,8 @@ namespace BlinkReminder.Windows
         /// <returns></returns>
         private int TimeToNextLongBreak()
         {
-            TimeSpan timePassed = longTimerWatch.Elapsed;
             TimeSpan totalTime = TimeSpan.FromSeconds(settings.LongIntervalTime);
-            TimeSpan remainingTime = totalTime - timePassed;
+            TimeSpan remainingTime = totalTime - longBreakLengthSoFar;
 
             return (int)remainingTime.TotalMinutes;
         }
@@ -570,8 +538,7 @@ namespace BlinkReminder.Windows
         /// <returns></returns>
         private int TimeToPauseEnd()
         {
-            TimeSpan timePassed = pauseWatch.Elapsed;
-            TimeSpan remainingTime = pauseTime - timePassed;
+            TimeSpan remainingTime = pauseTotalLength - pauseLengthSoFar;
 
             return (int)remainingTime.TotalMinutes;
         }
@@ -608,6 +575,32 @@ namespace BlinkReminder.Windows
         {
             option.IsEnabled = true;
         }
+
+        /// <summary>
+        /// Switch to 'Resume' btn on taskbar
+        /// </summary>
+        private void ActivateResumeBtn()
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                PauseItem.Header = "Resume";
+                PauseItem.Click -= PauseItem_Click;
+                PauseItem.Click += ResumeItem_Click;
+            }));
+        }
+
+        /// <summary>
+        /// Switch to 'Pause' btn on taskbar
+        /// </summary>
+        private void ActivatePauseBtn()
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                PauseItem.Header = "Pause";
+                PauseItem.Click += PauseItem_Click;
+                PauseItem.Click -= ResumeItem_Click;
+            }));
+        }
         #endregion
 
         #region IDisposable Support
@@ -621,7 +614,7 @@ namespace BlinkReminder.Windows
                 {
                     shortIntervalTimer.Dispose();
                     longIntervalTimer.Dispose();
-                    tooltipRefreshTimer.Dispose();
+                    minuteTimer.Dispose();
                     pauseTimer.Dispose();
                     taskbarIcon.Dispose();
 
@@ -631,14 +624,14 @@ namespace BlinkReminder.Windows
                     }
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
+                // free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // set large fields to null.
 
                 disposedValue = true;
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
         // ~TaskbarPresence() {
         //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         //   Dispose(false);
@@ -649,7 +642,7 @@ namespace BlinkReminder.Windows
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
+            // uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
         #endregion
