@@ -75,6 +75,7 @@ namespace BlinkReminder.Windows
             InitializeComponent();
             SetDefaultValues();
             StartDefaultTimers();
+            CheckForUpdate();
 
             logger.Debug("Startup successful");
         }
@@ -156,6 +157,14 @@ namespace BlinkReminder.Windows
                 SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
                 DisableTaskbarOption(ref LongBreakStartItem);
             }
+        }
+        
+        /// <summary>
+        /// Checks for program update and notifies the user if found
+        /// </summary>
+        private void CheckForUpdate()
+        {
+            // Will check for updates here and notify the user if found any!
         }
         #endregion
 
