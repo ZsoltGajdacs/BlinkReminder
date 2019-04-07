@@ -10,10 +10,8 @@ namespace BlinkReminder.Helpers
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Serializes the given object to the given path
+        /// Serializes the given object to the given path via Binary formatting
         /// </summary>
-        /// <param name="o"></param>
-        /// <param name="serializePath"></param>
         internal static void SerializeObj(Object o, string serializePath, string parentDir)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(parentDir);
@@ -35,6 +33,31 @@ namespace BlinkReminder.Helpers
             {
                 logger.Error(ex, "Serialization failed!");
             }
+        }
+
+        /// <summary>
+        /// Deserializes the given object at path via Binary formatting
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static object DeserializeObject(string path)
+        {
+            if (File.Exists(path) && new FileInfo(path).Length > 0)
+            {
+                try
+                {
+                    IFormatter formatter = new BinaryFormatter();
+                    FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+
+                    return formatter.Deserialize(stream);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Deserialization failed!");
+                }
+            }
+
+            return null;
         }
     }
 }

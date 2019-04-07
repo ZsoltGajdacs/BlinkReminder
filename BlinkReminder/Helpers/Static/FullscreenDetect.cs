@@ -1,7 +1,7 @@
 ﻿/*
  * From Stackoverflow user ARN: https://stackoverflow.com/users/7967049/arn
  * Taken from this answer: https://stackoverflow.com/a/43797777
- * Modified to fit my needs
+ * Modified to fit my needs - Zsolt Gajdács
 */
 using System;
 using System.Runtime.InteropServices;

@@ -63,6 +63,9 @@ namespace BlinkReminder.Settings
         // For selection which quote to show
         private RandIntMem rand;
 
+        // Logger
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         // Event handler for MVVM support
         [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
@@ -72,24 +75,9 @@ namespace BlinkReminder.Settings
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
             string settingsPath = GetSettingsLocation();
-
-            if (File.Exists(settingsPath) && new FileInfo(settingsPath).Length > 0)
-            {
-                try
-                {
-                    IFormatter formatter = new BinaryFormatter();
-                    FileStream stream = new FileStream(settingsPath, FileMode.Open, FileAccess.Read);
-                    return (UserSettings)formatter.Deserialize(stream);
-                }
-                catch (Exception)
-                {
-                    return new UserSettings();
-                }
-            }
-            else
-            {
-                return new UserSettings();
-            }
+            UserSettings settings = (UserSettings)Serializer.DeserializeObject(settingsPath);
+            
+            return settings ?? new UserSettings();
         });
 
         public static UserSettings Instance { get { return lazy.Value; } }
@@ -97,7 +85,7 @@ namespace BlinkReminder.Settings
 
         #region Constructors
         /// <summary>
-        /// Default ctor sets defaul values
+        /// Default ctor sets default values
         /// </summary>
         private UserSettings()
         {
@@ -124,8 +112,6 @@ namespace BlinkReminder.Settings
         /// <summary>
         /// Serialization ctor, loads data from file
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
             SetSettingsDirLocation();
@@ -146,6 +132,22 @@ namespace BlinkReminder.Settings
             _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
 
+            // Manually set long and short interval helper texts if they are set to zero
+            if (ShortIntervalTime == 0) ShortIntervalTimeFormatted = DISABLED_TEXT;
+            if (LongIntervalTime == 0) LongIntervalTimeFormatted = DISABLED_TEXT;
+
+            // Settings options after v0.5 must go in "try" blocks as they might be missing from the 
+            // file on the user's end.
+            //--------------------- v0.6 settings --------------------
+            try
+            {
+                IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, "Getting 0.6 settings failed");
+            }
+
             // Check the amount of quotes to know how many can be shown without repetition
             // Commented out until flexible RandIntMem is implemented
             /*if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
@@ -157,29 +159,6 @@ namespace BlinkReminder.Settings
                 rand = new RandIntMem(1);
             }*/
             rand = new RandIntMem(1);
-
-            // Manually set long and short interval helper texts if they are set to zero
-            if (ShortIntervalTime == 0)
-            {
-                ShortIntervalTimeFormatted = DISABLED_TEXT;
-            }
-
-            if (LongIntervalTime == 0)
-            {
-                LongIntervalTimeFormatted = DISABLED_TEXT;
-            }
-
-            // Settings options after v0.5 must go in "try" blocks as they might be missing from the
-            // file on the users end.
-            //--------------------- v0.6 settings --------------------
-            try
-            {
-                IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
-            }
-            catch (Exception)
-            {
-                //Log here
-            }
         }
         #endregion
 
