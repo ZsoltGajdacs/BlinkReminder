@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkReminder", "BlinkRemin
 EndProject
 Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "BRSetup", "BRSetup\BRSetup.aiproj", "{21376782-A476-4181-ACA6-E9B0A4C8C9AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BRupdate", "BRupdate\BRupdate.csproj", "{3CF461EB-D923-4316-B65D-3F3E4E04CA25}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
@@ -28,12 +26,6 @@ Global
 		{21376782-A476-4181-ACA6-E9B0A4C8C9AA}.Debug|Any CPU.Build.0 = DefaultBuild
 		{21376782-A476-4181-ACA6-E9B0A4C8C9AA}.Release|Any CPU.ActiveCfg = DefaultBuild
 		{21376782-A476-4181-ACA6-E9B0A4C8C9AA}.Release|Any CPU.Build.0 = DefaultBuild
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.All|Any CPU.ActiveCfg = Release|Any CPU
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.All|Any CPU.Build.0 = Release|Any CPU
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3CF461EB-D923-4316-B65D-3F3E4E04CA25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

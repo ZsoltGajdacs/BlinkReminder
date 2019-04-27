@@ -19,6 +19,7 @@ namespace BlinkReminder.Windows
     /// </summary>
     public partial class TaskbarPresence : Window, IDisposable
     {
+        #region Data members
         // Consts
         private readonly int MAJVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMajorPart;
         private readonly int MINVERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileMinorPart;
@@ -69,7 +70,9 @@ namespace BlinkReminder.Windows
 
         // NLog logging
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        #endregion
 
+        #region CTOR
         public TaskbarPresence()
         {
             InitializeComponent();
@@ -79,6 +82,7 @@ namespace BlinkReminder.Windows
 
             logger.Debug("Startup successful");
         }
+        #endregion
 
         #region Startup support
         private void SetDefaultValues()
