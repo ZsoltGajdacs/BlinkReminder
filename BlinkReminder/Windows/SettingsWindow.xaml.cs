@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Xceed.Wpf.Toolkit;
 
 namespace BlinkReminder.Windows
 {
@@ -47,16 +48,16 @@ namespace BlinkReminder.Windows
 
         private void CheckDisabledState()
         {
-            if (settings.LongIntervalTime == 0)
+            if (settings.LongIntervalTime == TimeSpan.Zero)
             {
                 longDispMinuteLabel.IsEnabled = false;
-                longDispText.IsEnabled = false;
+                longDispControl.IsEnabled = false;
             }
 
-            if (settings.ShortIntervalTime == 0)
+            if (settings.ShortIntervalTime == TimeSpan.Zero)
             {
                 shortDispMinuteLabel.IsEnabled = false;
-                shortDispText.IsEnabled = false;
+                shortDispControl.IsEnabled = false;
             }
         }
         #endregion
@@ -188,44 +189,44 @@ namespace BlinkReminder.Windows
         /// <param name="e"></param>
         private void SaveOnEnter(object sender, KeyEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            TimeSpanUpDown timeControl = sender as TimeSpanUpDown;
             if (e.Key == Key.Enter)
             {
-                BindingExpression textBindingExpr = textBox.GetBindingExpression(TextBox.TextProperty);
+                BindingExpression valueBindingExpression = timeControl.GetBindingExpression(TimeSpanUpDown.ValueProperty);
 
-                if (textBindingExpr == null) return;
+                if (valueBindingExpression == null) return;
 
-                textBindingExpr.UpdateSource();
+                valueBindingExpression.UpdateSource();
             }
         }
         #endregion
 
         #region Timer disable support
-        private void ShortIntervalText_SourceUpdated(object sender, DataTransferEventArgs e)
+        private void ShortIntervalControl_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            if (shortIntervalText.Text.Equals("0"))
+            if (shortIntervalControl.Value.Equals(TimeSpan.Zero))
             {
                 shortDispMinuteLabel.IsEnabled = false;
-                shortDispText.IsEnabled = false;
+                shortDispControl.IsEnabled = false;
             }
             else
             {
                 shortDispMinuteLabel.IsEnabled = true;
-                shortDispText.IsEnabled = true;
+                shortDispControl.IsEnabled = true;
             }
         }
 
-        private void LongIntervalText_SourceUpdated(object sender, DataTransferEventArgs e)
+        private void LongIntervalControl_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            if (longIntervalText.Text.Equals("0"))
+            if (longIntervalControl.Value.Equals(TimeSpan.Zero))
             {
                 longDispMinuteLabel.IsEnabled = false;
-                longDispText.IsEnabled = false;
+                longDispControl.IsEnabled = false;
             }
             else
             {
                 longDispMinuteLabel.IsEnabled = true;
-                longDispText.IsEnabled = true;
+                longDispControl.IsEnabled = true;
             }
         }
         #endregion

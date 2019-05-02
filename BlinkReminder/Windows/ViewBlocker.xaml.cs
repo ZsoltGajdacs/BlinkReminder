@@ -13,7 +13,7 @@ namespace BlinkReminder
         private Timer timeOfBlock; // Timer to control the window's lifetime
         private CountdownTimer countdownTimer; // Timer to display remaining time
 
-        internal ViewBlocker(long interval, bool isSkippable, string message)
+        internal ViewBlocker(double interval, bool isSkippable, string message)
         {
             InitializeComponent();
             SetTimer(interval);
@@ -47,9 +47,9 @@ namespace BlinkReminder
             }
         }
 
-        private void SetTimer(long duration)
+        private void SetTimer(double duration)
         {
-            countdownTimer = new CountdownTimer(duration);
+            countdownTimer = new CountdownTimer((long)duration);
         }
 
         private void SetBinding()
@@ -75,7 +75,7 @@ namespace BlinkReminder
         /// Starts the timer that control the duration of the window's appearance
         /// </summary>
         /// <param name="interval"></param>
-        private void StartViewTimer(long interval)
+        private void StartViewTimer(double interval)
         {
             timeOfBlock = new Timer(interval)
             {

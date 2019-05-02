@@ -1,4 +1,5 @@
-﻿using BlinkReminder.Helpers;
+﻿using BlinkReminder.DTOs;
+using BlinkReminder.Helpers;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -16,32 +17,19 @@ namespace BlinkReminder.Settings
     internal class UserSettings : INotifyPropertyChanged, ISerializable
     {
         #region Data members
-        // Consts for TimeSpan ToString
-        private const string TOSECONDSHORT = @"s\s";
-        private const string TOSECONDLONG = @"ss\s";
-        private const string TOMINUTESHORT = @"m\m\:ss\s";
-        private const string TOMINUTELONG = @"mm\m\:ss\s";
-        private const string TOHOUR = @"h\h\:mm\m\:ss\s";
-
-        // Text Consts
-        private const string DISABLED_TEXT = "Timer disabled";
+        // Logger
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         // Settings data
         private const string SETTINGS_FILENAME = "Settings.brs";
         internal string SettingsFilePath { get; set; }
         internal string SettingsDirPath { get; set; }
 
-        // Times are interpreted as seconds
-        private long _shortDisplayTime;
-        private long _shortIntervalTime;
-        private long _longDisplayTime;
-        private long _longIntervalTime;
-
-        // Minute keepers for user guidance
-        private string _shortDisplayTimeFormatted;
-        private string _shortIntervalTimeFormatted;
-        private string _LongDisplayTimeFormatted;
-        private string _longIntervalTimeFormatted;
+        // For keeping the user set times
+        private TimeSpan _shortDisplayTime;
+        private TimeSpan _shortIntervalTime;
+        private TimeSpan _longDisplayTime;
+        private TimeSpan _longIntervalTime;
 
         // Pause time keeper
         private int? _pauseTime;
@@ -63,8 +51,9 @@ namespace BlinkReminder.Settings
         // For selection which quote to show
         private RandIntMem rand;
 
-        // Logger
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        // DTO for communicating with windows
+        [field: NonSerializedAttribute()]
+        public SettingsDTO SettingsDTO { get; set; }
 
         // Event handler for MVVM support
         [field: NonSerializedAttribute()]
@@ -92,12 +81,10 @@ namespace BlinkReminder.Settings
             SetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
 
-            PropertyChanged += UserSettings_PropertyChanged;
-
-            ShortDisplayTime = (long)CycleTimesEnum.ShortDisplayTime;
-            ShortIntervalTime = (long)CycleTimesEnum.ShortIntervalTime;
-            LongDisplayTime = (long)CycleTimesEnum.LongDisplayTime;
-            LongIntervalTime = (long)CycleTimesEnum.LongIntervalTime;
+            ShortDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.ShortDisplayTime);
+            ShortIntervalTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.ShortIntervalTime);
+            LongDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongDisplayTime);
+            LongIntervalTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongIntervalTime);
 
             IsShortSkippable = false;
             IsLongSkippable = true;
@@ -105,8 +92,7 @@ namespace BlinkReminder.Settings
             IndefPauseEnabled = false;
 
             AddDefaultQuotes();
-
-            rand = new RandIntMem(2);
+            CreateStuff();
         }
 
         /// <summary>
@@ -117,24 +103,15 @@ namespace BlinkReminder.Settings
             SetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
 
-            PropertyChanged += UserSettings_PropertyChanged;
+            //PropertyChanged += UserSettings_PropertyChanged;
 
             // ------------------- v0.5 settings -------------------
-            ShortDisplayTime = (long)info.GetValue("sdt", typeof(long));
-            ShortIntervalTime = (long)info.GetValue("sit", typeof(long));
-            LongDisplayTime = (long)info.GetValue("ldt", typeof(long));
-            LongIntervalTime = (long)info.GetValue("lit", typeof(long));
-
             IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
             IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
             ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
 
             _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
             _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
-
-            // Manually set long and short interval helper texts if they are set to zero
-            if (ShortIntervalTime == 0) ShortIntervalTimeFormatted = DISABLED_TEXT;
-            if (LongIntervalTime == 0) LongIntervalTimeFormatted = DISABLED_TEXT;
 
             // Settings options after v0.5 must go in "try" blocks as they might be missing from the 
             // file on the user's end.
@@ -148,17 +125,25 @@ namespace BlinkReminder.Settings
                 logger.Debug(ex, "Getting 0.6 settings failed");
             }
 
-            // Check the amount of quotes to know how many can be shown without repetition
-            // Commented out until flexible RandIntMem is implemented
-            /*if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
+            //--------------------- v0.7 settings --------------------
+            try
             {
-                rand = new RandIntMem(2);
+                ShortDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("sdt", typeof(double)));
+                ShortIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("sit", typeof(double)));
+                LongDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("ldt", typeof(double)));
+                LongIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("lit", typeof(double)));
             }
-            else
+            catch (Exception ex)
             {
-                rand = new RandIntMem(1);
-            }*/
-            rand = new RandIntMem(1);
+                logger.Debug(ex, "Getting 0.7 settings failed");
+
+                ShortDisplayTime = (TimeSpan)info.GetValue("sdt", typeof(TimeSpan));
+                ShortIntervalTime = (TimeSpan)info.GetValue("sit", typeof(TimeSpan));
+                LongDisplayTime = (TimeSpan)info.GetValue("ldt", typeof(TimeSpan));
+                LongIntervalTime = (TimeSpan)info.GetValue("lit", typeof(TimeSpan));
+            }
+
+            CreateStuff(false);
         }
         #endregion
 
@@ -198,6 +183,33 @@ namespace BlinkReminder.Settings
             };
         }
 
+        // Creates the necessary custom data members
+        private void CreateStuff(bool isNew = true)
+        {
+            SettingsDTO = new SettingsDTO(ref _shortDisplayTime, ref _shortIntervalTime,
+                                            ref _longDisplayTime, ref _longIntervalTime);
+            if (isNew)
+            {
+                rand = new RandIntMem(2);
+            }
+            else
+            {
+                rand = new RandIntMem(1);
+            }
+
+            // Check the amount of quotes to know how many can be shown without repetition
+            // Commented out until flexible RandIntMem is implemented
+            /*if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
+            {
+                rand = new RandIntMem(2);
+            }
+            else
+            {
+                rand = new RandIntMem(1);
+            }*/
+
+        }
+
         #endregion
 
         #region Property changed handler
@@ -209,23 +221,11 @@ namespace BlinkReminder.Settings
 
         #endregion
 
-        #region Event handler
-
-        private void UserSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            TimeFormatter(e.PropertyName);
-        }
-
-        #endregion
-
         #region Accessor properties
 
         #region Time setters
 
-        /// <summary>
-        /// Gives back Seconds
-        /// </summary>
-        public long ShortDisplayTime
+        public TimeSpan ShortDisplayTime
         {
             get
             {
@@ -241,11 +241,7 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-
-        /// <summary>
-        /// Gives back Seconds
-        /// </summary>
-        public long ShortIntervalTime
+        public TimeSpan ShortIntervalTime
         {
             get
             {
@@ -262,10 +258,7 @@ namespace BlinkReminder.Settings
             }
         }
 
-        /// <summary>
-        /// Gives back Seconds
-        /// </summary>
-        public long LongDisplayTime
+        public TimeSpan LongDisplayTime
         {
             get
             {
@@ -281,11 +274,7 @@ namespace BlinkReminder.Settings
                 }
             }
         }
-
-        /// <summary>
-        /// Gives back Seconds
-        /// </summary>
-        public long LongIntervalTime
+        public TimeSpan LongIntervalTime
         {
             get
             {
@@ -302,61 +291,6 @@ namespace BlinkReminder.Settings
             }
         }
 
-        #endregion
-
-        #region Minute display helpers
-
-        public string ShortDisplayTimeFormatted
-        {
-            get
-            {
-                return _shortDisplayTimeFormatted;
-            }
-            set
-            {
-                _shortDisplayTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ShortIntervalTimeFormatted
-        {
-            get
-            {
-                return _shortIntervalTimeFormatted;
-            }
-            set
-            {
-                _shortIntervalTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string LongDisplayTimeFormatted
-        {
-            get
-            {
-                return _LongDisplayTimeFormatted;
-            }
-            set
-            {
-                _LongDisplayTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string LongIntervalTimeFormatted
-        {
-            get
-            {
-                return _longIntervalTimeFormatted;
-            }
-            set
-            {
-                _longIntervalTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
         #endregion
 
         #region Quotes
@@ -379,6 +313,7 @@ namespace BlinkReminder.Settings
 
         #endregion
 
+        #region Booleans
         public bool IsShortSkippable
         {
             get
@@ -453,28 +388,9 @@ namespace BlinkReminder.Settings
                 NotifyPropertyChanged();
             }
         }
+
         #endregion
 
-        #region Milliseconds getters
-        public long GetShortDisplayMillisecond()
-        {
-            return _shortDisplayTime * 1000;
-        }
-
-        public long GetLongDisplayMillisecond()
-        {
-            return _longDisplayTime * 1000;
-        }
-
-        public long GetShortIntervalMillisecond()
-        {
-            return _shortIntervalTime * 1000;
-        }
-
-        public long GetLongIntervalMillisecond()
-        {
-            return _longIntervalTime * 1000;
-        }
         #endregion
 
         #region Quote getters
@@ -504,10 +420,10 @@ namespace BlinkReminder.Settings
         #region Serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("sdt", _shortDisplayTime, typeof(long));
-            info.AddValue("sit", _shortIntervalTime, typeof(long));
-            info.AddValue("ldt", _longDisplayTime, typeof(long));
-            info.AddValue("lit", _longIntervalTime, typeof(long));
+            info.AddValue("sdt", _shortDisplayTime, typeof(TimeSpan));
+            info.AddValue("sit", _shortIntervalTime, typeof(TimeSpan));
+            info.AddValue("ldt", _longDisplayTime, typeof(TimeSpan));
+            info.AddValue("lit", _longIntervalTime, typeof(TimeSpan));
 
             info.AddValue("iss", _isShortSkippable, typeof(bool));
             info.AddValue("ils", _isLongSkippable, typeof(bool));
@@ -520,109 +436,6 @@ namespace BlinkReminder.Settings
         #endregion
 
         #region Helpers
-
-        /// <summary>
-        /// Converts the second based times to easily readable format
-        /// </summary>
-        /// <param name="propertyName"></param>
-        private void TimeFormatter(string propertyName)
-        {
-            TimeSpan time;
-
-            switch (propertyName)
-            {
-                case ("ShortDisplayTime"):
-                    time = TimeSpan.FromSeconds(ShortDisplayTime);
-
-                    if (time < TimeSpan.FromSeconds(10))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("ShortIntervalTime"):
-                    time = TimeSpan.FromSeconds(ShortIntervalTime);
-
-                    if (time == TimeSpan.Zero)
-                    {
-                        ShortIntervalTimeFormatted = DISABLED_TEXT;
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("LongDisplayTime"):
-                    time = TimeSpan.FromSeconds(LongDisplayTime);
-
-                    if (time < TimeSpan.FromSeconds(10))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("LongIntervalTime"):
-                    time = TimeSpan.FromSeconds(LongIntervalTime);
-
-                    if (time == TimeSpan.Zero)
-                    {
-                        LongIntervalTimeFormatted = DISABLED_TEXT;
-                    }
-                    else if (time < TimeSpan.FromMinutes(60))
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOHOUR);
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
 
         /// <summary>
         /// Gives back a randomly chosen quote from the given list

@@ -130,7 +130,7 @@ namespace BlinkReminder.Windows
         private void StartDefaultTimers()
         {
             // ------------- Short Interval ----------------
-            long shortTime = settings.GetShortIntervalMillisecond();
+            double shortTime = settings.ShortIntervalTime.TotalMilliseconds;
 
             if (shortTime > 0)
             {
@@ -139,7 +139,7 @@ namespace BlinkReminder.Windows
             }
 
             // ------------- Long Interval -----------------
-            long longTime = settings.GetLongIntervalMillisecond();
+            double longTime = settings.LongIntervalTime.TotalMilliseconds;
 
             if (longTime > 0)
             {
@@ -154,7 +154,7 @@ namespace BlinkReminder.Windows
 
             if (longTime > 0)
             {
-                SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
+                SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
             }
             else
             {
@@ -262,7 +262,7 @@ namespace BlinkReminder.Windows
         private void LongCycleTimer_Elapsed(object sender, EventArgs e)
         {
             isLongIntervalTimerDone = true;
-            SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
+            SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
 
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
@@ -271,7 +271,7 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                ShowViewBlocker(settings.GetLongDisplayMillisecond(), settings.IsLongSkippable, settings.GetLongQuote());
+                ShowViewBlocker(settings.LongDisplayTime.TotalMilliseconds, settings.IsLongSkippable, settings.GetLongQuote());
             }
         }
 
@@ -286,7 +286,7 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                ShowViewBlocker(settings.GetShortDisplayMillisecond(), settings.IsShortSkippable, settings.GetShortQuote());
+                ShowViewBlocker(settings.ShortDisplayTime.TotalMilliseconds, settings.IsShortSkippable, settings.GetShortQuote());
             }
         }
 
@@ -360,7 +360,7 @@ namespace BlinkReminder.Windows
 
         #region Window showers
 
-        private void ShowViewBlocker(long interval, bool isSkippable, string message)
+        private void ShowViewBlocker(double interval, bool isSkippable, string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -404,7 +404,7 @@ namespace BlinkReminder.Windows
             switch (changedProperty)
             {
                 case "ShortIntervalTime":
-                    long shortInterval = settings.GetShortIntervalMillisecond();
+                    double shortInterval = settings.ShortIntervalTime.TotalMilliseconds;
 
                     if (shortInterval > 0)
                     {
@@ -421,14 +421,14 @@ namespace BlinkReminder.Windows
                     break;
 
                 case "LongIntervalTime":
-                    long longInterval = settings.GetLongIntervalMillisecond();
+                    double longInterval = settings.LongIntervalTime.TotalMilliseconds;
 
                     if (longInterval > 0)
                     {
                         TimerHandler.RestartTimer(ref longIntervalTimer, longInterval);
 
                         EnableTaskbarOption(ref LongBreakStartItem);
-                        SetTaskbarTooltip((settings.LongIntervalTime / 60) + TOOLTIP_LONG_MSG);
+                        SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
                     }
                     // If disabled
                     else
@@ -461,8 +461,8 @@ namespace BlinkReminder.Windows
             isPaused = false;
 
             // Get the latest times from settings
-            TimeSpan longIntervalTime = TimeSpan.FromMilliseconds(settings.GetLongIntervalMillisecond());
-            TimeSpan shortIntervalTime = TimeSpan.FromMilliseconds(settings.GetShortIntervalMillisecond());
+            TimeSpan longIntervalTime = TimeSpan.FromMilliseconds(settings.LongIntervalTime.TotalMilliseconds);
+            TimeSpan shortIntervalTime = TimeSpan.FromMilliseconds(settings.ShortIntervalTime.TotalMilliseconds);
 
             // Calculate remaining times
             TimeSpan longRemain = longIntervalTime - longBreakLengthSoFar;
@@ -494,7 +494,7 @@ namespace BlinkReminder.Windows
         {
             if (isShortIntervalTimerDone)
             {
-                TimerHandler.RestartTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                TimerHandler.RestartTimer(ref shortIntervalTimer, settings.ShortIntervalTime.TotalMilliseconds);
                 TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
 
                 isShortIntervalTimerDone = false;
@@ -502,13 +502,13 @@ namespace BlinkReminder.Windows
 
             if (isLongIntervalTimerDone)
             {
-                TimerHandler.RestartTimer(ref longIntervalTimer, settings.GetLongIntervalMillisecond());
+                TimerHandler.RestartTimer(ref longIntervalTimer, settings.LongIntervalTime.TotalMilliseconds);
                 TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
 
                 // Restart the short timer too....
-                if (settings.GetShortIntervalMillisecond() > 0)
+                if (settings.ShortIntervalTime.TotalMilliseconds > 0)
                 {
-                    TimerHandler.RestartTimer(ref shortIntervalTimer, settings.GetShortIntervalMillisecond());
+                    TimerHandler.RestartTimer(ref shortIntervalTimer, settings.ShortIntervalTime.TotalMilliseconds);
                     TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
                 }
 
@@ -540,7 +540,7 @@ namespace BlinkReminder.Windows
         /// <returns></returns>
         private int TimeToNextLongBreak()
         {
-            TimeSpan totalTime = TimeSpan.FromSeconds(settings.LongIntervalTime);
+            TimeSpan totalTime = settings.LongIntervalTime;
             TimeSpan remainingTime = totalTime - longBreakLengthSoFar;
 
             return (int)remainingTime.TotalMinutes;
