@@ -15,92 +15,116 @@
             <TabItem Header="General">
                 <Grid x:Name="SettingsGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-                        <!--0 Padding top-->
-                        <RowDefinition Height="30"/>
-                        <!--1 ShortInterval-->
-                        <RowDefinition Height="5"/>
-                        <!--2 Padding-->
-                        <RowDefinition Height="30"/>
-                        <!--3 ShortDisplay-->
-                        <RowDefinition Height="10"/>
-                        <!--4 Padding-->
-                        <RowDefinition Height="30"/>
-                        <!--5 LongInterval-->
-                        <RowDefinition Height="5"/>
-                        <!--6 Padding-->
-                        <RowDefinition Height="30"/>
-                        <!--7 LongDisplay-->
-                        <RowDefinition Height="15"/>
-                        <!--8 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--9 FullscreenChkbox-->
-                        <RowDefinition Height="5"/>
-                        <!--10 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--11 shortSkipChkBox-->
-                        <RowDefinition Height="5"/>
-                        <!--12 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--13 longSkipChkBox-->
-                        <RowDefinition Height="5"/>
-                        <!--14 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--15 IndefPause-->
-                        <RowDefinition Height="10"/>
-                        <!--16 Padding-->
-                        <RowDefinition Height="*"/>
-                        <!--17 Fill-->
-                        <RowDefinition Height="20"/>
-                        <!--18 OkBtn-->
-                        <RowDefinition Height="5"/>
-                        <!--19 Padding bottom-->
+                        <RowDefinition Height="160"/> <!--0 TimeGrid-->
+                        <RowDefinition Height="20"/> <!--1 FullscreenChkbox-->
+                        <RowDefinition Height="5"/> <!--2 Padding-->
+                        <RowDefinition Height="20"/> <!--3 shortSkipChkBox-->
+                        <RowDefinition Height="5"/> <!--4 Padding-->
+                        <RowDefinition Height="20"/> <!--5 longSkipChkBox-->
+                        <RowDefinition Height="5"/> <!--6 Padding-->
+                        <RowDefinition Height="20"/> <!--7 IndefPause-->
+                        <RowDefinition Height="10"/> <!--8 Padding-->
+                        <RowDefinition Height="*"/> <!--9 Fill-->
+                        <RowDefinition Height="20"/> <!--10 OkBtn-->
+                        <RowDefinition Height="5"/> <!--11 Padding bottom-->
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5" />
-                        <!--0 Padding Left-->
-                        <ColumnDefinition Width="165" />
-                        <!--1 Description Labels-->
-                        <ColumnDefinition Width="*" />
-                        <!--2 Textboxes-->
-                        <ColumnDefinition Width="100" />
-                        <!--3 Minute Labels-->
-                        <ColumnDefinition Width="5" />
-                        <!--4 Right padding-->
+                        <ColumnDefinition Width="5" /> <!--0 Padding Left-->
+                        <ColumnDefinition Width="165" /> <!--1 Description Labels-->
+                        <ColumnDefinition Width="*" /> <!--2 Textboxes-->
+                        <ColumnDefinition Width="100" /> <!--3 Minute Labels-->
+                        <ColumnDefinition Width="5" /> <!--4 Right padding-->
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="shortIntervalLabel" Content="Interval of short breaks (s): " Grid.Column="1" Grid.Row="1"/>
-                    <!--<TextBox x:Name="shortIntervalText" Text="{Binding ShortIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="1" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="ShortIntervalText_SourceUpdated"/>-->
-                    <xce:LongUpDown x:Name="shortIntervalControl" Grid.Column="2" Grid.Row="1" 
-                                        Value="{Binding settingsDTO.ShortIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
-                                        ShowButtonSpinner="True" ClipValueToMinMax="True" Minimum="0" Maximum="1800"
-                                        Background="#FFF8F8F8" UpdateValueOnEnterKey="False" Height="25" Width="100"/>
-                    <Label x:Name="shortIntervalMinuteLabel" Content="{Binding ShortIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="1"/>
+                    <Grid x:Name="TimeGrid" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5"/>
+                            <!--0 Padding top-->
+                            <RowDefinition Height="30"/>
+                            <!--1 ShortInterval-->
+                            <RowDefinition Height="5"/>
+                            <!--2 Padding-->
+                            <RowDefinition Height="30"/>
+                            <!--3 ShortDisplay-->
+                            <RowDefinition Height="10"/>
+                            <!--4 Padding-->
+                            <RowDefinition Height="30"/>
+                            <!--5 LongInterval-->
+                            <RowDefinition Height="5"/>
+                            <!--6 Padding-->
+                            <RowDefinition Height="30"/>
+                            <!--7 LongDisplay-->
+                            <RowDefinition Height="15"/>
+                            <!--8 Padding bottom-->
+                        </Grid.RowDefinitions>
 
-                    <Label x:Name="shortDispLabel" Content="Length of short break (s): " Grid.Column="1" Grid.Row="3"/>
-                    <!--<TextBox x:Name="shortDispText" Text="{Binding ShortDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="3" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
-                    <xce:TimeSpanUpDown x:Name="shortDispControl" Grid.Column="2" Grid.Row="3" Value="{Binding ShortDisplayTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" ShowButtonSpinner="True" ClipValueToMinMax="True" Minimum="0" Background="#FFF8F8F8"/>
-                    <Label x:Name="shortDispMinuteLabel" Content="{Binding ShortDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="3"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5" />
+                            <!--0 Padding Left-->
+                            <ColumnDefinition Width="165" />
+                            <!--1 Description Labels-->
+                            <ColumnDefinition Width="*" />
+                            <!--2 Textboxes-->
+                            <ColumnDefinition Width="100" />
+                            <!--3 Minute Labels-->
+                            <ColumnDefinition Width="5" />
+                            <!--4 Right padding-->
+                        </Grid.ColumnDefinitions>
 
-                    <Label x:Name="longIntervalLabel" Content="Interval of long breaks (s): " Grid.Column="1" Grid.Row="5"/>
-                    <!--<TextBox x:Name="longIntervalText" Text="{Binding LongIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="5" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="LongIntervalText_SourceUpdated"/>-->
-                    <xce:TimeSpanUpDown x:Name="longIntervalControl" Grid.Column="2" Grid.Row="5" Value="{Binding LongIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" ShowButtonSpinner="True" ClipValueToMinMax="True" Minimum="0" Background="#FFF8F8F8" SourceUpdated="LongIntervalControl_SourceUpdated"/>
-                    <Label x:Name="longIntervalMinuteLabel" Content="{Binding LongIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="5"/>
+                        <Label x:Name="shortIntervalLabel" Content="Interval of short breaks (s): " Grid.Column="1" Grid.Row="1"/>
+                        <!--<TextBox x:Name="shortIntervalText" Text="{Binding ShortIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="1" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="ShortIntervalText_SourceUpdated"/>-->
+                        <xce:LongUpDown x:Name="shortIntervalControl" Grid.Column="2" Grid.Row="1" 
+                                        Value="{Binding ShortIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Minimum="{Binding ShortIntervalMin, Mode=OneWay}" Maximum="{Binding ShortIntervalMax, Mode=OneWay}"
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                        <Label x:Name="shortIntervalMinuteLabel" Content="{Binding ShortIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="1"/>
 
-                    <Label x:Name="longDispLabel" Content="Length of long break (s): " Grid.Column="1" Grid.Row="7"/>
-                    <!--<TextBox x:Name="longDispText" Text="{Binding LongDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="7" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
-                    <xce:TimeSpanUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" Value="{Binding LongDisplayTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" ShowButtonSpinner="True" ClipValueToMinMax="True" Minimum="0" Background="#FFF8F8F8"/>
-                    <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
+                        <Label x:Name="shortDispLabel" Content="Length of short break (s): " Grid.Column="1" Grid.Row="3"/>
+                        <!--<TextBox x:Name="shortDispText" Text="{Binding ShortDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="3" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
+                        <xce:LongUpDown x:Name="shortDispControl" Grid.Column="2" Grid.Row="3" 
+                                        Value="{Binding ShortDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Minimum="{Binding ShortDisplayMin, Mode=OneWay}" Maximum="{Binding ShortDisplayMax, Mode=OneWay}"
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                        <Label x:Name="shortDispMinuteLabel" Content="{Binding ShortDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="3"/>
 
-                    <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5"/>
+                        <Label x:Name="longIntervalLabel" Content="Interval of long breaks (s): " Grid.Column="1" Grid.Row="5"/>
+                        <!--<TextBox x:Name="longIntervalText" Text="{Binding LongIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="5" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="LongIntervalText_SourceUpdated"/>-->
+                        <xce:LongUpDown x:Name="longIntervalControl" Grid.Column="2" Grid.Row="5" 
+                                        Value="{Binding LongIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Minimum="{Binding LongIntervalMin, Mode=OneWay}" Maximum="{Binding LongIntervalMax, Mode=OneWay}" 
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" 
+                                        SourceUpdated="LongIntervalControl_SourceUpdated"/>
+                        <Label x:Name="longIntervalMinuteLabel" Content="{Binding LongIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="5"/>
 
-                    <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" Content="Should a full screen application block rests?" Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
-                    <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" Content="Should a short rest be skippable?" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
-                    <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" Content="Should a long rest be skippable?" Grid.Column="1" Grid.Row="13" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
-                    <CheckBox x:Name="indefPauseChkbox" IsChecked="{Binding IndefPauseEnabled, Mode=TwoWay}" Content="Should indefinite pause be enabled?" Grid.Column="1" Grid.Row="15" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                        <Label x:Name="longDispLabel" Content="Length of long break (s): " Grid.Column="1" Grid.Row="7"/>
+                        <!--<TextBox x:Name="longDispText" Text="{Binding LongDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="7" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
+                        <xce:LongUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" 
+                                        Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Minimum="{Binding LongDisplayMin, Mode=OneWay}" Maximum="{Binding LongDisplayMax, Mode=OneWay}"
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                        <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
 
-                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="18" Click="OkButton_Click" />
+                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5"/>
+                    </Grid>
+
+                    <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" 
+                              Content="Should a full screen application block rests?" 
+                              Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                    
+                    <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" 
+                              Content="Should a short rest be skippable?" 
+                              Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                    
+                    <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" 
+                              Content="Should a long rest be skippable?" 
+                              Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                    
+                    <CheckBox x:Name="indefPauseChkbox" IsChecked="{Binding IndefPauseEnabled, Mode=TwoWay}" 
+                              Content="Should indefinite pause be enabled?" 
+                              Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+
+                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="10" Click="OkButton_Click" />
                     
                 </Grid>
             </TabItem>

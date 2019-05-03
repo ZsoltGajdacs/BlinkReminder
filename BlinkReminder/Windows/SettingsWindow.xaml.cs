@@ -36,6 +36,7 @@ namespace BlinkReminder.Windows
         private void SetDataBinding()
         {
             SettingsGrid.DataContext = settings;
+            TimeGrid.DataContext = settings.SettingsDTO;
             ShortQuoteItems.ItemsSource = settings.ShortBreakQuotes;
             LongQuoteItems.ItemsSource = settings.LongBreakQuotes;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,16 @@ namespace BlinkReminder.DTOs
         private TimeSpan LongDisplayTime { get; set; }
         private TimeSpan LongIntervalTime { get; set; }
 
+        // Time control min/max holders
+        public long ShortDisplayMin { get; set; }
+        public long ShortDisplayMax { get; set; }
+        public long ShortIntervalMin { get; set; }
+        public long ShortIntervalMax { get; set; }
+        public long LongDisplayMin { get; set; }
+        public long LongDisplayMax { get; set; }
+        public long LongIntervalMin { get; set; }
+        public long LongIntervalMax { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public SettingsDTO(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime, 
@@ -55,6 +66,22 @@ namespace BlinkReminder.DTOs
             // Manually set long and short interval helper texts if they are set to zero
             if (ShortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
             if (LongIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
+
+            ShortDisplayAmount = (long)ShortDisplayTime.TotalSeconds;
+            ShortIntervalAmount = (long)ShortIntervalTime.TotalSeconds;
+            LongDisplayAmount = (long)LongDisplayTime.TotalSeconds;
+            LongIntervalAmount = (long)LongIntervalTime.TotalSeconds;
+
+            // Set min/max values to default safe
+            ShortDisplayMin = 0;
+            ShortIntervalMin = 0;
+            LongDisplayMin = 0;
+            LongIntervalMin = 0;
+
+            ShortDisplayMax = 10000;
+            ShortIntervalMax = 10000;
+            LongDisplayMax = 10000;
+            LongIntervalMax = 10000;
         }
 
         #region Property changed handler
@@ -71,6 +98,7 @@ namespace BlinkReminder.DTOs
         private void SettingsDto_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             TimeFormatter(e.PropertyName);
+            LimitSetter(e.PropertyName);
         }
 
         #endregion
@@ -191,93 +219,99 @@ namespace BlinkReminder.DTOs
 
         #endregion
 
+        #region Helpers
         /// <summary>
         /// Converts the second based times to easily readable format
         /// </summary>
         private void TimeFormatter(string propertyName)
         {
+            TimeSpan time;
             switch (propertyName)
             {
-                case ("ShortDisplayTime"):
-
-                    if (ShortDisplayTime < TimeSpan.FromSeconds(10))
+                case ("ShortDisplayAmount"):
+                    
+                    time = TimeSpan.FromSeconds(ShortDisplayAmount);
+                    if (time < TimeSpan.FromSeconds(10))
                     {
-                        ShortDisplayTimeFormatted = ShortDisplayTime.ToString(TOSECONDSHORT);
+                        ShortDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
                     }
                     else if (ShortDisplayTime < TimeSpan.FromSeconds(60))
                     {
-                        ShortDisplayTimeFormatted = ShortDisplayTime.ToString(TOSECONDLONG);
+                        ShortDisplayTimeFormatted = time.ToString(TOSECONDLONG);
                     }
                     else if (ShortDisplayTime < TimeSpan.FromMinutes(10))
                     {
-                        ShortDisplayTimeFormatted = ShortDisplayTime.ToString(TOMINUTESHORT);
+                        ShortDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
                     else
                     {
-                        ShortDisplayTimeFormatted = ShortDisplayTime.ToString(TOMINUTELONG);
+                        ShortDisplayTimeFormatted = time.ToString(TOMINUTELONG);
                     }
 
                     break;
 
-                case ("ShortIntervalTime"):
+                case ("ShortIntervalAmount"):
 
-                    if (ShortIntervalTime == TimeSpan.Zero)
+                    time = TimeSpan.FromSeconds(ShortIntervalAmount);
+                    if (time == TimeSpan.Zero)
                     {
                         ShortIntervalTimeFormatted = DISABLED_TEXT;
                     }
-                    else if (ShortIntervalTime < TimeSpan.FromSeconds(60))
+                    else if (time < TimeSpan.FromSeconds(60))
                     {
-                        ShortIntervalTimeFormatted = ShortIntervalTime.ToString(TOSECONDLONG);
+                        ShortIntervalTimeFormatted = time.ToString(TOSECONDLONG);
                     }
-                    else if (ShortIntervalTime < TimeSpan.FromMinutes(10))
+                    else if (time < TimeSpan.FromMinutes(10))
                     {
-                        ShortIntervalTimeFormatted = ShortIntervalTime.ToString(TOMINUTESHORT);
+                        ShortIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
                     else
                     {
-                        ShortIntervalTimeFormatted = ShortIntervalTime.ToString(TOMINUTELONG);
+                        ShortIntervalTimeFormatted = time.ToString(TOMINUTELONG);
                     }
 
                     break;
 
-                case ("LongDisplayTime"):
+                case ("LongDisplayAmount"):
 
-                    if (LongDisplayTime < TimeSpan.FromSeconds(10))
+                    time = TimeSpan.FromSeconds(LongDisplayAmount);
+                    if (time < TimeSpan.FromSeconds(10))
                     {
-                        LongDisplayTimeFormatted = LongDisplayTime.ToString(TOSECONDSHORT);
+                        LongDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
                     }
-                    else if (LongDisplayTime < TimeSpan.FromSeconds(60))
+                    else if (time < TimeSpan.FromSeconds(60))
                     {
-                        LongDisplayTimeFormatted = LongDisplayTime.ToString(TOSECONDLONG);
+                        LongDisplayTimeFormatted = time.ToString(TOSECONDLONG);
                     }
-                    else if (LongDisplayTime < TimeSpan.FromMinutes(10))
+                    else if (time < TimeSpan.FromMinutes(10))
                     {
-                        LongDisplayTimeFormatted = LongDisplayTime.ToString(TOMINUTESHORT);
+                        LongDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
                     else
                     {
-                        LongDisplayTimeFormatted = LongDisplayTime.ToString(TOMINUTELONG);
+                        LongDisplayTimeFormatted = time.ToString(TOMINUTELONG);
                     }
 
                     break;
 
-                case ("LongIntervalTime"):
+                case ("LongIntervalAmount"):
 
-                    if (LongIntervalTime == TimeSpan.Zero)
+                    time = TimeSpan.FromSeconds(LongIntervalAmount);
+                    if (time == TimeSpan.Zero)
                     {
                         LongIntervalTimeFormatted = DISABLED_TEXT;
                     }
-                    else if (LongIntervalTime < TimeSpan.FromMinutes(60))
+                    else if (time < TimeSpan.FromMinutes(60))
                     {
-                        LongIntervalTimeFormatted = LongIntervalTime.ToString(TOMINUTELONG);
+                        LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
                     }
-                    else if (LongIntervalTime < TimeSpan.FromMinutes(10))
+                    else if (time < TimeSpan.FromMinutes(10))
                     {
-                        LongIntervalTimeFormatted = LongIntervalTime.ToString(TOMINUTESHORT);
+                        LongIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
                     else
                     {
-                        LongIntervalTimeFormatted = LongIntervalTime.ToString(TOHOUR);
+                        LongIntervalTimeFormatted = time.ToString(TOHOUR);
                     }
 
                     break;
@@ -286,5 +320,35 @@ namespace BlinkReminder.DTOs
                     break;
             }
         }
+
+        /// <summary>
+        /// Sets the min/max amounts of break intervals so short and long ones can't flip
+        /// </summary>
+        private void LimitSetter(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case ("ShortDisplayAmount"):
+                    // TODO: Figure out the usefulness of this
+                    break;
+
+                case ("ShortIntervalAmount"):
+                    LongIntervalMin = ShortIntervalAmount + 1;
+                    break;
+
+                case ("LongDisplayAmount"):
+                    // TODO: Figure out the usefulness of this
+                    break;
+
+                case ("LongIntervalAmount"):
+                    ShortIntervalMax = LongIntervalAmount - 1;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        #endregion
     }
 }
