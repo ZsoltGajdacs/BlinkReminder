@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Timers;
 
 namespace BlinkReminder.Settings
 {
@@ -183,11 +184,16 @@ namespace BlinkReminder.Settings
             };
         }
 
-        // Creates the necessary custom data members
+        /// <summary>
+        /// Creates the necessary custom data members
+        /// </summary>
         private void CreateStuff(bool isNew = true)
         {
             SettingsDTO = new SettingsDTO(ref _shortDisplayTime, ref _shortIntervalTime,
                                             ref _longDisplayTime, ref _longIntervalTime);
+
+            SettingsDTO.UserInactivityTimer.Elapsed += UserInactivityTimer_Elapsed;
+
             if (isNew)
             {
                 rand = new RandIntMem(2);
@@ -415,6 +421,18 @@ namespace BlinkReminder.Settings
 
             return GetQuote(ref _longBreakQuotes, defaultLongQuote);
         }
+        #endregion
+
+        #region Event Handler
+
+        private void UserInactivityTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            ShortDisplayTime = TimeSpan.FromSeconds(SettingsDTO.ShortDisplayAmount);
+            ShortIntervalTime = TimeSpan.FromSeconds(SettingsDTO.ShortIntervalAmount);
+            LongDisplayTime = TimeSpan.FromSeconds(SettingsDTO.LongDisplayAmount);
+            LongIntervalTime = TimeSpan.FromSeconds(SettingsDTO.LongIntervalAmount);
+        }
+
         #endregion
 
         #region Serialization
