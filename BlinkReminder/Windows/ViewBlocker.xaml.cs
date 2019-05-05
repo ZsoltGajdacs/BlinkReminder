@@ -2,6 +2,10 @@
 using System.Windows;
 using System.Timers;
 using BlinkReminder.Windows.Support;
+using BlinkReminder.Helpers;
+using System.Windows.Media;
+using System.Globalization;
+using System.Windows.Controls;
 
 namespace BlinkReminder
 {
@@ -10,12 +14,30 @@ namespace BlinkReminder
     /// </summary>
     public partial class ViewBlocker : Window, IDisposable
     {
+        private static int BASE_CONTROL_HEIGHT = 31;
+        private static int BASE_DISTANCE_FROM_EDGE = 15;
+        private static int BASE_WINDOW_HEIGHT = 150;
+        private static int BASE_WINDOW_WIDTH = 400;
+        private static int BASE_WINDOW_WIDTH_PADDING = 60;
+        private static int BASE_BTN_WIDTH = 100;
+        private static int BASE_FONT_SIZE = 16;
+        private readonly int QUOTE_TEXT_WIDTH;
+
         private Timer timeOfBlock; // Timer to control the window's lifetime
         private CountdownTimer countdownTimer; // Timer to display remaining time
 
-        internal ViewBlocker(double interval, bool isSkippable, string message)
+        // Window size properties
+        public double ControlHeight { get; set; }
+        public double BtnWidth { get; set; }
+        public double Distance { get; set; }
+
+        internal ViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, string message)
         {
             InitializeComponent();
+
+            QUOTE_TEXT_WIDTH = MeasureString(message, ref quoteText, scaling).Width;
+
+            SetWindowSize(isFullscreen, scaling);
             SetTimer(interval);
             SetBinding();
             StartViewTimer(interval);
@@ -47,14 +69,21 @@ namespace BlinkReminder
             }
         }
 
+        /// <summary>
+        /// Sets the internal timer of the window
+        /// </summary>
         private void SetTimer(double duration)
         {
             countdownTimer = new CountdownTimer((long)duration);
         }
 
+        /// <summary>
+        /// Sets binding of window parts
+        /// </summary>
         private void SetBinding()
         {
-            blockerGrid.DataContext = countdownTimer;
+            blockerGrid.DataContext = this;
+            blockerStack.DataContext = countdownTimer;
         }
 
         /// <summary>
@@ -84,6 +113,52 @@ namespace BlinkReminder
             timeOfBlock.Elapsed += TimeOfBlock_Elapsed;
             timeOfBlock.Start();
         }
+        
+        /// <summary>
+        /// Sets window size in case the user chose small screen breaks
+        /// </summary>
+        private void SetWindowSize(bool isFullscreen, double scaling)
+        {
+            ControlHeight = BASE_CONTROL_HEIGHT;
+            BtnWidth = BASE_BTN_WIDTH;
+            Distance = BASE_DISTANCE_FROM_EDGE;
+
+            if (!isFullscreen)
+            {
+                this.WindowState = WindowState.Normal;
+                this.WindowStartupLocation = WindowStartupLocation.Manual;
+
+                // Set width and height of window via scaling set by user
+                double w = (QUOTE_TEXT_WIDTH * scaling) + (BASE_WINDOW_WIDTH_PADDING * scaling);
+                w = w >= BASE_WINDOW_WIDTH ? w : BASE_WINDOW_WIDTH;
+                this.Width = w;
+
+                double h = BASE_WINDOW_HEIGHT * scaling;
+                this.Height = h;
+
+                // Set font and btn so it scales as well
+                /*if (scaling < 1)
+                {
+                    this.FontSize = BASE_FONT_SIZE * (scaling + (1 - scaling) / 2);
+                }
+                else if (scaling > 1)
+                {
+                    this.FontSize = BASE_FONT_SIZE * (scaling - (scaling - 1) / 2);
+                }*/
+
+                this.FontSize = BASE_FONT_SIZE * scaling;
+                BtnWidth *= scaling;
+                ControlHeight *= scaling;
+
+                // Set window position to the lower right edge of screen
+                this.Left = ScreenSizeInfo.CalculateLeftEdgeOfWindow(w);
+                this.Top = ScreenSizeInfo.CalculateTopEdgeOfWindow(h);
+            }
+            else
+            {
+                Distance = (Distance * 2) * scaling;
+            }
+        }
         #endregion
 
         #region Event helpers
@@ -112,8 +187,6 @@ namespace BlinkReminder
         /// <summary>
         /// Called when the timer's countwown is finished
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TimeOfBlock_Elapsed(object sender, ElapsedEventArgs e)
         {
             CloseBlockWindow();
@@ -122,14 +195,30 @@ namespace BlinkReminder
         /// <summary>
         /// Called when the user pushes the skip button
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SkipButton_Click(object sender, RoutedEventArgs e)
         {
             CloseBlockWindow();
         }
 
         #endregion
+
+        /// <summary>
+        /// Measures the given string length for the given textblock, whith the given scaling
+        /// </summary>
+        private System.Drawing.Size MeasureString(string candidate, ref TextBlock textblock, double scaling)
+        {
+            var formattedText = new FormattedText(
+                candidate,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(textblock.FontFamily, textblock.FontStyle, textblock.FontWeight, textblock.FontStretch),
+                BASE_FONT_SIZE,
+                System.Windows.Media.Brushes.White,
+                new NumberSubstitution(),
+                VisualTreeHelper.GetDpi(this).DpiScaleX);
+
+            return new System.Drawing.Size((int)formattedText.Width, (int)formattedText.Height);
+        }
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

@@ -62,7 +62,7 @@ namespace BlinkReminder.DTOs
 
             // Set up inactivity timer, so I know when it's time to write out
             // values to settings
-            UserInactivityTimer = new Timer(5000);
+            UserInactivityTimer = new Timer(3000);
             UserInactivityTimer.AutoReset = false;
 
             // Manually set long and short interval helper texts if they are set to zero

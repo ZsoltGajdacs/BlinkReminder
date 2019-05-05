@@ -42,6 +42,12 @@ namespace BlinkReminder.Settings
         // For indefinite pause enablement
         private bool _indefPauseEnabled;
 
+        // For setting full screen vs small break screen
+        private bool _isFullscreenBreak;
+
+        // User scaling for small screen break
+        private double _scaling;
+
         // For keeping the quotes that appear during breaks
         private BindingList<Quote> _shortBreakQuotes;
         private BindingList<Quote> _longBreakQuotes;
@@ -88,6 +94,9 @@ namespace BlinkReminder.Settings
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
             IndefPauseEnabled = false;
+            IsFullscreenBreak = true;
+
+            Scaling = 1;
 
             AddDefaultQuotes();
             CreateStuff();
@@ -100,8 +109,6 @@ namespace BlinkReminder.Settings
         {
             SetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
-
-            //PropertyChanged += UserSettings_PropertyChanged;
 
             // ------------------- v0.5 settings -------------------
             IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
@@ -120,25 +127,34 @@ namespace BlinkReminder.Settings
             }
             catch (Exception ex)
             {
-                logger.Debug(ex, "Getting 0.6 settings failed");
+                logger.Debug(ex, "Getting IndefPauseEnabled failed");
+                IndefPauseEnabled = false;
             }
 
             //--------------------- v0.7 settings --------------------
             try
             {
-                ShortDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("sdt", typeof(double)));
-                ShortIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("sit", typeof(double)));
-                LongDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("ldt", typeof(double)));
-                LongIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("lit", typeof(double)));
+                ShortDisplayTime = (TimeSpan)info.GetValue("sdt", typeof(TimeSpan));
+                ShortIntervalTime = (TimeSpan)info.GetValue("sit", typeof(TimeSpan));
+                LongDisplayTime = (TimeSpan)info.GetValue("ldt", typeof(TimeSpan));
+                LongIntervalTime = (TimeSpan)info.GetValue("lit", typeof(TimeSpan));
+
+                IsFullscreenBreak = (bool)info.GetValue("ifb", typeof(bool));
+
+                Scaling = (double)info.GetValue("scl", typeof(double));
             }
             catch (Exception ex)
             {
                 logger.Debug(ex, "Getting 0.7 settings failed");
 
-                ShortDisplayTime = (TimeSpan)info.GetValue("sdt", typeof(TimeSpan));
-                ShortIntervalTime = (TimeSpan)info.GetValue("sit", typeof(TimeSpan));
-                LongDisplayTime = (TimeSpan)info.GetValue("ldt", typeof(TimeSpan));
-                LongIntervalTime = (TimeSpan)info.GetValue("lit", typeof(TimeSpan));
+                ShortDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("sdt", typeof(double)));
+                ShortIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("sit", typeof(double)));
+                LongDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("ldt", typeof(double)));
+                LongIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("lit", typeof(double)));
+
+                IsFullscreenBreak = true;
+
+                Scaling = 1;
             }
 
             CreateStuff(false);
@@ -378,6 +394,40 @@ namespace BlinkReminder.Settings
             }
         }
 
+        public bool IsFullscreenBreak
+        {
+            get
+            {
+                return _isFullscreenBreak;
+            }
+
+            set
+            {
+                if (value != _isFullscreenBreak)
+                {
+                    _isFullscreenBreak = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
+        #region Others
+        public double Scaling
+        {
+            get
+            {
+                return _scaling;
+            }
+
+            set
+            {
+                if (value != _scaling)
+                {
+                    _scaling = value;
+                }
+            }
+        }
         #endregion
 
         #endregion
@@ -430,6 +480,9 @@ namespace BlinkReminder.Settings
             info.AddValue("ils", _isLongSkippable, typeof(bool));
             info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
             info.AddValue("ipe", _indefPauseEnabled, typeof(bool));
+            info.AddValue("ifb", _isFullscreenBreak, typeof(bool));
+
+            info.AddValue("scl", _scaling, typeof(double));
 
             info.AddValue("sbq", _shortBreakQuotes.ToArray(), typeof(Quote[]));
             info.AddValue("lbq", _longBreakQuotes.ToArray(), typeof(Quote[]));

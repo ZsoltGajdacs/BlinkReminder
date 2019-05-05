@@ -9,7 +9,7 @@
         xmlns:brControl="clr-namespace:BlinkReminder.Windows.Controls"
     x:Name="SettingsView" x:Class="BlinkReminder.Windows.SettingsWindow"
         mc:Ignorable="d"
-        Title="BlinkReminder settings" Height="400" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
+        Title="BlinkReminder settings" Height="410" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
     <Grid >
         <TabControl Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
@@ -23,10 +23,14 @@
                         <RowDefinition Height="20"/> <!--5 longSkipChkBox-->
                         <RowDefinition Height="5"/> <!--6 Padding-->
                         <RowDefinition Height="20"/> <!--7 IndefPause-->
-                        <RowDefinition Height="10"/> <!--8 Padding-->
-                        <RowDefinition Height="*"/> <!--9 Fill-->
-                        <RowDefinition Height="20"/> <!--10 OkBtn-->
-                        <RowDefinition Height="5"/> <!--11 Padding bottom-->
+                        <RowDefinition Height="5"/> <!--8 Padding-->
+                        <RowDefinition Height="20"/> <!--9 Window size Chkbox-->
+                        <RowDefinition Height="5"/> <!--10 Padding-->
+                        <RowDefinition Height="30"/> <!--11 Scaling-->
+                        <RowDefinition Height="5"/> <!--12 Padding-->
+                        <RowDefinition Height="*"/> <!--13 Fill-->
+                        <RowDefinition Height="20"/> <!--14 OkBtn-->
+                        <RowDefinition Height="5"/> <!--15 Padding bottom-->
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -110,21 +114,44 @@
 
                     <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" 
                               Content="Should a full screen application block rests?" 
-                              Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                              Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     
                     <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" 
                               Content="Should a short rest be skippable?" 
-                              Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                              Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     
                     <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" 
                               Content="Should a long rest be skippable?" 
-                              Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                              Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     
                     <CheckBox x:Name="indefPauseChkbox" IsChecked="{Binding IndefPauseEnabled, Mode=TwoWay}" 
                               Content="Should indefinite pause be enabled?" 
-                              Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="2" VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                              Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
-                    <Button x:Name="okButtonG" Content="OK" Width="80" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="10" Click="OkButton_Click" />
+                    <CheckBox x:Name="isFullscreenBreakChkBox" IsChecked="{Binding IsFullscreenBreak, Mode=TwoWay}"
+                              Content="Should breaks be full screen?"
+                              Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="2"
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
+                    
+                    <!--<toggleswitch:ToggleSwitch x:Name="fullscreenBreakSwitch" IsOn="{Binding IsFullscreenBreak, Mode=TwoWay}" 
+                                TrackBackgroundOnColor="LightGreen" CircleBackgroundColor="LightGray" 
+                                Grid.Column="1" Grid.Row="9"/>-->
+
+                    <Label x:Name="ScaleLabel" Content="Scale small window by: " 
+                           Grid.Column="1" Grid.Row="11" HorizontalAlignment="Right"/>
+                    
+                    <xce:DoubleUpDown x:Name="ScaleControl" Value="{Binding Scaling, Mode=TwoWay}"
+                                      Grid.Column="2" Grid.Row="11" Width="50" HorizontalAlignment="Left"
+                                      VerticalAlignment="Center" Background="#FFF8F8F8"
+                                      Increment=".1" Minimum="0.5" Maximum="1.5"/>
+
+                    <Button x:Name="okButtonG" Content="OK" Width="80" 
+                            Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="14" 
+                            Click="OkButton_Click" />
                     
                 </Grid>
             </TabItem>

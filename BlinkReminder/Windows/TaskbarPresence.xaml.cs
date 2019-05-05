@@ -271,7 +271,8 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                ShowViewBlocker(settings.LongDisplayTime.TotalMilliseconds, settings.IsLongSkippable, settings.GetLongQuote());
+                ShowViewBlocker(settings.LongDisplayTime.TotalMilliseconds, settings.Scaling,
+                    settings.IsLongSkippable, settings.IsFullscreenBreak, settings.GetLongQuote());
             }
         }
 
@@ -286,7 +287,8 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                ShowViewBlocker(settings.ShortDisplayTime.TotalMilliseconds, settings.IsShortSkippable, settings.GetShortQuote());
+                ShowViewBlocker(settings.ShortDisplayTime.TotalMilliseconds, settings.Scaling,
+                    settings.IsShortSkippable, settings.IsFullscreenBreak, settings.GetShortQuote());
             }
         }
 
@@ -360,14 +362,17 @@ namespace BlinkReminder.Windows
 
         #region Window showers
 
-        private void ShowViewBlocker(double interval, bool isSkippable, string message)
+        private void ShowViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 if (blockerWindow == null)
                 {
-                    keyTrap = new KeyboardHook(); // Intercept every key
-                    blockerWindow = new ViewBlocker(interval, isSkippable, message);
+                    if (settings.IsFullscreenBreak)
+                    {
+                        keyTrap = new KeyboardHook(); // Intercept every key
+                    }
+                    blockerWindow = new ViewBlocker(interval, scaling, isSkippable, isFullscreen, message);
                     blockerWindow.Closed += BlockerWindow_Closed;
                     blockerWindow.Show();
                 
