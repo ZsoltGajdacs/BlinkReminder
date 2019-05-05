@@ -1,3 +1,10 @@
+-------------------- v0.7.0 -----------------------
+- Basic logging added
+- Major reorganization of code for long term maintability
+- Replaced textboxes with numeric controls
+- Added new break type: small screen break
+- When locking the machine, based on the lock time and on user setting, it will be considered a long or short break
+
 -------------------- v0.6.2 -----------------------
 - Added update check and bug report link to About
 - Corrected fixed length of quote text display (it can now be as long as the screen)

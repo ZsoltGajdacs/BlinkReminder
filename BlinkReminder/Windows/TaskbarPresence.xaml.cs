@@ -59,6 +59,9 @@ namespace BlinkReminder.Windows
         private bool isPaused;
         private TimeSpan pauseTotalLength;
 
+        // Stopwatch to know how long is the machine locked
+        Stopwatch lockWatch;
+
         // Update checker
         private UpdateCheck updater;
 
@@ -122,6 +125,12 @@ namespace BlinkReminder.Windows
 
             // Set up update checker
             updater = new UpdateCheck(new int[] { MAJVERSION, MINVERSION, REVVERSION });
+
+            // Subscribe to workstation lock event
+            Microsoft.Win32.SystemEvents.SessionSwitch += new Microsoft.Win32.SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+
+            // Create stopwatch
+            lockWatch = new Stopwatch();
         }
 
         /// <summary>
@@ -346,6 +355,39 @@ namespace BlinkReminder.Windows
             pauseWindow = null;
         }
 
+        #endregion
+
+        #region System Events
+        /// <summary>
+        /// Happens when the user lockes the workstation, determines the timers to restart based on 
+        /// lock time
+        /// </summary>
+        void SystemEvents_SessionSwitch(object sender, Microsoft.Win32.SessionSwitchEventArgs e)
+        {
+            if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionLock)
+            {
+                lockWatch.Restart();
+            }
+            else if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionUnlock)
+            {
+                lockWatch.Stop();
+                String clockName;
+
+                if (lockWatch.Elapsed > settings.LockLengthTimeExtent)
+                {
+                    clockName = "LongIntervalTime";
+                }
+                else
+                {
+                    clockName = "ShortIntervalTime";
+                }
+
+                if (!isPaused)
+                {
+                    DecideWhichClockToReset(clockName);
+                }
+            }
+        }
         #endregion
 
         #region Property changed Events

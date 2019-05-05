@@ -15,7 +15,7 @@
             <TabItem Header="General">
                 <Grid x:Name="SettingsGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="160"/> <!--0 TimeGrid-->
+                        <RowDefinition Height="197"/> <!--0 TimeGrid-->
                         <RowDefinition Height="20"/> <!--1 FullscreenChkbox-->
                         <RowDefinition Height="5"/> <!--2 Padding-->
                         <RowDefinition Height="20"/> <!--3 shortSkipChkBox-->
@@ -59,8 +59,12 @@
                             <!--6 Padding-->
                             <RowDefinition Height="30"/>
                             <!--7 LongDisplay-->
+                            <RowDefinition Height="10"/>
+                            <!--8 Padding-->
+                            <RowDefinition Height="30"/>
+                            <!--9 LockScreenTimeExtent-->
                             <RowDefinition Height="15"/>
-                            <!--8 Padding bottom-->
+                            <!--10 Padding bottom-->
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
@@ -109,7 +113,14 @@
                                         ClipValueToMinMax="True" Background="#FFF8F8F8"/>
                         <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
 
-                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5"/>
+                        <Label x:Name="lockedLengthExtentLabel" 
+                               Content="Minutes above which a workstation lock is taken as long break: " 
+                               Grid.Column="1" Grid.Row="9"/>
+                        <xce:IntegerUpDown x:Name="lockedLengthExtentControl" Grid.Column="2" Grid.Row="9"
+                                           Value="{Binding LockLengthTimeExtent, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                                           Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+
+                        <Separator Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="5"/>
                     </Grid>
 
                     <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" 

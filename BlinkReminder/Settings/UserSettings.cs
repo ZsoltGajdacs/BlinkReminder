@@ -32,6 +32,9 @@ namespace BlinkReminder.Settings
         private TimeSpan _longDisplayTime;
         private TimeSpan _longIntervalTime;
 
+        // For locked screen length intrepretation
+        private TimeSpan _lockLengthTimeExtent;
+
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
         private bool _isLongSkippable;
@@ -90,6 +93,8 @@ namespace BlinkReminder.Settings
             LongDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongDisplayTime);
             LongIntervalTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongIntervalTime);
 
+            LockLengthTimeExtent = TimeSpan.FromMinutes(1);
+
             IsShortSkippable = false;
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
@@ -139,6 +144,8 @@ namespace BlinkReminder.Settings
                 LongDisplayTime = (TimeSpan)info.GetValue("ldt", typeof(TimeSpan));
                 LongIntervalTime = (TimeSpan)info.GetValue("lit", typeof(TimeSpan));
 
+                LockLengthTimeExtent = (TimeSpan)info.GetValue("llte", typeof(TimeSpan));
+
                 IsFullscreenBreak = (bool)info.GetValue("ifb", typeof(bool));
 
                 Scaling = (double)info.GetValue("scl", typeof(double));
@@ -151,6 +158,8 @@ namespace BlinkReminder.Settings
                 ShortIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("sit", typeof(double)));
                 LongDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("ldt", typeof(double)));
                 LongIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("lit", typeof(double)));
+
+                LockLengthTimeExtent = TimeSpan.FromMinutes(1);
 
                 IsFullscreenBreak = true;
 
@@ -203,7 +212,8 @@ namespace BlinkReminder.Settings
         private void CreateStuff(bool isNew = true)
         {
             SettingsDTO = new SettingsDTO(ref _shortDisplayTime, ref _shortIntervalTime,
-                                            ref _longDisplayTime, ref _longIntervalTime);
+                                            ref _longDisplayTime, ref _longIntervalTime,
+                                            ref _lockLengthTimeExtent);
 
             SettingsDTO.UserInactivityTimer.Elapsed += UserInactivityTimer_Elapsed;
 
@@ -428,6 +438,27 @@ namespace BlinkReminder.Settings
                 }
             }
         }
+        
+        /// <summary>
+        /// The amount of time below which a locked screen is considered a short break 
+        /// or above it a long one
+        /// </summary>
+        public TimeSpan LockLengthTimeExtent
+        {
+            get
+            {
+                return _lockLengthTimeExtent;
+            }
+
+            set
+            {
+                if (value != _lockLengthTimeExtent)
+                {
+                    _lockLengthTimeExtent = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         #endregion
@@ -464,6 +495,7 @@ namespace BlinkReminder.Settings
             ShortIntervalTime = TimeSpan.FromSeconds(SettingsDTO.ShortIntervalAmount);
             LongDisplayTime = TimeSpan.FromSeconds(SettingsDTO.LongDisplayAmount);
             LongIntervalTime = TimeSpan.FromSeconds(SettingsDTO.LongIntervalAmount);
+            LockLengthTimeExtent = TimeSpan.FromMinutes(SettingsDTO.LockLengthTimeExtent);
         }
 
         #endregion
@@ -475,6 +507,8 @@ namespace BlinkReminder.Settings
             info.AddValue("sit", _shortIntervalTime, typeof(TimeSpan));
             info.AddValue("ldt", _longDisplayTime, typeof(TimeSpan));
             info.AddValue("lit", _longIntervalTime, typeof(TimeSpan));
+
+            info.AddValue("llte", _lockLengthTimeExtent, typeof(TimeSpan));
 
             info.AddValue("iss", _isShortSkippable, typeof(bool));
             info.AddValue("ils", _isLongSkippable, typeof(bool));

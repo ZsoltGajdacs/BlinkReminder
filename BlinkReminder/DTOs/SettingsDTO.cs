@@ -34,6 +34,9 @@ namespace BlinkReminder.DTOs
         private long _longDisplayAmount;
         private long _longIntervalAmount;
 
+        // For lock length decision if it's short or long
+        private int _lockLengthTimeExtent;
+
         // Minute keepers for user guidance
         private string _shortDisplayTimeFormatted;
         private string _shortIntervalTimeFormatted;
@@ -56,7 +59,8 @@ namespace BlinkReminder.DTOs
         public event PropertyChangedEventHandler PropertyChanged;
 
         public SettingsDTO(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime, 
-                            ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime)
+                            ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime,
+                            ref TimeSpan lockLengthTimeExtent)
         {
             PropertyChanged += SettingsDto_PropertyChanged;
 
@@ -85,6 +89,9 @@ namespace BlinkReminder.DTOs
             ShortIntervalMax = 10000;
             LongDisplayMax = 10000;
             LongIntervalMax = 10000;
+
+            // Set lockLength from settings
+            LockLengthTimeExtent = (int)lockLengthTimeExtent.TotalMinutes;
         }
 
         #region Property changed handler
@@ -221,6 +228,27 @@ namespace BlinkReminder.DTOs
             {
                 _longIntervalAmount = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// The amount of time below which a locked screen is considered a short break 
+        /// or above it a long one
+        /// </summary>
+        public int LockLengthTimeExtent
+        {
+            get
+            {
+                return _lockLengthTimeExtent;
+            }
+
+            set
+            {
+                if (value != _lockLengthTimeExtent)
+                {
+                    _lockLengthTimeExtent = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
