@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlinkReminder.Windows"
+        xmlns:xce="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Timer pause" Height="150" Width="320" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFF8F8F8" FontSize="14">
     <StackPanel x:Name="mainStack" Orientation="Vertical">
         <Label Content="Pause for how long? (minutes)" Margin="5 5 5 5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox x:Name="pauseTimeTextBox" Text="{Binding PauseTime, Mode=TwoWay}" Width="100" Margin="5 0 5 12" HorizontalAlignment="Center" PreviewTextInput="PauseTimeTextBox_PreviewTextInput" KeyUp="PauseTimeTextBox_KeyUp"/>
+        <xce:LongUpDown x:Name="pauseTimeControl" Text="{Binding PauseTime, Mode=TwoWay}" 
+                        Width="80" Margin="5 0 5 12" HorizontalAlignment="Center"
+                        Minimum="1"/>
 
         <DockPanel LastChildFill="False">
             <Button x:Name="TimedPauseBtn" Content="Pause for selected time" Margin="15 0 15 0" DockPanel.Dock="Left" Click="TimedPauseBtn_Click"/>

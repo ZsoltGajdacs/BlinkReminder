@@ -3,6 +3,7 @@ using BlinkReminder.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Xceed.Wpf.Toolkit;
 
 namespace BlinkReminder.Windows
 {
@@ -12,7 +13,7 @@ namespace BlinkReminder.Windows
     public partial class PauseWindow : Window
     {
         private UserSettings userSettings;
-        private int pauseTime;
+        public long PauseTime { get; set; }
         private bool btnClicked;
         private TooltipHandler tooltipHandler;
 
@@ -21,7 +22,9 @@ namespace BlinkReminder.Windows
             InitializeComponent();
             userSettings = UserSettings.Instance;
             tooltipHandler = new TooltipHandler();
+
             IndefPauseBtn.IsEnabled = userSettings.IndefPauseEnabled;
+            PauseTime = 1;
 
             SetBinding();
         }
@@ -31,7 +34,7 @@ namespace BlinkReminder.Windows
         /// </summary>
         private void SetBinding()
         {
-            mainStack.DataContext = userSettings;
+            mainStack.DataContext = this;
         }
 
         /// <summary>
@@ -40,13 +43,13 @@ namespace BlinkReminder.Windows
         /// -2 if user closed window with 'x'
         /// </summary>
         /// <returns></returns>
-        public new int ShowDialog()
+        public new long ShowDialog()
         {
             base.ShowDialog();
 
             if (btnClicked)
             {
-                return pauseTime;
+                return PauseTime;
             }
             else
             {
@@ -54,42 +57,20 @@ namespace BlinkReminder.Windows
             }
         }
 
-        #region Event Handlers
+        #region Button Clicks
         private void IndefPauseBtn_Click(object sender, RoutedEventArgs e)
         {
-            pauseTime = -1;
+            PauseTime = -1;
             btnClicked = true;
             Close();
         }
 
         private void TimedPauseBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (userSettings.PauseTime != null)
-            {
-                pauseTime = (int)userSettings.PauseTime;
-                btnClicked = true;
-                Close();
-            }
-            else
-            {
-                tooltipHandler.ShowTooltipOnTextBox(ref pauseTimeTextBox, "Please enter a value");
-            }
+            btnClicked = true;
+            Close();
         }
 
-        private void PauseTimeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !TextValidator.IsNumsOnly(e.Text);
-        }
-
-        private void PauseTimeTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox.Text.Equals("0"))
-            {
-                textBox.Text = null;
-                tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 minutes!");
-            }
-        }
         #endregion
     }
 }

@@ -9,6 +9,10 @@ using System.Timers;
 
 namespace BlinkReminder.DTOs
 {
+    /// <summary>
+    /// Intermediary between settings and the UI. TODO: Come up with a better name, 
+    /// as this is not really a DTO!
+    /// </summary>
     internal class SettingsDTO : INotifyPropertyChanged, IDisposable
     {
         // Logger

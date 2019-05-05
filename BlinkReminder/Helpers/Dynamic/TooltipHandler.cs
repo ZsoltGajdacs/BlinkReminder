@@ -6,7 +6,7 @@ namespace BlinkReminder.Helpers
     internal class TooltipHandler
     {
         private ToolTip toolTip;
-        private TextBox tBWithOpenTT; // This one will keep the TB with an open Tooltip
+        private Control uiControl; // This one will keep the TB with an open Tooltip
 
         internal TooltipHandler()
         {
@@ -16,19 +16,17 @@ namespace BlinkReminder.Helpers
         }
 
         /// <summary>
-        /// Shows a Tooltip with the given message on the given Textbox
+        /// Shows a Tooltip with the given message on the given Control
         /// </summary>
-        /// <param name="textBox"></param>
-        /// <param name="msg"></param>
-        internal void ShowTooltipOnTextBox(ref TextBox textBox, string msg)
+        internal void ShowTooltipOnTextBox(ref Control control, string msg)
         {
             // Get the reference address of the tooltip so the tooltip can be removed later
-            tBWithOpenTT = textBox;
+            uiControl = control;
 
             // Show tooltip
             Application.Current.Dispatcher.Invoke(() =>
             {
-                tBWithOpenTT.ToolTip = toolTip;
+                uiControl.ToolTip = toolTip;
                 toolTip.Content = msg;
                 toolTip.IsOpen = true;
             });
@@ -37,14 +35,12 @@ namespace BlinkReminder.Helpers
         /// <summary>
         /// Runs when the tooltip of one of the input controls is closed
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Tt_Closed(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 toolTip.IsOpen = false;
-                tBWithOpenTT.ToolTip = null;
+                uiControl.ToolTip = null;
             });
         }
     }

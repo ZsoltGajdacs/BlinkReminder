@@ -159,7 +159,7 @@ namespace BlinkReminder.Windows
             else
             {
                 SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
-                DisableTaskbarOption(ref LongBreakStartItem);
+                DisableTaskbarOption(LongBreakStartItem);
             }
         }
         
@@ -427,7 +427,7 @@ namespace BlinkReminder.Windows
                     {
                         TimerHandler.RestartTimer(ref longIntervalTimer, longInterval);
 
-                        EnableTaskbarOption(ref LongBreakStartItem);
+                        EnableTaskbarOption(LongBreakStartItem);
                         SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
                     }
                     // If disabled
@@ -435,7 +435,7 @@ namespace BlinkReminder.Windows
                     {
                         longIntervalTimer.Stop();
                         SetTaskbarTooltip(TOOLTIP_LONG_DISABLED);
-                        DisableTaskbarOption(ref LongBreakStartItem);
+                        DisableTaskbarOption(LongBreakStartItem);
                     }
 
                     TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
@@ -576,18 +576,24 @@ namespace BlinkReminder.Windows
         /// Disables the given taskbar MenuItem
         /// </summary>
         /// <param name="option"></param>
-        private void DisableTaskbarOption(ref MenuItem option)
+        private void DisableTaskbarOption(MenuItem option)
         {
-            option.IsEnabled = false;
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                option.IsEnabled = false;
+            }));
         }
 
         /// <summary>
         /// Enable the given taskbar MenuItem
         /// </summary>
         /// <param name="option"></param>
-        private void EnableTaskbarOption(ref MenuItem option)
+        private void EnableTaskbarOption(MenuItem option)
         {
-            option.IsEnabled = true;
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                option.IsEnabled = true;
+            }));
         }
 
         /// <summary>

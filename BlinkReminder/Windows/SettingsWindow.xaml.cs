@@ -140,14 +140,8 @@ namespace BlinkReminder.Windows
             {
                 string quoteMsg = "Quote already added";
 
-                if (quote.IsShort)
-                {
-                    tooltipHandler.ShowTooltipOnTextBox(ref ShortQuoteInput, quoteMsg);
-                }
-                else
-                {
-                    tooltipHandler.ShowTooltipOnTextBox(ref LongQuoteInput, quoteMsg);
-                }
+                Control control = quote.IsShort ? ShortQuoteInput : LongQuoteInput;
+                tooltipHandler.ShowTooltipOnTextBox(ref control, quoteMsg);
             }
         }
 
@@ -161,43 +155,6 @@ namespace BlinkReminder.Windows
             if (textBox.Text.Equals(QUOTE_INPUT_PLACEHOLDER) && e.Key != Key.Enter)
             {
                 textBox.Text = String.Empty;
-            }
-        }
-        #endregion
-
-        #region Input check of display/interval values
-        private void TimesTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !TextValidator.IsNumsOnly(e.Text);
-        }
-
-        private void TimesTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox.Text.Equals("0"))
-            {
-                textBox.Text = null;
-                tooltipHandler.ShowTooltipOnTextBox(ref textBox, "Can't have 0 seconds!");
-            }
-
-            SaveOnEnter(sender, e);
-        }
-
-        /// <summary>
-        /// Saves the textbox's value on Enter
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SaveOnEnter(object sender, KeyEventArgs e)
-        {
-            TimeSpanUpDown timeControl = sender as TimeSpanUpDown;
-            if (e.Key == Key.Enter)
-            {
-                BindingExpression valueBindingExpression = timeControl.GetBindingExpression(TimeSpanUpDown.ValueProperty);
-
-                if (valueBindingExpression == null) return;
-
-                valueBindingExpression.UpdateSource();
             }
         }
         #endregion

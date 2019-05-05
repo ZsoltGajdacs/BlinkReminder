@@ -32,9 +32,6 @@ namespace BlinkReminder.Settings
         private TimeSpan _longDisplayTime;
         private TimeSpan _longIntervalTime;
 
-        // Pause time keeper
-        private int? _pauseTime;
-
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
         private bool _isLongSkippable;
@@ -377,20 +374,6 @@ namespace BlinkReminder.Settings
             set
             {
                 _indefPauseEnabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public int? PauseTime
-        {
-            get
-            {
-                return _pauseTime;
-            }
-
-            set
-            {
-                _pauseTime = value;
                 NotifyPropertyChanged();
             }
         }
