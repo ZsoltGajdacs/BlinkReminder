@@ -40,12 +40,6 @@ namespace BlinkReminder.DTOs
         private string _LongDisplayTimeFormatted;
         private string _longIntervalTimeFormatted;
 
-        // TimeSpan refs from settings so I can work with them
-        private TimeSpan ShortDisplayTime { get; set; }
-        private TimeSpan ShortIntervalTime { get; set; }
-        private TimeSpan LongDisplayTime { get; set; }
-        private TimeSpan LongIntervalTime { get; set; }
-
         // Time control min/max holders
         public long ShortDisplayMin { get; set; }
         public long ShortDisplayMax { get; set; }
@@ -66,22 +60,20 @@ namespace BlinkReminder.DTOs
         {
             PropertyChanged += SettingsDto_PropertyChanged;
 
+            // Set up inactivity timer, so I know when it's time to write out
+            // values to settings
             UserInactivityTimer = new Timer(5000);
             UserInactivityTimer.AutoReset = false;
 
-            ShortDisplayTime = shortDisplayTime;
-            ShortIntervalTime = shortIntervalTime;
-            LongDisplayTime = longDisplayTime;
-            LongIntervalTime = longIntervalTime;
-
             // Manually set long and short interval helper texts if they are set to zero
-            if (ShortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
-            if (LongIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
+            if (shortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
+            if (longIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
 
-            ShortDisplayAmount = (long)ShortDisplayTime.TotalSeconds;
-            ShortIntervalAmount = (long)ShortIntervalTime.TotalSeconds;
-            LongDisplayAmount = (long)LongDisplayTime.TotalSeconds;
-            LongIntervalAmount = (long)LongIntervalTime.TotalSeconds;
+            // Set internal keepers from settings
+            ShortDisplayAmount = (long)shortDisplayTime.TotalSeconds;
+            ShortIntervalAmount = (long)shortIntervalTime.TotalSeconds;
+            LongDisplayAmount = (long)longDisplayTime.TotalSeconds;
+            LongIntervalAmount = (long)longIntervalTime.TotalSeconds;
 
             // Set min/max values to default safe
             ShortDisplayMin = 0;
@@ -250,11 +242,11 @@ namespace BlinkReminder.DTOs
                     {
                         ShortDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
                     }
-                    else if (ShortDisplayTime < TimeSpan.FromSeconds(60))
+                    else if (time < TimeSpan.FromSeconds(60))
                     {
                         ShortDisplayTimeFormatted = time.ToString(TOSECONDLONG);
                     }
-                    else if (ShortDisplayTime < TimeSpan.FromMinutes(10))
+                    else if (time < TimeSpan.FromMinutes(10))
                     {
                         ShortDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
                     }
