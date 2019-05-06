@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="15.6" version="15.7" Modules="simple" RootPath="." Language="en" Id="{AB47775A-73C7-4564-A43C-13627B48B2CE}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="15.6" version="15.9" Modules="simple" RootPath="." Language="en" Id="{AB47775A-73C7-4564-A43C-13627B48B2CE}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;FixupComponent"/>
   </COMPONENT>
@@ -9,25 +9,18 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_NLog.dll" Value="..\packages\NLog.4.5.11\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\packages\Newtonsoft.Json.12.0.1\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll" Value="..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll" Value="..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Value="..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.dll" Value="..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_NLog.dll" Value="..\packages\NLog.4.6.3\lib\net45"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\packages\Newtonsoft.Json.12.0.2\lib\net45"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.Toolkit.dll" Value="..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config" Value="BlinkReminder.exe.config"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="Hardcodet.Wpf.TaskbarNotification.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_NLog.dll" Value="NLog.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll" Value="Newtonsoft.Json.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll" Value="Xceed.Wpf.AvalonDock.Themes.Aero.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll" Value="Xceed.Wpf.AvalonDock.Themes.Metro.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Value="Xceed.Wpf.AvalonDock.Themes.VS2010.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.dll" Value="Xceed.Wpf.AvalonDock.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.Toolkit.dll" Value="Xceed.Wpf.Toolkit.dll"/>
     <ROW Property="AI_REQUIRED_DOTNET_DISPLAY" MultiBuildValue="DefaultBuild:4.7.2" ValueLocId="-"/>
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.7.2" ValueLocId="-"/>
+    <ROW Property="AI_RUN_AS_ADMIN" Value="0"/>
     <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPPRODUCTICON" Value="BlinkReminder_1.exe" Type="8"/>
@@ -35,10 +28,10 @@
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/ZsoltGajdacs/BlinkReminder/releases"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="Manufacturer" Value="ZsGWorks"/>
-    <ROW Property="ProductCode" Value="1033:{719EDE6B-2B1D-456A-95FB-EEA65C33C7F5} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{EC0CA6D5-A712-4519-B64D-C5BE818457F1} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlinkReminder"/>
-    <ROW Property="ProductVersion" Value="0.6.2" Type="32"/>
+    <ROW Property="ProductVersion" Value="0.7.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CED82C3D-3135-468B-84C3-73AF11ECFFDA}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -69,12 +62,8 @@
     <ROW File="BlinkReminder.exe" Component_="BlinkReminder_PrimaryOutput" FileName="BLINKR~1.EXE|[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_BlinkReminder.exe&gt;" SelfReg="false" NextFile="Hardcodet.Wpf.TaskbarNotification.dll" DigSign="true"/>
     <ROW File="BlinkReminder.exe.config" Component_="BlinkReminder_PrimaryOutput" FileName="BLINKR~2.CON|[|AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_BlinkReminder.exe.config&gt;" SelfReg="false" NextFile="Newtonsoft.Json.dll"/>
     <ROW File="Hardcodet.Wpf.TaskbarNotification.dll" Component_="BlinkReminder_References" FileName="HARDCO~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll&gt;" SelfReg="false" NextFile="BlinkReminder.exe.config"/>
-    <ROW File="NLog.dll" Component_="BlinkReminder_References" FileName="[|AI_PROPPATH_FILENAME_PERBUILD_NLog.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_NLog.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.AvalonDock.dll"/>
+    <ROW File="NLog.dll" Component_="BlinkReminder_References" FileName="[|AI_PROPPATH_FILENAME_PERBUILD_NLog.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_NLog.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.Toolkit.dll"/>
     <ROW File="Newtonsoft.Json.dll" Component_="BlinkReminder_References" FileName="NEWTON~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Newtonsoft.Json.dll&gt;" SelfReg="false" NextFile="NLog.dll"/>
-    <ROW File="Xceed.Wpf.AvalonDock.Themes.Aero.dll" Component_="BlinkReminder_References" FileName="XCEEDW~3.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.AvalonDock.Themes.Metro.dll"/>
-    <ROW File="Xceed.Wpf.AvalonDock.Themes.Metro.dll" Component_="BlinkReminder_References" FileName="XCEEDW~4.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.AvalonDock.Themes.VS2010.dll"/>
-    <ROW File="Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Component_="BlinkReminder_References" FileName="XCEEDW~5.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.Toolkit.dll"/>
-    <ROW File="Xceed.Wpf.AvalonDock.dll" Component_="BlinkReminder_References" FileName="XCEEDW~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.dll&gt;" SelfReg="false" NextFile="Xceed.Wpf.AvalonDock.Themes.Aero.dll"/>
     <ROW File="Xceed.Wpf.Toolkit.dll" Component_="BlinkReminder_References" FileName="XCEEDW~6.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.Toolkit.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Xceed.Wpf.Toolkit.dll&gt;" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
@@ -83,10 +72,6 @@
     <ROW Name="AI_APPPATH_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_NLog.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_NLog.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_NLog.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Xceed.Wpf.AvalonDock.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.AvalonDock.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Xceed.Wpf.Toolkit.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.Toolkit.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_Xceed.Wpf.Toolkit.dll]" Type="2" Content="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
@@ -211,10 +196,6 @@
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="PrimaryOutput" OutputFile="BlinkReminder.exe.config"/>
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Newtonsoft.Json.dll"/>
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="NLog.dll"/>
-    <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Xceed.Wpf.AvalonDock.dll"/>
-    <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Xceed.Wpf.AvalonDock.Themes.Aero.dll"/>
-    <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Xceed.Wpf.AvalonDock.Themes.Metro.dll"/>
-    <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Xceed.Wpf.AvalonDock.Themes.VS2010.dll"/>
     <ROW ProjectId="{e80dadb3-3681-4ef9-a00b-017fedee7eed}" ProjectName="BlinkReminder" OutputGroup="References" OutputFile="Xceed.Wpf.Toolkit.dll"/>
   </COMPONENT>
 </DOCUMENT>

@@ -11,19 +11,19 @@ Then: https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose
 Write! :)
 
 ## Current features
-* Displays a blocker window at regular intervals, keyboard disabled during that time
-  * Short breaks are default not skippable
-  * Long breaks can be skipped by default
-  * Both breaks can be disabled in settings, by giving them an interval time of zero
+* Displays either a full screen blocking window, where keyboard is mostly disabled
+* Or a small screen on the lower right corner, which doesn't disable anything
 * If a full screen application is running breaks are not shown
+* If the machine is locked it will be taken either as a small break or a long one, depending on the threshold set in settings
 * Can be paused for a certain time, or indefinitely (that is until resume is clicked, or the app restarted)
 * Custom quotes for the breaks, can be added in settings
 * Most things can be changed in settings (Saved in AppData/Roaming)
 * Can check for update or go to bug report site (Issue opener here on GitHub) in About
 
 ## Planned features
-* Statistics about usage
+* Notification before breaks
 * Long breaks lock the machine
 * Multi display support
 * Home / Office mode
+* Statistics about usage
 * Better looks

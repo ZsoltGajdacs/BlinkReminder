@@ -9,7 +9,7 @@
         xmlns:brControl="clr-namespace:BlinkReminder.Windows.Controls"
     x:Name="SettingsView" x:Class="BlinkReminder.Windows.SettingsWindow"
         mc:Ignorable="d"
-        Title="BlinkReminder settings" Height="410" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
+        Title="BlinkReminder settings" Height="450" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
     <Grid >
         <TabControl Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
@@ -35,7 +35,7 @@
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="5" /> <!--0 Padding Left-->
-                        <ColumnDefinition Width="165" /> <!--1 Description Labels-->
+                        <ColumnDefinition Width="180" /> <!--1 Description Labels-->
                         <ColumnDefinition Width="*" /> <!--2 Textboxes-->
                         <ColumnDefinition Width="100" /> <!--3 Minute Labels-->
                         <ColumnDefinition Width="5" /> <!--4 Right padding-->
@@ -70,7 +70,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5" />
                             <!--0 Padding Left-->
-                            <ColumnDefinition Width="165" />
+                            <ColumnDefinition Width="180" />
                             <!--1 Description Labels-->
                             <ColumnDefinition Width="*" />
                             <!--2 Textboxes-->
@@ -80,45 +80,50 @@
                             <!--4 Right padding-->
                         </Grid.ColumnDefinitions>
 
-                        <Label x:Name="shortIntervalLabel" Content="Interval of short breaks (s): " Grid.Column="1" Grid.Row="1"/>
+                        <Label x:Name="shortIntervalLabel" Content="Interval of short breaks: " Grid.Column="1" Grid.Row="1"/>
                         <!--<TextBox x:Name="shortIntervalText" Text="{Binding ShortIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="1" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="ShortIntervalText_SourceUpdated"/>-->
                         <xce:LongUpDown x:Name="shortIntervalControl" Grid.Column="2" Grid.Row="1" 
                                         Value="{Binding ShortIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         Minimum="{Binding ShortIntervalMin, Mode=OneWay}" Maximum="{Binding ShortIntervalMax, Mode=OneWay}"
-                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
+                                        ToolTip="Time between two short breaks, measured in seconds"/>
                         <Label x:Name="shortIntervalMinuteLabel" Content="{Binding ShortIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="1"/>
 
-                        <Label x:Name="shortDispLabel" Content="Length of short break (s): " Grid.Column="1" Grid.Row="3"/>
+                        <Label x:Name="shortDispLabel" Content="Length of short break: " Grid.Column="1" Grid.Row="3"/>
                         <!--<TextBox x:Name="shortDispText" Text="{Binding ShortDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="3" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
                         <xce:LongUpDown x:Name="shortDispControl" Grid.Column="2" Grid.Row="3" 
                                         Value="{Binding ShortDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         Minimum="{Binding ShortDisplayMin, Mode=OneWay}" Maximum="{Binding ShortDisplayMax, Mode=OneWay}"
-                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
+                                        ToolTip="Display time of a short break, measured in seconds"/>
                         <Label x:Name="shortDispMinuteLabel" Content="{Binding ShortDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="3"/>
 
-                        <Label x:Name="longIntervalLabel" Content="Interval of long breaks (s): " Grid.Column="1" Grid.Row="5"/>
+                        <Label x:Name="longIntervalLabel" Content="Interval of long breaks: " Grid.Column="1" Grid.Row="5"/>
                         <!--<TextBox x:Name="longIntervalText" Text="{Binding LongIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="5" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="LongIntervalText_SourceUpdated"/>-->
                         <xce:LongUpDown x:Name="longIntervalControl" Grid.Column="2" Grid.Row="5" 
                                         Value="{Binding LongIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         Minimum="{Binding LongIntervalMin, Mode=OneWay}" Maximum="{Binding LongIntervalMax, Mode=OneWay}" 
-                                        ClipValueToMinMax="True" Background="#FFF8F8F8" 
-                                        SourceUpdated="LongIntervalControl_SourceUpdated"/>
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
+                                        SourceUpdated="LongIntervalControl_SourceUpdated"
+                                        ToolTip="Time between two long breaks, measured in seconds"/>
                         <Label x:Name="longIntervalMinuteLabel" Content="{Binding LongIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="5"/>
 
-                        <Label x:Name="longDispLabel" Content="Length of long break (s): " Grid.Column="1" Grid.Row="7"/>
+                        <Label x:Name="longDispLabel" Content="Length of long break: " Grid.Column="1" Grid.Row="7"/>
                         <!--<TextBox x:Name="longDispText" Text="{Binding LongDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="7" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
                         <xce:LongUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" 
                                         Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         Minimum="{Binding LongDisplayMin, Mode=OneWay}" Maximum="{Binding LongDisplayMax, Mode=OneWay}"
-                                        ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
+                                        ToolTip="Display time of a long break, measured in seconds"/>
                         <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
 
-                        <Label x:Name="lockedLengthExtentLabel" 
-                               Content="Minutes above which a workstation lock is taken as long break: " 
+                        <Label x:Name="lockedLengthExtentLabel" Content="Lock time to long break: " 
                                Grid.Column="1" Grid.Row="9"/>
                         <xce:IntegerUpDown x:Name="lockedLengthExtentControl" Grid.Column="2" Grid.Row="9"
                                            Value="{Binding LockLengthTimeExtent, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                                           Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"/>
+                                           Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"
+                                           FormatString="0 min" 
+                                           ToolTip="The amount of time above which workstation lock is considered a long break"/>
 
                         <Separator Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="5"/>
                     </Grid>
@@ -158,7 +163,7 @@
                     <xce:DoubleUpDown x:Name="ScaleControl" Value="{Binding Scaling, Mode=TwoWay}"
                                       Grid.Column="2" Grid.Row="11" Width="50" HorizontalAlignment="Left"
                                       VerticalAlignment="Center" Background="#FFF8F8F8"
-                                      Increment=".1" Minimum="0.5" Maximum="1.5"/>
+                                      Increment=".1" Minimum="0.5" Maximum="1.5" FormatString="0.0x"/>
 
                     <Button x:Name="okButtonG" Content="OK" Width="80" 
                             Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="14" 
