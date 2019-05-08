@@ -105,6 +105,8 @@ namespace BlinkReminder.Settings
 
             AddDefaultQuotes();
             CreateStuff();
+
+            logger.Info("New settings created with defaults");
         }
 
         /// <summary>
@@ -167,6 +169,8 @@ namespace BlinkReminder.Settings
             }
 
             CreateStuff(false);
+
+            logger.Info("Settings successfully deserialzed");
         }
         #endregion
 

@@ -156,7 +156,7 @@ namespace BlinkReminder
             }
             else
             {
-                Distance = (Distance * 2) * scaling;
+                Distance = Distance * 2;
             }
         }
         #endregion

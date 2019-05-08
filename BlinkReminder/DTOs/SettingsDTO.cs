@@ -21,6 +21,9 @@ namespace BlinkReminder.DTOs
         // Text Consts
         private const string DISABLED_TEXT = "Timer disabled";
 
+        // Numeric Consts
+        private const double MILLISECONDS_TO_SAVE = 3000;
+
         // Consts for TimeSpan ToString
         private const string TOSECONDSHORT = @"s\s";
         private const string TOSECONDLONG = @"ss\s";
@@ -66,7 +69,7 @@ namespace BlinkReminder.DTOs
 
             // Set up inactivity timer, so I know when it's time to write out
             // values to settings
-            UserInactivityTimer = new Timer(3000);
+            UserInactivityTimer = new Timer(MILLISECONDS_TO_SAVE);
             UserInactivityTimer.AutoReset = false;
 
             // Manually set long and short interval helper texts if they are set to zero

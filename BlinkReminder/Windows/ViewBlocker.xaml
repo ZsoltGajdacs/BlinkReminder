@@ -8,7 +8,7 @@
         Title="Blocker" FontSize="16" ResizeMode="NoResize" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0.95" Background="Black" AllowsTransparency="True" ShowInTaskbar="False" >
     <Grid x:Name="blockerGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/> <!--0-->
+            <RowDefinition Height="10*"/> <!--0-->
             <RowDefinition Height="{Binding Distance, Mode=OneWay}"/> <!--1-->
             <RowDefinition Height="{Binding ControlHeight, Mode=OneWay}"/><!--2 quoteText-->
             <RowDefinition Height="*"/><!--3 padding-->
@@ -16,7 +16,7 @@
             <RowDefinition Height="*"/><!--5 padding-->
             <RowDefinition Height="{Binding ControlHeight, Mode=OneWay}"/> <!--6 skipbtn-->
             <RowDefinition Height="{Binding Distance, Mode=OneWay}"/> <!--7-->
-            <RowDefinition Height="*"/> <!--8-->
+            <RowDefinition Height="10*"/> <!--8-->
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>

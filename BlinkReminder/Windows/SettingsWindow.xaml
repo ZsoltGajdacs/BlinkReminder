@@ -157,10 +157,10 @@
                                 TrackBackgroundOnColor="LightGreen" CircleBackgroundColor="LightGray" 
                                 Grid.Column="1" Grid.Row="9"/>-->
 
-                    <Label x:Name="ScaleLabel" Content="Scale small window by: " 
+                    <Label x:Name="scaleLabel" Content="Scale small window by: " 
                            Grid.Column="1" Grid.Row="11" HorizontalAlignment="Right"/>
                     
-                    <xce:DoubleUpDown x:Name="ScaleControl" Value="{Binding Scaling, Mode=TwoWay}"
+                    <xce:DoubleUpDown x:Name="scaleControl" Value="{Binding Scaling, Mode=TwoWay}"
                                       Grid.Column="2" Grid.Row="11" Width="50" HorizontalAlignment="Left"
                                       VerticalAlignment="Center" Background="#FFF8F8F8"
                                       Increment=".1" Minimum="0.5" Maximum="1.5" FormatString="0.0x"/>
