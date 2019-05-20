@@ -28,6 +28,8 @@ namespace BlinkReminder.Helpers
 
                 formatter.Serialize(stream, o);
                 stream.Close();
+
+                logger.Info(o.ToString() + " serialization successful");
             }
             catch (Exception ex)
             {

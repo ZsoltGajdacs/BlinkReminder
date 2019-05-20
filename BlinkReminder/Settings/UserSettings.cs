@@ -592,5 +592,14 @@ namespace BlinkReminder.Settings
         }
 
         #endregion
+
+        #region Object methods
+
+        public override string ToString()
+        {
+            return "Blinkreminder settings object";
+        }
+
+        #endregion
     }
 }
