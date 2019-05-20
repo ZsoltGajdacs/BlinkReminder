@@ -1,5 +1,7 @@
 ﻿using BlinkReminder.DTOs;
 using BlinkReminder.Helpers;
+using NLog;
+using NLog.Layouts;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -71,6 +73,22 @@ namespace BlinkReminder.Settings
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
             string settingsPath = GetSettingsLocation();
+            string settingsDirPath = GetSettingsDirLocation();
+
+            // Configure logger
+            var config = new NLog.Config.LoggingConfiguration();
+            var logfile = new NLog.Targets.FileTarget("logfile")
+            {
+                FileName = settingsDirPath + "\\brlog.log",
+                Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}"),
+                ArchiveOldFileOnStartup = true,
+                MaxArchiveFiles = 5,
+                ArchiveNumbering = NLog.Targets.ArchiveNumberingMode.DateAndSequence
+            };
+            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+            NLog.LogManager.Configuration = config;
+
+            // Deserialize settings
             UserSettings settings = (UserSettings)Serializer.DeserializeObject(settingsPath);
             
             return settings ?? new UserSettings();
@@ -85,7 +103,7 @@ namespace BlinkReminder.Settings
         /// </summary>
         private UserSettings()
         {
-            SetSettingsDirLocation();
+            SettingsDirPath = GetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
 
             ShortDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.ShortDisplayTime);
@@ -114,7 +132,7 @@ namespace BlinkReminder.Settings
         /// </summary>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
-            SetSettingsDirLocation();
+            SettingsDirPath = GetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
 
             // ------------------- v0.5 settings -------------------
@@ -184,6 +202,15 @@ namespace BlinkReminder.Settings
         {
             string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             return userAppData + "\\BlinkReminder\\" + SETTINGS_FILENAME;
+        }
+
+        /// <summary>
+        /// Sets the application settings directory property
+        /// </summary>
+        private static string GetSettingsDirLocation()
+        {
+            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            return userAppData + "\\BlinkReminder";
         }
 
         #endregion
@@ -562,15 +589,6 @@ namespace BlinkReminder.Settings
 
                 return quoteList[quoteIndex].QuoteText;
             }
-        }
-
-        /// <summary>
-        /// Sets the application settings directory property
-        /// </summary>
-        private void SetSettingsDirLocation()
-        {
-            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            SettingsDirPath = userAppData + "\\BlinkReminder";
         }
 
         #endregion

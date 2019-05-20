@@ -94,18 +94,6 @@ namespace BlinkReminder.Windows
             settings = UserSettings.Instance;
             settings.PropertyChanged += UserSettings_PropertyChanged;
 
-            // Configure logger
-            var config = new NLog.Config.LoggingConfiguration();
-            var logfile = new NLog.Targets.FileTarget("logfile") {
-                FileName = settings.SettingsDirPath + "\\brlog.log",
-                Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}"),
-                ArchiveOldFileOnStartup = true,
-                MaxArchiveFiles = 5,
-                ArchiveNumbering = NLog.Targets.ArchiveNumberingMode.DateAndSequence
-            };
-            config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
-            NLog.LogManager.Configuration = config;
-
             // Initialize short, long, pause and minute timers
             shortIntervalTimer = new Timer();
             shortIntervalTimer.AutoReset = false;
