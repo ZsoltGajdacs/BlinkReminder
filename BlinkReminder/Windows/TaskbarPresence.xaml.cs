@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using NLog.Layouts;
 using NLog;
 using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace BlinkReminder.Windows
 {
@@ -116,6 +117,9 @@ namespace BlinkReminder.Windows
 
             // Subscribe to workstation lock event
             Microsoft.Win32.SystemEvents.SessionSwitch += new Microsoft.Win32.SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+
+            // Subscribe to sleep event
+            Microsoft.Win32.SystemEvents.PowerModeChanged += OnPowerChange;
 
             // Create stopwatch
             lockWatch = new Stopwatch();
@@ -346,12 +350,12 @@ namespace BlinkReminder.Windows
         /// Happens when the user lockes the workstation, determines the timers to restart based on 
         /// lock time
         /// </summary>
-        void SystemEvents_SessionSwitch(object sender, Microsoft.Win32.SessionSwitchEventArgs e)
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
             String longInterval = "LongIntervalTime";
             String shortInterval = "ShortIntervalTime";
 
-            if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionLock)
+            if (e.Reason == SessionSwitchReason.SessionLock)
             {
                 lockWatch.Restart();
 
@@ -360,7 +364,7 @@ namespace BlinkReminder.Windows
                     PauseTimers(false);
                 }
             }
-            else if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionUnlock)
+            else if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
                 lockWatch.Stop();
                 String clockName = String.Empty;
@@ -389,6 +393,22 @@ namespace BlinkReminder.Windows
                     }
                 }
             }
+        }
+
+        private void OnPowerChange(object s, PowerModeChangedEventArgs e)
+        {
+            // Not needed at this time.
+            // Here for possible future usage
+            /*
+            switch (e.Mode)
+            {
+                case PowerModes.Resume:
+                    break;
+
+                case PowerModes.Suspend:
+                    break;
+            }
+            */
         }
         #endregion
 
@@ -521,7 +541,6 @@ namespace BlinkReminder.Windows
 
         /// <summary>
         /// Starts the long and short timers from where they were stopped. 
-        /// Continues the stopwatches. 
         /// Handles the case of pause state settings changes
         /// </summary>
         private void ResumeTimers()
@@ -706,11 +725,10 @@ namespace BlinkReminder.Windows
                     minuteTimer.Dispose();
                     pauseTimer.Dispose();
                     taskbarIcon.Dispose();
-
-                    if (keyTrap != null)
-                    {
-                        keyTrap.Dispose();
-                    }
+                    keyTrap?.Dispose();
+                    
+                    // Important! See the manual for the event
+                    SystemEvents.PowerModeChanged -= OnPowerChange;
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.
