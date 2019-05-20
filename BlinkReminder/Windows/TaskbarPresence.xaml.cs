@@ -257,8 +257,9 @@ namespace BlinkReminder.Windows
 
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
-                ResetElaspedTimer();
+                // Order is important!
                 ResetFinishedTimeCounter();
+                ResetElaspedTimer();
             }
             else
             {
@@ -273,8 +274,9 @@ namespace BlinkReminder.Windows
 
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
-                ResetElaspedTimer();
+                // Order is important!
                 ResetFinishedTimeCounter();
+                ResetElaspedTimer();
             }
             else
             {
