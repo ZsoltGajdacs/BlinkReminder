@@ -212,20 +212,14 @@ namespace BlinkReminder.Windows
 
                 ActivateResumeBtn();
                 SetTaskbarTooltip(TimeToPauseEnd() + TOOLTIP_PAUSE_MSG);
-
-                List<Timer> timersToStop = new List<Timer>() {shortIntervalTimer, longIntervalTimer};
-                TimerHandler.StopTimers(ref timersToStop);
-
-                TimerHandler.RestartTimer(ref pauseTimer, pauseTotalLength.TotalMilliseconds);
+                PauseTimers(true);
             }
             // if this is going on till resume is pushed
             else if (pauseTotalLength.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
             {
                 ActivateResumeBtn();
                 SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
-
-                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer, minuteTimer };
-                TimerHandler.StopTimers(ref timersToStop);
+                PauseTimers(false);
             }
             // Or the user just canceled
             else
@@ -276,7 +270,7 @@ namespace BlinkReminder.Windows
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
                 ResetElaspedTimer();
-                ZeroFinishedTimeCounter();
+                ResetFinishedTimeCounter();
             }
             else
             {
@@ -292,7 +286,7 @@ namespace BlinkReminder.Windows
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
                 ResetElaspedTimer();
-                ZeroFinishedTimeCounter();
+                ResetFinishedTimeCounter();
             }
             else
             {
@@ -332,7 +326,7 @@ namespace BlinkReminder.Windows
             blockerWindow = null;
             keyTrap?.Dispose(); // Release keyboard trap
             ResetElaspedTimer(); // Restart the clock that started the window that closed
-            ZeroFinishedTimeCounter(); //Reset the related stopwatch too
+            ResetFinishedTimeCounter(); //Reset the related stopwatch too
             TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS); // Reset the minute timer, so the counts are more precise
 
             // Set back the taskbarWindow to be the main one
@@ -364,27 +358,45 @@ namespace BlinkReminder.Windows
         /// </summary>
         void SystemEvents_SessionSwitch(object sender, Microsoft.Win32.SessionSwitchEventArgs e)
         {
+            String longInterval = "LongIntervalTime";
+            String shortInterval = "ShortIntervalTime";
+
             if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionLock)
             {
                 lockWatch.Restart();
+
+                if (!isPaused)
+                {
+                    PauseTimers(false);
+                }
             }
             else if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionUnlock)
             {
                 lockWatch.Stop();
-                String clockName;
+                String clockName = String.Empty;
 
                 if (lockWatch.Elapsed > settings.LockLengthTimeExtent)
                 {
-                    clockName = "LongIntervalTime";
+                    clockName = longInterval;
                 }
                 else
                 {
-                    clockName = "ShortIntervalTime";
+                    clockName = shortInterval;
                 }
 
                 if (!isPaused)
                 {
+                    // Order is important here! First the timers are resumed from where they
+                    // were before. Only after then can the reset be done based on lock length
+                    ResumeTimers();
                     DecideWhichClockToReset(clockName);
+
+                    // If this is considered a long break then 
+                    // the short break timer should too be reset
+                    if (clockName.Equals(longInterval))
+                    {
+                        DecideWhichClockToReset(shortInterval);
+                    }
                 }
             }
         }
@@ -498,6 +510,26 @@ namespace BlinkReminder.Windows
         }
 
         /// <summary>
+        /// Pauses the short and long timers if timed pause.
+        /// Short, long and minute timers if not timed pause.
+        /// </summary>
+        private void PauseTimers(bool isTimed)
+        {
+            if (isTimed)
+            {
+                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer };
+                TimerHandler.StopTimers(ref timersToStop);
+
+                TimerHandler.RestartTimer(ref pauseTimer, pauseTotalLength.TotalMilliseconds);
+            }
+            else
+            {
+                List<Timer> timersToStop = new List<Timer>() { shortIntervalTimer, longIntervalTimer, minuteTimer };
+                TimerHandler.StopTimers(ref timersToStop);
+            }
+        }
+
+        /// <summary>
         /// Starts the long and short timers from where they were stopped. 
         /// Continues the stopwatches. 
         /// Handles the case of pause state settings changes
@@ -569,7 +601,7 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Zeros out the counter whose timer is done
         /// </summary>
-        private void ZeroFinishedTimeCounter()
+        private void ResetFinishedTimeCounter()
         {
             if (isShortIntervalTimerDone)
             {
