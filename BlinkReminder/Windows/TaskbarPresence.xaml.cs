@@ -155,7 +155,7 @@ namespace BlinkReminder.Windows
 
             if (longTime > 0)
             {
-                SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
+                SetTaskbarTooltip(Math.Round(settings.LongIntervalTime.TotalMinutes, 1) + TOOLTIP_LONG_MSG);
             }
             else
             {
@@ -363,6 +363,8 @@ namespace BlinkReminder.Windows
                 {
                     PauseTimers(false);
                 }
+
+                logger.Debug("Machine locked");
             }
             else if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
@@ -392,6 +394,8 @@ namespace BlinkReminder.Windows
                         DecideWhichClockToReset(shortInterval);
                     }
                 }
+
+                logger.Debug("Machine unlocked, " + clockName + " reset");
             }
         }
 
@@ -497,7 +501,7 @@ namespace BlinkReminder.Windows
                         TimerHandler.RestartTimer(ref longIntervalTimer, longInterval);
 
                         EnableTaskbarOption(LongBreakStartItem);
-                        SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
+                        SetTaskbarTooltip(Math.Round(settings.LongIntervalTime.TotalMinutes, 1) + TOOLTIP_LONG_MSG);
                     }
                     // If disabled
                     else
@@ -625,13 +629,12 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Gives back the remaining minutes till the next long break
         /// </summary>
-        /// <returns></returns>
-        private int TimeToNextLongBreak()
+        private double TimeToNextLongBreak()
         {
             TimeSpan totalTime = settings.LongIntervalTime;
             TimeSpan remainingTime = totalTime - longBreakLengthSoFar;
 
-            return (int)remainingTime.TotalMinutes;
+            return Math.Round(remainingTime.TotalMinutes, 1);
         }
 
         /// <summary>

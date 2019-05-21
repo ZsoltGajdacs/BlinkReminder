@@ -106,10 +106,10 @@ namespace BlinkReminder.Settings
             SettingsDirPath = GetSettingsDirLocation();
             SettingsFilePath = GetSettingsLocation();
 
-            ShortDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.ShortDisplayTime);
-            ShortIntervalTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.ShortIntervalTime);
-            LongDisplayTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongDisplayTime);
-            LongIntervalTime = TimeSpan.FromMilliseconds((double)CycleTimesEnum.LongIntervalTime);
+            ShortDisplayTime = TimeSpan.FromSeconds((double)CycleTimesEnum.ShortDisplayTime);
+            ShortIntervalTime = TimeSpan.FromSeconds((double)CycleTimesEnum.ShortIntervalTime);
+            LongDisplayTime = TimeSpan.FromSeconds((double)CycleTimesEnum.LongDisplayTime);
+            LongIntervalTime = TimeSpan.FromSeconds((double)CycleTimesEnum.LongIntervalTime);
 
             LockLengthTimeExtent = TimeSpan.FromMinutes(1);
 
