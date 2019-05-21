@@ -107,10 +107,10 @@
 
                         <Label x:Name="longDispLabel" Content="Length of long break: " Grid.Column="1" Grid.Row="7"/>
                         <!--<TextBox x:Name="longDispText" Text="{Binding LongDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="7" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
-                        <xce:LongUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" 
+                        <xce:DoubleUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" 
                                         Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
-                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
-                                        ToolTip="Display time of a long break, measured in seconds"/>
+                                        ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
+                                        ToolTip="Display time of a long break, measured in minutes" Increment="0.1"/>
                         <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
 
                         <Label x:Name="lockedLengthExtentLabel" Content="Lock time to long break: " 

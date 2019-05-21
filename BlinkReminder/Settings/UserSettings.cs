@@ -523,9 +523,9 @@ namespace BlinkReminder.Settings
         private void UserInactivityTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             ShortDisplayTime = TimeSpan.FromSeconds(SettingsDTO.ShortDisplayAmount);
-            ShortIntervalTime = TimeSpan.FromSeconds(SettingsDTO.ShortIntervalAmount);
-            LongDisplayTime = TimeSpan.FromSeconds(SettingsDTO.LongDisplayAmount);
-            LongIntervalTime = TimeSpan.FromSeconds(SettingsDTO.LongIntervalAmount);
+            ShortIntervalTime = TimeSpan.FromMinutes(SettingsDTO.ShortIntervalAmount);
+            LongDisplayTime = TimeSpan.FromMinutes(SettingsDTO.LongDisplayAmount);
+            LongIntervalTime = TimeSpan.FromMinutes(SettingsDTO.LongIntervalAmount);
             LockLengthTimeExtent = TimeSpan.FromMinutes(SettingsDTO.LockLengthTimeExtent);
         }
 

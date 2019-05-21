@@ -33,9 +33,9 @@ namespace BlinkReminder.DTOs
 
         // Second keepers for controls
         private long _shortDisplayAmount;
-        private long _shortIntervalAmount;
-        private long _longDisplayAmount;
-        private long _longIntervalAmount;
+        private double _shortIntervalAmount;
+        private double _longDisplayAmount;
+        private double _longIntervalAmount;
 
         // For lock length decision if it's short or long
         private int _lockLengthTimeExtent;
@@ -78,11 +78,12 @@ namespace BlinkReminder.DTOs
 
             // Set internal keepers from settings
             ShortDisplayAmount = (long)shortDisplayTime.TotalSeconds;
-            ShortIntervalAmount = (long)shortIntervalTime.TotalSeconds;
-            LongDisplayAmount = (long)longDisplayTime.TotalSeconds;
-            LongIntervalAmount = (long)longIntervalTime.TotalSeconds;
+            ShortIntervalAmount = shortIntervalTime.TotalMinutes;
+            LongDisplayAmount = longDisplayTime.TotalMinutes;
+            LongIntervalAmount = longIntervalTime.TotalMinutes;
 
             // Set min/max values to default safe
+            // NOT USED RIGHT NOW
             ShortDisplayMin = 0;
             ShortIntervalMin = 0;
             LongDisplayMin = 0;
@@ -192,7 +193,7 @@ namespace BlinkReminder.DTOs
             }
         }
 
-        public long ShortIntervalAmount
+        public double ShortIntervalAmount
         {
             get
             {
@@ -206,7 +207,7 @@ namespace BlinkReminder.DTOs
             }
         }
 
-        public long LongDisplayAmount
+        public double LongDisplayAmount
         {
             get
             {
@@ -220,7 +221,7 @@ namespace BlinkReminder.DTOs
             }
         }
 
-        public long LongIntervalAmount
+        public double LongIntervalAmount
         {
             get
             {
@@ -290,7 +291,7 @@ namespace BlinkReminder.DTOs
 
                 case ("ShortIntervalAmount"):
 
-                    time = TimeSpan.FromSeconds(ShortIntervalAmount);
+                    time = TimeSpan.FromMinutes(ShortIntervalAmount);
                     if (time == TimeSpan.Zero)
                     {
                         ShortIntervalTimeFormatted = DISABLED_TEXT;
@@ -312,7 +313,7 @@ namespace BlinkReminder.DTOs
 
                 case ("LongDisplayAmount"):
 
-                    time = TimeSpan.FromSeconds(LongDisplayAmount);
+                    time = TimeSpan.FromMinutes(LongDisplayAmount);
                     if (time < TimeSpan.FromSeconds(10))
                     {
                         LongDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
@@ -334,7 +335,7 @@ namespace BlinkReminder.DTOs
 
                 case ("LongIntervalAmount"):
 
-                    time = TimeSpan.FromSeconds(LongIntervalAmount);
+                    time = TimeSpan.FromMinutes(LongIntervalAmount);
                     if (time == TimeSpan.Zero)
                     {
                         LongIntervalTimeFormatted = DISABLED_TEXT;
@@ -371,7 +372,7 @@ namespace BlinkReminder.DTOs
                     break;
 
                 case ("ShortIntervalAmount"):
-                    LongIntervalMin = ShortIntervalAmount + 1;
+                    LongIntervalMin = (long)Math.Round(ShortIntervalAmount + 1, 1);
                     break;
 
                 case ("LongDisplayAmount"):
@@ -379,7 +380,7 @@ namespace BlinkReminder.DTOs
                     break;
 
                 case ("LongIntervalAmount"):
-                    ShortIntervalMax = LongIntervalAmount - 1;
+                    ShortIntervalMax = (long)Math.Round(LongIntervalAmount - 1, 1);
                     break;
 
                 default:
