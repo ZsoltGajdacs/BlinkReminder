@@ -165,6 +165,7 @@
     <Compile Include="Helpers\Static\FullscreenDetect.cs" />
     <Compile Include="Helpers\Dynamic\Keyboard.cs" />
     <Compile Include="Helpers\Dynamic\RandIntMem.cs" />
+    <Compile Include="Helpers\Static\Locker.cs" />
     <Compile Include="Helpers\Static\ScreenSizeInfo.cs" />
     <Compile Include="Helpers\Static\Serializer.cs" />
     <Compile Include="Helpers\Static\TextValidator.cs" />

@@ -26,12 +26,14 @@ namespace BlinkReminder
         private Timer timeOfBlock; // Timer to control the window's lifetime
         private CountdownTimer countdownTimer; // Timer to display remaining time
 
+        private Timer timeToLock; // Timer to lock the machine sometime after the block starts
+
         // Window size properties
         public double ControlHeight { get; set; }
         public double BtnWidth { get; set; }
         public double Distance { get; set; }
 
-        internal ViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, string message)
+        internal ViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
         {
             InitializeComponent();
 
@@ -41,6 +43,7 @@ namespace BlinkReminder
             SetTimer(interval);
             SetBinding();
             StartViewTimer(interval);
+            StartLockTimer(isLongBreakLocksScreen, isLongBreak, 5000);
             SetSkippable(isSkippable);
             SetMessage(message);
             PrepareWindow();
@@ -159,6 +162,20 @@ namespace BlinkReminder
                 Distance = Distance * 2;
             }
         }
+        
+        /// <summary>
+        /// Starts the timer responsible for locking the machine when the given time is done
+        /// </summary>
+        private void StartLockTimer(bool isLongBreakLocksScreen, bool isLongBreak, double millisecondsToLock)
+        {
+            if (isLongBreakLocksScreen && isLongBreak)
+            {
+                timeToLock = new Timer(millisecondsToLock);
+                timeToLock.AutoReset = false;
+                timeToLock.Elapsed += TimeToLock_Elapsed;
+                timeToLock.Start();
+            }
+        }
         #endregion
 
         #region Event helpers
@@ -200,8 +217,16 @@ namespace BlinkReminder
             CloseBlockWindow();
         }
 
+        /// <summary>
+        /// Called when the timer to control when to lock the machine finishes
+        /// </summary>
+        private void TimeToLock_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Locker.LockWorkStation();
+        }
         #endregion
 
+        #region Helpers
         /// <summary>
         /// Measures the given string length for the given textblock, whith the given scaling
         /// </summary>
@@ -219,6 +244,8 @@ namespace BlinkReminder
 
             return new System.Drawing.Size((int)formattedText.Width, (int)formattedText.Height);
         }
+
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

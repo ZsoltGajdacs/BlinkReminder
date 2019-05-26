@@ -4,11 +4,9 @@ using NLog;
 using NLog.Layouts;
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Timers;
 
 namespace BlinkReminder.Settings
@@ -49,6 +47,9 @@ namespace BlinkReminder.Settings
 
         // For setting full screen vs small break screen
         private bool _isFullscreenBreak;
+
+        // To know if the user wants the computer to be locked in long break
+        private bool _isLongBreakLocksScreen;
 
         // User scaling for small screen break
         private double _scaling;
@@ -184,6 +185,17 @@ namespace BlinkReminder.Settings
                 IsFullscreenBreak = true;
 
                 Scaling = 1;
+            }
+
+            //--------------------- v0.8 settings --------------------
+            try
+            {
+                IsLongBreakLocksScreen = (bool)info.GetValue("ilbls", typeof(bool));
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, "Getting IsLongBreakLocksScreen failed");
+                IsLongBreakLocksScreen = false;
             }
 
             CreateStuff(false);
@@ -451,6 +463,19 @@ namespace BlinkReminder.Settings
                 }
             }
         }
+        
+        public bool IsLongBreakLocksScreen
+        {
+            get
+            {
+                return _isLongBreakLocksScreen;
+            }
+
+            set
+            {
+                _isLongBreakLocksScreen = value;
+            }
+        }
         #endregion
 
         #region Others
@@ -543,6 +568,7 @@ namespace BlinkReminder.Settings
 
             info.AddValue("iss", _isShortSkippable, typeof(bool));
             info.AddValue("ils", _isLongSkippable, typeof(bool));
+            info.AddValue("ilbls", _isLongBreakLocksScreen, typeof(bool));
             info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
             info.AddValue("ipe", _indefPauseEnabled, typeof(bool));
             info.AddValue("ifb", _isFullscreenBreak, typeof(bool));

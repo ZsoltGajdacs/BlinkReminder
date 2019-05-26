@@ -267,8 +267,10 @@ namespace BlinkReminder.Windows
             }
             else
             {
+                bool isLongBreak = true; // Needed for the decesion to lock the machine
                 ShowViewBlocker(settings.LongDisplayTime.TotalMilliseconds, settings.Scaling,
-                    settings.IsLongSkippable, settings.IsFullscreenBreak, settings.GetLongQuote());
+                    settings.IsLongSkippable, settings.IsFullscreenBreak, 
+                    settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
             }
         }
 
@@ -284,8 +286,10 @@ namespace BlinkReminder.Windows
             }
             else
             {
+                bool isLongBreak = false; // Needed for the decesion to lock the machine
                 ShowViewBlocker(settings.ShortDisplayTime.TotalMilliseconds, settings.Scaling,
-                    settings.IsShortSkippable, settings.IsFullscreenBreak, settings.GetShortQuote());
+                    settings.IsShortSkippable, settings.IsFullscreenBreak,
+                    settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
             }
         }
 
@@ -430,7 +434,7 @@ namespace BlinkReminder.Windows
 
         #region Window showers
 
-        private void ShowViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, string message)
+        private void ShowViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -440,7 +444,7 @@ namespace BlinkReminder.Windows
                     {
                         keyTrap = new KeyboardHook(); // Intercept every key
                     }
-                    blockerWindow = new ViewBlocker(interval, scaling, isSkippable, isFullscreen, message);
+                    blockerWindow = new ViewBlocker(interval, scaling, isSkippable, isFullscreen, isLongBreakLocksScreen, isLongBreak, message);
                     blockerWindow.Closed += BlockerWindow_Closed;
                     blockerWindow.Show();
                 
@@ -471,7 +475,6 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// If the user changes time amounts in settings this method is called to set in logic
         /// </summary>
-        /// <param name="changedProperty"></param>
         private void DecideWhichClockToReset(string changedProperty)
         {
             switch (changedProperty)
@@ -641,11 +644,11 @@ namespace BlinkReminder.Windows
         /// Gives back the amount of minutes left until the end of the current pause state
         /// </summary>
         /// <returns></returns>
-        private int TimeToPauseEnd()
+        private double TimeToPauseEnd()
         {
             TimeSpan remainingTime = pauseTotalLength - pauseLengthSoFar;
 
-            return (int)remainingTime.TotalMinutes;
+            return Math.Round(remainingTime.TotalMinutes, 1);
         }
 
         #endregion
@@ -654,7 +657,6 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Sets the taskbar tooltip to the given text
         /// </summary>
-        /// <param name="text"></param>
         private void SetTaskbarTooltip(string text)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
