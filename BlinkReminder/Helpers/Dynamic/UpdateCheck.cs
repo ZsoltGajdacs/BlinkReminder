@@ -19,17 +19,18 @@ namespace BlinkReminder.Helpers
         private static readonly string NO_UPDATE = "No new version";
 
         private readonly int[] currentVersionArr;
-        public int[] CurrentVersionArr => currentVersionArr;
+        internal readonly string versionText;
 
         internal UpdateCheck(int[] versionNums)
         {
             currentVersionArr = versionNums;
+            versionText = versionNums[0] + "." + versionNums[1] + "." + versionNums[2];
         }
 
-        internal async Task<string> GetUpdateUrl(string version)
+        internal async Task<string> GetUpdateUrl()
         {
             HttpClient httpClient = new HttpClient();
-            ProductInfoHeaderValue header = new ProductInfoHeaderValue(PRODUCT_NAME, version);
+            ProductInfoHeaderValue header = new ProductInfoHeaderValue(PRODUCT_NAME, versionText);
             httpClient.DefaultRequestHeaders.UserAgent.Add(header);
             string content = String.Empty;
 
@@ -99,17 +100,17 @@ namespace BlinkReminder.Helpers
             string[] gitVerArr = tag.Substring(1).Split('.');
 
             // Major version comparison
-            if (int.Parse (gitVerArr[0]) > CurrentVersionArr[0])
+            if (int.Parse (gitVerArr[0]) > currentVersionArr[0])
             {
                 return true;
             }
             // Minor version comparison
-            else if (int.Parse(gitVerArr[1]) > CurrentVersionArr[1])
+            else if (int.Parse(gitVerArr[1]) > currentVersionArr[1])
             {
                 return true;
             }
             // Revision version comparison
-            else if (int.Parse(gitVerArr[2]) > CurrentVersionArr[2])
+            else if (int.Parse(gitVerArr[2]) > currentVersionArr[2])
             {
                 return true;
             }

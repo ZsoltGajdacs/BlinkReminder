@@ -118,8 +118,8 @@ namespace BlinkReminder.Windows
             // Subscribe to workstation lock event
             Microsoft.Win32.SystemEvents.SessionSwitch += new Microsoft.Win32.SessionSwitchEventHandler(SystemEvents_SessionSwitch);
 
-            // Subscribe to sleep event
-            Microsoft.Win32.SystemEvents.PowerModeChanged += OnPowerChange;
+            // Subscribe to sleep event - Unsubscribe in Dispose!
+            // Microsoft.Win32.SystemEvents.PowerModeChanged += OnPowerChange;
 
             // Create stopwatch
             lockWatch = new Stopwatch();
@@ -167,9 +167,14 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Checks for program update and notifies the user if found
         /// </summary>
-        private void CheckForUpdate()
+        private async void CheckForUpdate()
         {
-            // Will check for updates here and notify the user if found any!
+            string result = await updater.GetUpdateUrl();
+
+            if (result.StartsWith("https"))
+            {
+                ShowAbout(result);
+            }
         }
         #endregion
 
@@ -233,16 +238,7 @@ namespace BlinkReminder.Windows
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            if (aboutWindow == null)
-            {
-                aboutWindow = new AboutWindow(ref updater);
-                aboutWindow.Closed += AboutWindow_Closed;
-                aboutWindow.Show();
-            }
-            else
-            {
-                aboutWindow.Activate();
-            }
+            ShowAbout();
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
@@ -468,6 +464,19 @@ namespace BlinkReminder.Windows
             }));
         }
 
+        private void ShowAbout(string downloadUri = "")
+        {
+            if (aboutWindow == null)
+            {
+                aboutWindow = new AboutWindow(ref updater, downloadUri);
+                aboutWindow.Closed += AboutWindow_Closed;
+                aboutWindow.Show();
+            }
+            else
+            {
+                aboutWindow.Activate();
+            }
+        }
         #endregion
 
         #region Timer methods
@@ -733,7 +742,7 @@ namespace BlinkReminder.Windows
                     keyTrap?.Dispose();
                     
                     // Important! See the manual for the event
-                    SystemEvents.PowerModeChanged -= OnPowerChange;
+                    // SystemEvents.PowerModeChanged -= OnPowerChange;
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.

@@ -30,23 +30,31 @@ namespace BlinkReminder.Windows
 
         private UpdateCheck update;
 
-        internal AboutWindow(ref UpdateCheck updater)
+        internal AboutWindow(ref UpdateCheck updater, string downloadUri)
         {
             InitializeComponent();
 
             this.update = updater;
-            int[] versionNums= update.CurrentVersionArr;
-            string versionText = versionNums[0] + "." + versionNums[1] + "." + versionNums[2];
 
-            SetTexts(ref versionText);
-            CheckUpdate(versionText);
+            SetTexts(update.versionText);
+            if (downloadUri.Equals(""))
+            {
+                SetUpdateLabel(VERSION_CHECK_INIT_LABEL);
+                CheckUpdate();
+            }
+            else
+            {
+                SetUpdateLabel(downloadUri);
+            }
         }
 
-        private void SetTexts(ref string versionText)
+        /// <summary>
+        /// Sets the constant texts - those known right at window start
+        /// </summary>
+        private void SetTexts(string versionText)
         {
             authorLabel.Content = AUTHOR_LABEL;
             versionLabel.Content = VERSION_LABEL + " " + versionText;
-            updateLabel.Content = VERSION_CHECK_INIT_LABEL;
 
             Run linkText = new Run(ISSUE_LINK_TEXT);
             Hyperlink issueLink = new Hyperlink(linkText);
@@ -55,23 +63,30 @@ namespace BlinkReminder.Windows
             issueLabel.Content = issueLink;
         }
 
-        private async void CheckUpdate(string versionText)
+        /// <summary>
+        /// Sets the label as a string or as a link based on the string supplied
+        /// </summary>
+        private void SetUpdateLabel(string result)
         {
-            string result = await update.GetUpdateUrl(versionText);
-
             if (result.StartsWith("https"))
             {
                 Run linkName = new Run(DOWNLOAD_LINK_TEXT);
                 Hyperlink downloadLink = new Hyperlink(linkName);
                 downloadLink.RequestNavigate += HyperLink_RequestNavigate;
                 downloadLink.NavigateUri = new Uri(result);
-                
+
                 updateLabel.Content = downloadLink;
             }
             else
             {
                 updateLabel.Content = result;
             }
+        }
+
+        private async void CheckUpdate()
+        {
+            string result = await update.GetUpdateUrl();
+            SetUpdateLabel(result);
         }
 
         private void OkBtn_Click(object sender, RoutedEventArgs e)
