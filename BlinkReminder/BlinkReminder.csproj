@@ -178,6 +178,7 @@
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Controls\ClickableLabel.cs" />
     <Compile Include="Windows\Controls\MinuteTimeSpanUpDown.cs" />
     <Compile Include="Windows\PauseWindow.xaml.cs">
       <DependentUpon>PauseWindow.xaml</DependentUpon>

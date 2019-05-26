@@ -79,6 +79,9 @@ namespace BlinkReminder.Windows
             Close();
         }
 
+        /// <summary>
+        /// Opens the browser to download the newest release
+        /// </summary>
         private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(e.Uri.ToString());

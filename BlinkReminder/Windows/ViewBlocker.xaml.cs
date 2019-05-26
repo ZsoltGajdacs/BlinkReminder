@@ -257,6 +257,7 @@ namespace BlinkReminder
                 if (disposing)
                 {
                     timeOfBlock.Dispose();
+                    timeToLock.Dispose();
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.
