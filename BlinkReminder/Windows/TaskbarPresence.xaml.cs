@@ -11,6 +11,7 @@ using NLog.Layouts;
 using NLog;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using BlinkReminder.Windows.Controls;
 
 namespace BlinkReminder.Windows
 {
@@ -180,6 +181,16 @@ namespace BlinkReminder.Windows
 
         #region Click Events
 
+        /// <summary>
+        /// Used for dev purposes only
+        /// </summary>
+        private void Test_Click(object sender, RoutedEventArgs e)
+        {
+            BreakNotificationPopup breakPopup = new BreakNotificationPopup("Ezt nézd meg");
+            taskbarIcon.ShowCustomBalloon(breakPopup, 
+                System.Windows.Controls.Primitives.PopupAnimation.Fade, 10000);
+        }
+
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
             LongCycleTimer_Elapsed(sender, e);
@@ -263,8 +274,8 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                bool isLongBreak = true; // Needed for the decesion to lock the machine
-                ShowViewBlocker(settings.LongDisplayTime.TotalMilliseconds, settings.Scaling,
+                bool isLongBreak = true; // Needed for the decision to lock the machine
+                ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
                     settings.IsLongSkippable, settings.IsFullscreenBreak, 
                     settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
             }
@@ -283,7 +294,7 @@ namespace BlinkReminder.Windows
             else
             {
                 bool isLongBreak = false; // Needed for the decesion to lock the machine
-                ShowViewBlocker(settings.ShortDisplayTime.TotalMilliseconds, settings.Scaling,
+                ShowViewBlocker(settings.ShortDisplayTime, settings.Scaling,
                     settings.IsShortSkippable, settings.IsFullscreenBreak,
                     settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
             }
@@ -430,7 +441,7 @@ namespace BlinkReminder.Windows
 
         #region Window showers
 
-        private void ShowViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
+        private void ShowViewBlocker(TimeSpan interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -767,6 +778,6 @@ namespace BlinkReminder.Windows
             // GC.SuppressFinalize(this);
         }
         #endregion
-        
+
     }
 }

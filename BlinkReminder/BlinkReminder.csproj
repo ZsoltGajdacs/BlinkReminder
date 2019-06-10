@@ -141,6 +141,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\Controls\BreakNotificationPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\PauseWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -177,6 +181,9 @@
     <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\BreakNotificationPopup.xaml.cs">
+      <DependentUpon>BreakNotificationPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Controls\ClickableLabel.cs" />
     <Compile Include="Windows\Controls\MinuteTimeSpanUpDown.cs" />

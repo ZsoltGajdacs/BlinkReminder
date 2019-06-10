@@ -33,7 +33,7 @@ namespace BlinkReminder
         public double BtnWidth { get; set; }
         public double Distance { get; set; }
 
-        internal ViewBlocker(double interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
+        internal ViewBlocker(TimeSpan interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
         {
             InitializeComponent();
 
@@ -75,9 +75,9 @@ namespace BlinkReminder
         /// <summary>
         /// Sets the internal timer of the window
         /// </summary>
-        private void SetTimer(double duration)
+        private void SetTimer(TimeSpan duration)
         {
-            countdownTimer = new CountdownTimer((long)duration);
+            countdownTimer = new CountdownTimer(duration);
         }
 
         /// <summary>
@@ -107,9 +107,9 @@ namespace BlinkReminder
         /// Starts the timer that control the duration of the window's appearance
         /// </summary>
         /// <param name="interval"></param>
-        private void StartViewTimer(double interval)
+        private void StartViewTimer(TimeSpan interval)
         {
-            timeOfBlock = new Timer(interval)
+            timeOfBlock = new Timer(interval.TotalMilliseconds)
             {
                 AutoReset = false
             };

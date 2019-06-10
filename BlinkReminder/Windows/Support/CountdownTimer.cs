@@ -17,13 +17,13 @@ namespace BlinkReminder.Windows.Support
         private DispatcherTimer timer; // Timer to display remaining time
         private TimeSpan duration; // Remaining time for display timer
 
-        private String _timeToDisplay; // Variable for data binding
+        private string _timeToDisplay; // Variable for data binding
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public CountdownTimer(long duration)
+        public CountdownTimer(TimeSpan duration)
         {
-            this.duration = TimeSpan.FromMilliseconds(duration);
+            this.duration = duration;
             UpdateDurationAndDisplay();
             SetAndStartTimer();
         }
@@ -42,7 +42,7 @@ namespace BlinkReminder.Windows.Support
         /// <summary>
         /// Access to remaing to window close, preformatted hh:mm:ss
         /// </summary>
-        public String TimeToDisplay
+        public string TimeToDisplay
         {
             get
             {
@@ -101,7 +101,7 @@ namespace BlinkReminder.Windows.Support
         {
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(Timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Interval = TimeSpan.FromSeconds(1);
 
             timer.Start();
         }
@@ -113,8 +113,6 @@ namespace BlinkReminder.Windows.Support
         /// <summary>
         /// Called when the dispatcherTimer ticks (every second).
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Timer_Tick(object sender, EventArgs e)
         {
             UpdateDurationAndDisplay();
