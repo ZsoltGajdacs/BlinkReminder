@@ -1,4 +1,6 @@
-﻿using BlinkReminder.Windows.Support;
+﻿using BlinkReminder.Settings;
+using BlinkReminder.Windows.Support;
+using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,6 +27,9 @@ namespace BlinkReminder.Windows.Controls
     {
         private string _textToShow = String.Empty;
         private CountdownTimer countdownTimer;
+        private UserSettings settings;
+
+        public bool ShouldStartBreak { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -32,10 +37,12 @@ namespace BlinkReminder.Windows.Controls
         {
             InitializeComponent();
 
-            countdownTimer = new CountdownTimer(TimeSpan.FromSeconds(10));
+            settings = UserSettings.Instance;
+            countdownTimer = new CountdownTimer(settings.PreNotificationTime);
             timerBlock.DataContext = countdownTimer;
             controlGrid.DataContext = this;
             TextToShow = textToShow;
+            SetBtnLabel();
         }
 
         #region Property changed handler
@@ -63,5 +70,38 @@ namespace BlinkReminder.Windows.Controls
             }
         }
         #endregion
+
+        /// <summary>
+        /// Set's the confiramtion button's label according to the chosen mode
+        /// </summary>
+        private void SetBtnLabel()
+        {
+            string btnLabel = String.Empty;
+            if (settings.IsPermissiveNotification)
+            {
+                btnLabel = "Let's have a break!";
+            }
+            else
+            {
+                btnLabel = "No break yet, I'm not ready!";
+            }
+
+            confirmBtn.Content = btnLabel;
+        }
+
+        private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (settings.IsPermissiveNotification)
+            {
+                ShouldStartBreak = true;
+            }
+            else
+            {
+                ShouldStartBreak = false;
+            }
+
+            TaskbarIcon taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
+            taskbarIcon.CloseBalloon();
+        }
     }
 }

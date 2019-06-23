@@ -12,6 +12,7 @@ using NLog;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using BlinkReminder.Windows.Controls;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace BlinkReminder.Windows
 {
@@ -34,6 +35,8 @@ namespace BlinkReminder.Windows
         private const string TOOLTIP_LONG_DISABLED = "Long breaks are disabled";
         private const string TOOLTIP_SHORT_DISABLED = "Short breaks are disabled";
         private const int HALF_MINUTE_IN_MS = 30000;
+
+        private const string PRE_BREAK_POPUP_TEXT = "Time for a long break!";
 
         // Keyboard input catcher
         private KeyboardHook keyTrap;
@@ -62,7 +65,10 @@ namespace BlinkReminder.Windows
         private TimeSpan pauseTotalLength;
 
         // Stopwatch to know how long is the machine locked
-        Stopwatch lockWatch;
+        private Stopwatch lockWatch;
+
+        // Pre-break popup
+        private BreakNotificationPopup breakPopup;
 
         // Update checker
         private UpdateCheck updater;
@@ -124,6 +130,10 @@ namespace BlinkReminder.Windows
 
             // Create stopwatch
             lockWatch = new Stopwatch();
+
+            // Set up the pre-break popup
+            breakPopup = new BreakNotificationPopup(PRE_BREAK_POPUP_TEXT);
+            TaskbarIcon.AddBalloonClosingHandler(breakPopup, OnBalloonClosing);
         }
 
         /// <summary>
@@ -132,7 +142,8 @@ namespace BlinkReminder.Windows
         private void StartDefaultTimers()
         {
             // ------------- Short Interval ----------------
-            double shortTime = settings.ShortIntervalTime.TotalMilliseconds;
+            TimeSpan shortIntervalTimeSpan = settings.ShortIntervalTime;
+            double shortTime = shortIntervalTimeSpan.TotalMilliseconds;
 
             if (shortTime > 0)
             {
@@ -141,7 +152,10 @@ namespace BlinkReminder.Windows
             }
 
             // ------------- Long Interval -----------------
-            double longTime = settings.LongIntervalTime.TotalMilliseconds;
+            TimeSpan longIntervalTimeSpan = settings.LongIntervalTime;
+            SubstractForPreNotification(ref longIntervalTimeSpan);
+
+            double longTime = longIntervalTimeSpan.TotalMilliseconds;
 
             if (longTime > 0)
             {
@@ -275,9 +289,20 @@ namespace BlinkReminder.Windows
             else
             {
                 bool isLongBreak = true; // Needed for the decision to lock the machine
-                ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
-                    settings.IsLongSkippable, settings.IsFullscreenBreak, 
+
+                // Handle the case when the user wants to have pre-break notifications
+                if (settings.IsNotificationEnabled)
+                {
+                    taskbarIcon.ShowCustomBalloon(breakPopup,
+                        System.Windows.Controls.Primitives.PopupAnimation.Fade,
+                        (int)settings.PreNotificationTime.TotalMilliseconds);
+                }
+                else
+                {
+                    ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
+                    settings.IsLongSkippable, settings.IsFullscreenBreak,
                     settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
+                }
             }
         }
 
@@ -293,7 +318,7 @@ namespace BlinkReminder.Windows
             }
             else
             {
-                bool isLongBreak = false; // Needed for the decesion to lock the machine
+                bool isLongBreak = false; // Needed for the decision to lock the machine
                 ShowViewBlocker(settings.ShortDisplayTime, settings.Scaling,
                     settings.IsShortSkippable, settings.IsFullscreenBreak,
                     settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
@@ -352,6 +377,18 @@ namespace BlinkReminder.Windows
         private void PauseWindow_Closed(object sender, EventArgs e)
         {
             pauseWindow = null;
+        }
+
+        private void OnBalloonClosing(object sender, RoutedEventArgs e)
+        {
+            bool isLongBreak = true; // Since this is only used for long breaks....
+
+            if (breakPopup.ShouldStartBreak)
+            {
+                ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
+                    settings.IsLongSkippable, settings.IsFullscreenBreak,
+                    settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
+            }
         }
 
         #endregion
@@ -488,6 +525,7 @@ namespace BlinkReminder.Windows
                 aboutWindow.Activate();
             }
         }
+        
         #endregion
 
         #region Timer methods
@@ -500,7 +538,8 @@ namespace BlinkReminder.Windows
             switch (changedProperty)
             {
                 case "ShortIntervalTime":
-                    double shortInterval = settings.ShortIntervalTime.TotalMilliseconds;
+                    TimeSpan shortIntervalTimeSpan = settings.ShortIntervalTime;
+                    double shortInterval = shortIntervalTimeSpan.TotalMilliseconds;
 
                     if (shortInterval > 0)
                     {
@@ -517,7 +556,10 @@ namespace BlinkReminder.Windows
                     break;
 
                 case "LongIntervalTime":
-                    double longInterval = settings.LongIntervalTime.TotalMilliseconds;
+                    TimeSpan longIntervalTimeSpan = settings.LongIntervalTime;
+                    SubstractForPreNotification(ref longIntervalTimeSpan);
+
+                    double longInterval = longIntervalTimeSpan.TotalMilliseconds;
 
                     if (longInterval > 0)
                     {
@@ -594,6 +636,9 @@ namespace BlinkReminder.Windows
                 shortRemain = shortIntervalTime;
             }
 
+            // Account for possible pre-break notification
+            SubstractForPreNotification(ref longRemain);
+
             // Reset them
             TimerHandler.RestartTimer(ref shortIntervalTimer, shortRemain.TotalMilliseconds);
             TimerHandler.RestartTimer(ref longIntervalTimer, longRemain.TotalMilliseconds);
@@ -607,9 +652,11 @@ namespace BlinkReminder.Windows
         /// </summary>
         private void ResetElaspedTimer()
         {
+            TimeSpan shortIntervalTimeSpan = settings.ShortIntervalTime;
+
             if (isShortIntervalTimerDone)
             {
-                TimerHandler.RestartTimer(ref shortIntervalTimer, settings.ShortIntervalTime.TotalMilliseconds);
+                TimerHandler.RestartTimer(ref shortIntervalTimer, shortIntervalTimeSpan.TotalMilliseconds);
                 TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
 
                 isShortIntervalTimerDone = false;
@@ -617,13 +664,16 @@ namespace BlinkReminder.Windows
 
             if (isLongIntervalTimerDone)
             {
-                TimerHandler.RestartTimer(ref longIntervalTimer, settings.LongIntervalTime.TotalMilliseconds);
+                TimeSpan longIntervalTimeSpan = settings.LongIntervalTime;
+                SubstractForPreNotification(ref longIntervalTimeSpan);
+
+                TimerHandler.RestartTimer(ref longIntervalTimer, longIntervalTimeSpan.TotalMilliseconds);
                 TimerHandler.ResetCounterTime(ref longBreakLengthSoFar);
 
                 // Restart the short timer too....
-                if (settings.ShortIntervalTime.TotalMilliseconds > 0)
+                if (settings.ShortIntervalTime > TimeSpan.Zero)
                 {
-                    TimerHandler.RestartTimer(ref shortIntervalTimer, settings.ShortIntervalTime.TotalMilliseconds);
+                    TimerHandler.RestartTimer(ref shortIntervalTimer, shortIntervalTimeSpan.TotalMilliseconds);
                     TimerHandler.ResetCounterTime(ref shortBreakLengthSoFar);
                 }
 
@@ -663,12 +713,24 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Gives back the amount of minutes left until the end of the current pause state
         /// </summary>
-        /// <returns></returns>
         private double TimeToPauseEnd()
         {
             TimeSpan remainingTime = pauseTotalLength - pauseLengthSoFar;
 
             return Math.Round(remainingTime.TotalMinutes, 1);
+        }
+
+        /// <summary>
+        /// If pre-break notification is enabled then the duration of the popup is substracted 
+        /// from the time argument. 
+        /// Usage: Call when giving value to the timers which govern the break times
+        /// </summary>
+        private void SubstractForPreNotification(ref TimeSpan time)
+        {
+            if (settings.IsNotificationEnabled && time > TimeSpan.Zero)
+            {
+                time -= settings.PreNotificationTime;
+            }
         }
 
         #endregion

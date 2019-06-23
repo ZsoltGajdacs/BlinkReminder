@@ -176,7 +176,7 @@
     <Compile Include="Helpers\Static\TimerHandler.cs" />
     <Compile Include="Helpers\Dynamic\TooltipHandler.cs" />
     <Compile Include="Helpers\Dynamic\UpdateCheck.cs" />
-    <Compile Include="Settings\CycleTimesEnum.cs" />
+    <Compile Include="Settings\Enums.cs" />
     <Compile Include="Settings\Quote.cs" />
     <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">

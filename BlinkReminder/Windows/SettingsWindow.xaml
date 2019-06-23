@@ -9,7 +9,7 @@
         xmlns:brControl="clr-namespace:BlinkReminder.Windows.Controls"
     x:Name="SettingsView" x:Class="BlinkReminder.Windows.SettingsWindow"
         mc:Ignorable="d"
-        Title="BlinkReminder settings" Height="475" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
+        Title="BlinkReminder settings" Height="520" Width="415" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
     <Grid >
         <TabControl Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
@@ -26,13 +26,17 @@
                         <RowDefinition Height="5"/> <!--8 Padding-->
                         <RowDefinition Height="20"/> <!--9 IndefPause-->
                         <RowDefinition Height="5"/> <!--10 Padding-->
-                        <RowDefinition Height="20"/> <!--11 Window size-->
+                        <RowDefinition Height="20"/> <!--11 IndefPause-->
                         <RowDefinition Height="5"/> <!--12 Padding-->
-                        <RowDefinition Height="30"/> <!--13 Scaling-->
+                        <RowDefinition Height="20"/> <!--13 IndefPause-->
                         <RowDefinition Height="5"/> <!--14 Padding-->
-                        <RowDefinition Height="*"/> <!--15 Fill-->
-                        <RowDefinition Height="20"/> <!--16 OkBtn-->
-                        <RowDefinition Height="5"/> <!--17 Padding bottom-->
+                        <RowDefinition Height="20"/> <!--15 Window size-->
+                        <RowDefinition Height="5"/> <!--16 Padding-->
+                        <RowDefinition Height="30"/> <!--17 Scaling-->
+                        <RowDefinition Height="5"/> <!--18 Padding-->
+                        <RowDefinition Height="*"/> <!--19 Fill-->
+                        <RowDefinition Height="20"/> <!--20 OkBtn-->
+                        <RowDefinition Height="5"/> <!--21 Padding bottom-->
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -83,7 +87,6 @@
                         </Grid.ColumnDefinitions>
 
                         <Label x:Name="shortIntervalLabel" Content="Interval of short breaks: " Grid.Column="1" Grid.Row="1"/>
-                        <!--<TextBox x:Name="shortIntervalText" Text="{Binding ShortIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="1" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="ShortIntervalText_SourceUpdated"/>-->
                         <xce:DoubleUpDown x:Name="shortIntervalControl" Grid.Column="2" Grid.Row="1" 
                                         Value="{Binding ShortIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
@@ -91,7 +94,6 @@
                         <Label x:Name="shortIntervalMinuteLabel" Content="{Binding ShortIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="1"/>
 
                         <Label x:Name="shortDispLabel" Content="Length of short break: " Grid.Column="1" Grid.Row="3"/>
-                        <!--<TextBox x:Name="shortDispText" Text="{Binding ShortDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="3" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
                         <xce:LongUpDown x:Name="shortDispControl" Grid.Column="2" Grid.Row="3" 
                                         Value="{Binding ShortDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
@@ -99,7 +101,6 @@
                         <Label x:Name="shortDispMinuteLabel" Content="{Binding ShortDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="3"/>
 
                         <Label x:Name="longIntervalLabel" Content="Interval of long breaks: " Grid.Column="1" Grid.Row="5"/>
-                        <!--<TextBox x:Name="longIntervalText" Text="{Binding LongIntervalTime, Mode=TwoWay, NotifyOnSourceUpdated=True}" Grid.Column="2" Grid.Row="5" Background="#FFF8F8F8" KeyUp="SaveOnEnter" PreviewTextInput="TimesTextBox_PreviewTextInput" SourceUpdated="LongIntervalText_SourceUpdated"/>-->
                         <xce:DoubleUpDown x:Name="longIntervalControl" Grid.Column="2" Grid.Row="5" 
                                         Value="{Binding LongIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}"  
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
@@ -108,7 +109,6 @@
                         <Label x:Name="longIntervalMinuteLabel" Content="{Binding LongIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="5"/>
 
                         <Label x:Name="longDispLabel" Content="Length of long break: " Grid.Column="1" Grid.Row="7"/>
-                        <!--<TextBox x:Name="longDispText" Text="{Binding LongDisplayTime, Mode=TwoWay}" Grid.Column="2" Grid.Row="7" Background="#FFF8F8F8" KeyUp="TimesTextBox_KeyUp" PreviewTextInput="TimesTextBox_PreviewTextInput"/>-->
                         <xce:DoubleUpDown x:Name="longDispControl" Grid.Column="2" Grid.Row="7" 
                                         Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
@@ -156,10 +156,23 @@
                               Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="2" 
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
+                    <CheckBox x:Name="preNotificationChkbox" IsChecked="{Binding IsNotificationEnabled, Mode=TwoWay}" 
+                              Content="Should pre-break notifications be enabled?"
+                              ToolTip="Before a break occurs, a notification popup comes up above the taskbar icon"
+                              Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
+
+                    <CheckBox x:Name="permissiveNotificationChkbox" IsChecked="{Binding IsPermissiveNotification, Mode=TwoWay}" 
+                              Content="Should the notification be permissive?"
+                              ToolTip="Permissive: Clicking on the popup starts the break. Restrictive: Clicking on the popup dismisses the break."
+                              Grid.Column="1" Grid.Row="13" Grid.ColumnSpan="2" 
+                              VerticalAlignment="Center" Background="#FFF8F8F8" HorizontalAlignment="Right"
+                              Margin="0 0 20 0"/>
+
                     <CheckBox x:Name="isFullscreenBreakChkBox" IsChecked="{Binding IsFullscreenBreak, Mode=TwoWay}"
                               Content="Should breaks be full screen?"
                               ToolTip="The break will be displayed in a small window on the lower right hand corner of the screen"
-                              Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="2"
+                              Grid.Column="1" Grid.Row="15" Grid.ColumnSpan="2"
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
                     
                     <!--<toggleswitch:ToggleSwitch x:Name="fullscreenBreakSwitch" IsOn="{Binding IsFullscreenBreak, Mode=TwoWay}" 
@@ -167,16 +180,16 @@
                                 Grid.Column="1" Grid.Row="9"/>-->
 
                     <Label x:Name="scaleLabel" Content="Scale small window by: " 
-                           Grid.Column="1" Grid.Row="13" HorizontalAlignment="Right"/>
+                           Grid.Column="1" Grid.Row="17" HorizontalAlignment="Right"/>
                     
                     <xce:DoubleUpDown x:Name="scaleControl" Value="{Binding Scaling, Mode=TwoWay}"
-                                      Grid.Column="2" Grid.Row="13" Width="50" HorizontalAlignment="Left"
+                                      Grid.Column="2" Grid.Row="17" Width="50" HorizontalAlignment="Left"
                                       VerticalAlignment="Center" Background="#FFF8F8F8"
                                       Increment=".1" Minimum="0.5" Maximum="1.5" FormatString="0.0x"
                                       ToolTip="Controls the size of the small screen break window"/>
 
                     <Button x:Name="okButtonG" Content="OK" Width="80" 
-                            Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="16" 
+                            Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="20" 
                             Click="OkButton_Click" />
                     
                 </Grid>

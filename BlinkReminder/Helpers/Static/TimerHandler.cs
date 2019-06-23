@@ -9,12 +9,20 @@ namespace BlinkReminder.Helpers
         /// <summary>
         /// Restarts the given timer to the given time
         /// </summary>
-        /// <param name="timer"></param>
-        /// <param name="milliSecondTime"></param>
         internal static void RestartTimer(ref Timer timer, double milliSecondTime)
         {
             timer.Stop();
             timer.Interval = milliSecondTime;
+            timer.Start();
+        }
+
+        /// <summary>
+        /// Restarts the given timer to the given time
+        /// </summary>
+        internal static void RestartTimer(ref Timer timer, TimeSpan time)
+        {
+            timer.Stop();
+            timer.Interval = time.TotalMilliseconds;
             timer.Start();
         }
 

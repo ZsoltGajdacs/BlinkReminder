@@ -35,6 +35,11 @@ namespace BlinkReminder.Settings
         // For locked screen length intrepretation
         private TimeSpan _lockLengthTimeExtent;
 
+        /// <summary>
+        /// Gives back the duration of the pre-break notification
+        /// </summary>
+        internal TimeSpan PreNotificationTime { get; set; }
+
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
         private bool _isLongSkippable;
@@ -50,6 +55,14 @@ namespace BlinkReminder.Settings
 
         // To know if the user wants the computer to be locked in long break
         private bool _isLongBreakLocksScreen;
+
+        // For deciding if the pre-break notification is 
+        //                                 permissive (Clicking start the break)
+        //                                 restrictive (Clicking stops the break from happening)
+        private bool _isPermissiveNotification;
+
+        // For turning on pre-break notifications
+        private bool _isNotificationEnabled;
 
         // User scaling for small screen break
         private double _scaling;
@@ -113,12 +126,16 @@ namespace BlinkReminder.Settings
             LongIntervalTime = TimeSpan.FromSeconds((double)CycleTimesEnum.LongIntervalTime);
 
             LockLengthTimeExtent = TimeSpan.FromMinutes(1);
+            PreNotificationTime = TimeSpan.FromSeconds((double)NotificationDurationEnum.NotificationTime);
 
             IsShortSkippable = false;
             IsLongSkippable = true;
             ShouldBreakWhenFullScreen = true;
             IndefPauseEnabled = false;
             IsFullscreenBreak = true;
+            IsLongBreakLocksScreen = false;
+            IsPermissiveNotification = false;
+            IsNotificationEnabled = false;
 
             Scaling = 1;
 
@@ -191,16 +208,22 @@ namespace BlinkReminder.Settings
             try
             {
                 IsLongBreakLocksScreen = (bool)info.GetValue("ilbls", typeof(bool));
+                IsPermissiveNotification = (bool)info.GetValue("ipn", typeof(bool));
+                IsNotificationEnabled = (bool)info.GetValue("ine", typeof(bool));
+                PreNotificationTime = TimeSpan.FromSeconds((double)NotificationDurationEnum.NotificationTime);
             }
             catch (Exception ex)
             {
-                logger.Debug(ex, "Getting IsLongBreakLocksScreen failed");
+                logger.Debug(ex, "Getting v0.8 settings failed");
                 IsLongBreakLocksScreen = false;
+                IsPermissiveNotification = false;
+                IsNotificationEnabled = false;
+                PreNotificationTime = TimeSpan.FromSeconds((double)NotificationDurationEnum.NotificationTime);
             }
 
             CreateStuff(false);
 
-            logger.Info("Settings successfully deserialzed");
+            logger.Info("Settings successfully deserialized");
         }
         #endregion
 
@@ -474,6 +497,39 @@ namespace BlinkReminder.Settings
             set
             {
                 _isLongBreakLocksScreen = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        /// <summary>
+        /// Permissive: You need to click to get a break
+        /// Restrictive: You need to click to NOT get a break
+        /// </summary>
+        public bool IsPermissiveNotification
+        {
+            get
+            {
+                return _isPermissiveNotification;
+            }
+
+            set
+            {
+                _isPermissiveNotification = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        public bool IsNotificationEnabled
+        {
+            get
+            {
+                return _isNotificationEnabled;
+            }
+
+            set
+            {
+                _isNotificationEnabled = value;
+                NotifyPropertyChanged();
             }
         }
         #endregion
@@ -572,6 +628,8 @@ namespace BlinkReminder.Settings
             info.AddValue("sbwfs", _shouldBrakeWhenFullScreen, typeof(bool));
             info.AddValue("ipe", _indefPauseEnabled, typeof(bool));
             info.AddValue("ifb", _isFullscreenBreak, typeof(bool));
+            info.AddValue("ine", _isNotificationEnabled, typeof(bool));
+            info.AddValue("ipn", _isPermissiveNotification, typeof(bool));
 
             info.AddValue("scl", _scaling, typeof(double));
 
