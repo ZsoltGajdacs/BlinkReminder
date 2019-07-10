@@ -1,21 +1,49 @@
 ﻿using BlinkReminder.Helpers;
 using BlinkReminder.Settings;
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Xceed.Wpf.Toolkit;
 
 namespace BlinkReminder.Windows
 {
     /// <summary>
     /// Interaction logic for PauseWindow.xaml
     /// </summary>
-    public partial class PauseWindow : Window
+    public partial class PauseWindow : Window, INotifyPropertyChanged
     {
         private UserSettings userSettings;
-        public long PauseTime { get; set; }
+        private long _pauseTime;
         private bool btnClicked;
         private TooltipHandler tooltipHandler;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #region Property changed handler
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
+        #region Properties
+        public long PauseTime
+        {
+            get
+            {
+                return _pauseTime;
+            }
+
+            set
+            {
+                if (value != _pauseTime)
+                {
+                    _pauseTime = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion
 
         internal PauseWindow()
         {
@@ -49,6 +77,7 @@ namespace BlinkReminder.Windows
 
             if (btnClicked)
             {
+                PauseTime = (long)pauseTimeControl.Value;
                 return PauseTime;
             }
             else
@@ -72,5 +101,6 @@ namespace BlinkReminder.Windows
         }
 
         #endregion
+
     }
 }
