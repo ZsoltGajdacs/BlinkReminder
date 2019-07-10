@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Reflection;
 using BlinkReminder.Helpers;
 using System.Windows.Controls;
-using NLog.Layouts;
-using NLog;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using BlinkReminder.Windows.Controls;
@@ -30,13 +28,16 @@ namespace BlinkReminder.Windows
 
         private const string TOOLTIP_LONG_MSG = " minutes to long break";
         private const string TOOLTIP_SHORT_MSG = " minutes to short break";
-        private const string TOOLTIP_PAUSE_MSG = " minutes until break end";
+        private const string TOOLTIP_PAUSE_MSG = " minutes until pause end";
         private const string TOOLTIP_INDEF_PAUSE = "Breaks are paused until resume is clicked";
         private const string TOOLTIP_LONG_DISABLED = "Long breaks are disabled";
         private const string TOOLTIP_SHORT_DISABLED = "Short breaks are disabled";
         private const int HALF_MINUTE_IN_MS = 30000;
 
         private const string PRE_BREAK_POPUP_TEXT = "Time for a long break!";
+
+        private const string UPDATE_AVAILABLE_TEXT = "There is an update available, would you like to download it?";
+        private const string UPDATE_AVAILABLE_CAPTION = "Update available";
 
         // Keyboard input catcher
         private KeyboardHook keyTrap;
@@ -132,7 +133,7 @@ namespace BlinkReminder.Windows
             lockWatch = new Stopwatch();
 
             // Set up the pre-break popup
-            breakPopup = new BreakNotificationPopup(PRE_BREAK_POPUP_TEXT);
+            breakPopup = new BreakNotificationPopup();
             TaskbarIcon.AddBalloonClosingHandler(breakPopup, OnBalloonClosing);
         }
 
@@ -185,10 +186,24 @@ namespace BlinkReminder.Windows
         private async void CheckForUpdate()
         {
             string result = await updater.GetUpdateUrl();
-
+            
             if (result.StartsWith("https"))
             {
-                ShowAbout(result);
+                MessageBoxResult mBoxResult = MessageBox.Show(
+                    UPDATE_AVAILABLE_TEXT, UPDATE_AVAILABLE_CAPTION, 
+                    MessageBoxButton.YesNo, MessageBoxImage.Question, 
+                    MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
+
+                if (mBoxResult == MessageBoxResult.Yes)
+                {
+                    UpdateHandler updater = new UpdateHandler();
+                    bool isOkToLaunch = await updater.DownloadUpdate(result);
+
+                    if (isOkToLaunch)
+                    {
+                        updater.RunUpdate();
+                    }
+                }
             }
         }
         #endregion
@@ -200,7 +215,7 @@ namespace BlinkReminder.Windows
         /// </summary>
         private void Test_Click(object sender, RoutedEventArgs e)
         {
-            BreakNotificationPopup breakPopup = new BreakNotificationPopup("Ezt nézd meg");
+            BreakNotificationPopup breakPopup = new BreakNotificationPopup();
             taskbarIcon.ShowCustomBalloon(breakPopup, 
                 System.Windows.Controls.Primitives.PopupAnimation.Fade, 10000);
         }
@@ -282,9 +297,7 @@ namespace BlinkReminder.Windows
 
             if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
             {
-                // Order is important!
-                ResetFinishedTimeCounter();
-                ResetElaspedTimer();
+                ResetTimers();
             }
             else
             {
@@ -293,6 +306,7 @@ namespace BlinkReminder.Windows
                 // Handle the case when the user wants to have pre-break notifications
                 if (settings.IsNotificationEnabled)
                 {
+                    breakPopup.SetValues(PRE_BREAK_POPUP_TEXT);
                     taskbarIcon.ShowCustomBalloon(breakPopup,
                         System.Windows.Controls.Primitives.PopupAnimation.Fade,
                         (int)settings.PreNotificationTime.TotalMilliseconds);
@@ -308,21 +322,24 @@ namespace BlinkReminder.Windows
 
         private void ShortCycleTimer_Elapsed(object sender, EventArgs e)
         {
-            isShortIntervalTimerDone = true;
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                isShortIntervalTimerDone = true;
+                bool isPopupOpen = taskbarIcon.CustomBalloon.IsOpen;
 
-            if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
-            {
-                // Order is important!
-                ResetFinishedTimeCounter();
-                ResetElaspedTimer();
-            }
-            else
-            {
-                bool isLongBreak = false; // Needed for the decision to lock the machine
-                ShowViewBlocker(settings.ShortDisplayTime, settings.Scaling,
-                    settings.IsShortSkippable, settings.IsFullscreenBreak,
-                    settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
-            }
+                if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc)
+                    || isPopupOpen)
+                {
+                    ResetTimers();
+                }
+                else
+                {
+                    bool isLongBreak = false; // Needed for the decision to lock the machine
+                    ShowViewBlocker(settings.ShortDisplayTime, settings.Scaling,
+                        settings.IsShortSkippable, settings.IsFullscreenBreak,
+                        settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
+                }
+            }));
         }
 
         private void MinuteTimer_Elasped(object sender, ElapsedEventArgs e)
@@ -355,9 +372,7 @@ namespace BlinkReminder.Windows
         {
             blockerWindow = null;
             keyTrap?.Dispose(); // Release keyboard trap
-            ResetElaspedTimer(); // Restart the clock that started the window that closed
-            ResetFinishedTimeCounter(); //Reset the related stopwatch too
-            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS); // Reset the minute timer, so the counts are more precise
+            ResetTimers();
 
             // Set back the taskbarWindow to be the main one
             Application.Current.MainWindow = this;
@@ -388,6 +403,10 @@ namespace BlinkReminder.Windows
                 ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
                     settings.IsLongSkippable, settings.IsFullscreenBreak,
                     settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
+            }
+            else
+            {
+                ResetTimers();
             }
         }
 
@@ -512,11 +531,11 @@ namespace BlinkReminder.Windows
             }));
         }
 
-        private void ShowAbout(string downloadUri = "")
+        private void ShowAbout()
         {
             if (aboutWindow == null)
             {
-                aboutWindow = new AboutWindow(ref updater, downloadUri);
+                aboutWindow = new AboutWindow(ref updater);
                 aboutWindow.Closed += AboutWindow_Closed;
                 aboutWindow.Show();
             }
@@ -682,6 +701,9 @@ namespace BlinkReminder.Windows
 
             // For "accuracy's" sake restart the minute timer too
             TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS);
+            
+            // And refresh the toolbar tooltip
+            SetTaskbarTooltip(TimeToNextLongBreak() + TOOLTIP_LONG_MSG);
         }
 
         /// <summary>
@@ -733,6 +755,18 @@ namespace BlinkReminder.Windows
             }
         }
 
+        /// <summary>
+        /// Resets all the needed timers
+        /// Usage: When the blocker window has closed, or when the break is postponed
+        /// </summary>
+        private void ResetTimers()
+        {
+            // Order is important!
+            ResetFinishedTimeCounter(); //Reset the related stopwatch too
+            ResetElaspedTimer(); // Restart the clock that started the window that closed
+            TimerHandler.RestartTimer(ref minuteTimer, HALF_MINUTE_IN_MS); // Reset the minute timer, so the counts are more precise
+        }
+
         #endregion
 
         #region Taskbar manipulation
@@ -750,7 +784,6 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Disables the given taskbar MenuItem
         /// </summary>
-        /// <param name="option"></param>
         private void DisableTaskbarOption(MenuItem option)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -762,7 +795,6 @@ namespace BlinkReminder.Windows
         /// <summary>
         /// Enable the given taskbar MenuItem
         /// </summary>
-        /// <param name="option"></param>
         private void EnableTaskbarOption(MenuItem option)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -807,13 +839,14 @@ namespace BlinkReminder.Windows
             {
                 if (disposing)
                 {
+                    // Dispose of all the stuff that could remain in memory after exit
                     shortIntervalTimer.Dispose();
                     longIntervalTimer.Dispose();
                     minuteTimer.Dispose();
                     pauseTimer.Dispose();
                     taskbarIcon.Dispose();
                     keyTrap?.Dispose();
-                    
+
                     // Important! See the manual for the event
                     // SystemEvents.PowerModeChanged -= OnPowerChange;
                 }

@@ -33,16 +33,12 @@ namespace BlinkReminder.Windows.Controls
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BreakNotificationPopup(string textToShow)
+        public BreakNotificationPopup()
         {
             InitializeComponent();
 
             settings = UserSettings.Instance;
-            countdownTimer = new CountdownTimer(settings.PreNotificationTime);
-            timerBlock.DataContext = countdownTimer;
             controlGrid.DataContext = this;
-            TextToShow = textToShow;
-            SetBtnLabel();
         }
 
         #region Property changed handler
@@ -70,6 +66,28 @@ namespace BlinkReminder.Windows.Controls
             }
         }
         #endregion
+
+        internal void SetValues(string textToShow)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                countdownTimer = new CountdownTimer(settings.PreNotificationTime);
+                timerBlock.DataContext = countdownTimer;
+
+                TextToShow = textToShow;
+                SetBtnLabel();
+
+                // Set the default if there is no click
+                if (settings.IsPermissiveNotification)
+                {
+                    ShouldStartBreak = false;
+                }
+                else
+                {
+                    ShouldStartBreak = true;
+                }
+            }));
+        }
 
         /// <summary>
         /// Set's the confiramtion button's label according to the chosen mode

@@ -1,17 +1,7 @@
 ﻿using BlinkReminder.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows
 {
@@ -24,28 +14,24 @@ namespace BlinkReminder.Windows
         private static readonly string AUTHOR_LABEL = "Author: Zsolt Gajdács";
         private static readonly string VERSION_LABEL = "Version:";
         private static readonly string VERSION_CHECK_INIT_LABEL = "Checking update....";
-        private static readonly string DOWNLOAD_LINK_TEXT = "Click to download the update";
+        private static readonly string DOWNLOAD_LINK_TEXT = "Click to update";
         private static readonly string ISSUE_LINK_TEXT = "You can report bugs here (GitHub)";
         private static readonly string ISSUE_LINK_ADDRESS = "https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose";
 
+        private string updateLinkUrl;
+
         private UpdateCheck update;
 
-        internal AboutWindow(ref UpdateCheck updater, string downloadUri)
+        internal AboutWindow(ref UpdateCheck updater)
         {
             InitializeComponent();
 
             this.update = updater;
+            updateLinkUrl = String.Empty;
 
             SetTexts(update.versionText);
-            if (downloadUri.Equals(""))
-            {
-                SetUpdateLabel(VERSION_CHECK_INIT_LABEL);
-                CheckUpdate();
-            }
-            else
-            {
-                SetUpdateLabel(downloadUri);
-            }
+            SetUpdateLabel(VERSION_CHECK_INIT_LABEL);
+            CheckUpdate();
         }
 
         /// <summary>
@@ -70,12 +56,13 @@ namespace BlinkReminder.Windows
         {
             if (result.StartsWith("https"))
             {
-                Run linkName = new Run(DOWNLOAD_LINK_TEXT);
-                Hyperlink downloadLink = new Hyperlink(linkName);
-                downloadLink.RequestNavigate += HyperLink_RequestNavigate;
-                downloadLink.NavigateUri = new Uri(result);
+                Run linkText = new Run(DOWNLOAD_LINK_TEXT);
+                Hyperlink updateLink = new Hyperlink(linkText);
+                updateLink.Click += UpdateLabel_Click;
+                updateLink.NavigateUri = new Uri(result);
 
-                updateLabel.Content = downloadLink;
+                updateLabel.Content = updateLink;
+                updateLinkUrl = result;
             }
             else
             {
@@ -94,12 +81,29 @@ namespace BlinkReminder.Windows
             Close();
         }
 
+        private async void UpdateLabel_Click(object sender, RoutedEventArgs e)
+        {
+            if (updateLinkUrl != String.Empty)
+            {
+                UpdateHandler updater = new UpdateHandler();
+                bool isOkToLaunch = await updater.DownloadUpdate(updateLinkUrl);
+
+                if (isOkToLaunch)
+                {
+                    updater.RunUpdate();
+                }
+
+                Close();
+            }
+        }
+
         /// <summary>
-        /// Opens the browser to download the newest release
+        /// Opens the browser to go to link
         /// </summary>
         private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(e.Uri.ToString());
         }
+
     }
 }
