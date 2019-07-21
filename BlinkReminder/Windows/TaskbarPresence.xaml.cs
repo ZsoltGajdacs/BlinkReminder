@@ -417,7 +417,7 @@ namespace BlinkReminder.Windows
 
             if (breakPopup.ShouldPostponeBreak)
             {
-
+                // TODO: What should happen when postponed?
             }
             else
             {

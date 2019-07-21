@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows.Controls
 {
-    /// <summary>
-    /// Interaction logic for BreakNotificationPopup.xaml
-    /// </summary>
     public partial class BreakNotificationPopup : UserControl, INotifyPropertyChanged
     {
         private string _textToShow = String.Empty;
@@ -30,6 +27,7 @@ namespace BlinkReminder.Windows.Controls
         private UserSettings settings;
 
         public bool ShouldStartBreak { get; set; }
+        public bool ShouldPostponeBreak { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -76,6 +74,7 @@ namespace BlinkReminder.Windows.Controls
 
                 TextToShow = textToShow;
                 SetBtnLabel();
+                ShouldPostponeBreak = false;
 
                 // Set the default if there is no click
                 if (settings.IsPermissiveNotification)
@@ -90,7 +89,7 @@ namespace BlinkReminder.Windows.Controls
         }
 
         /// <summary>
-        /// Set's the confiramtion button's label according to the chosen mode
+        /// Set's the confirmation button's label according to the chosen mode
         /// </summary>
         private void SetBtnLabel()
         {
@@ -101,7 +100,7 @@ namespace BlinkReminder.Windows.Controls
             }
             else
             {
-                btnLabel = "No break yet, I'm not ready!";
+                btnLabel = "No break yet!";
             }
 
             confirmBtn.Content = btnLabel;
@@ -118,6 +117,17 @@ namespace BlinkReminder.Windows.Controls
                 ShouldStartBreak = false;
             }
 
+            CloseThisBallon();
+        }
+
+        private void PostponeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ShouldPostponeBreak = true;
+            CloseThisBallon();
+        }
+
+        private void CloseThisBallon()
+        {
             TaskbarIcon taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
             taskbarIcon.CloseBalloon();
         }

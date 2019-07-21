@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BlinkReminder.Windows.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="125" d:DesignWidth="320"
+             d:DesignHeight="130" d:DesignWidth="400"
              FontSize="16">
     <Border Margin="5,5,5,5"
             BorderThickness="1,1,1,1"
@@ -30,23 +30,26 @@
                 <RowDefinition Height="10" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="10" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="10" />
-                </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="180" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="180" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
 
             <TextBlock x:Name="questionBlock" Text="{Binding TextToShow, Mode=OneWay}" 
-                    Grid.Row="1" Grid.Column="1"
+                    Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
                     Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <TextBlock x:Name="timerBlock" Text="{Binding TimeToDisplay, Mode=OneWay}"
-                       Grid.Row="3" Grid.Column="1"
+                       Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3"
                        Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <Button x:Name="confirmBtn" Content="OK" Grid.Row="5" Grid.Column="1" Click="ConfirmBtn_Click"/>
+            <Button x:Name="postponeBtn" Content="Postpone break" Grid.Row="5" Grid.Column="3" Click="PostponeBtn_Click"/>
 
         </Grid>
     </Border>
