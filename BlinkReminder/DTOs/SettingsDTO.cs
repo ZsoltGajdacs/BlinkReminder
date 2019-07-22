@@ -40,11 +40,8 @@ namespace BlinkReminder.DTOs
         // For lock length decision if it's short or long
         private int _lockLengthTimeExtent;
 
-        // Minute keepers for user guidance
-        private string _shortDisplayTimeFormatted;
-        private string _shortIntervalTimeFormatted;
-        private string _LongDisplayTimeFormatted;
-        private string _longIntervalTimeFormatted;
+        // For the time a break is postponed on the notification window
+        private int _postponeAmount;
 
         // Time control min/max holders
         public long ShortDisplayMin { get; set; }
@@ -61,9 +58,10 @@ namespace BlinkReminder.DTOs
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #region CTOR
         public SettingsDTO(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime, 
                             ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime,
-                            ref TimeSpan lockLengthTimeExtent)
+                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeAmount)
         {
             PropertyChanged += SettingsDto_PropertyChanged;
 
@@ -73,8 +71,9 @@ namespace BlinkReminder.DTOs
             UserInactivityTimer.AutoReset = false;
 
             // Manually set long and short interval helper texts if they are set to zero
-            if (shortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
-            if (longIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
+            // TODO: Figure out how to show that timers are disabled
+            //if (shortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
+            //if (longIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
 
             // Set internal keepers from settings
             ShortDisplayAmount = (long)shortDisplayTime.TotalSeconds;
@@ -94,9 +93,11 @@ namespace BlinkReminder.DTOs
             LongDisplayMax = 10000;
             LongIntervalMax = 10000;
 
-            // Set lockLength from settings
+            // Set supplementary times
             LockLengthTimeExtent = (int)lockLengthTimeExtent.TotalMinutes;
+            PostponeAmount = (int)postponeAmount.TotalMinutes;
         }
+        #endregion
 
         #region Property changed handler
 
@@ -113,66 +114,9 @@ namespace BlinkReminder.DTOs
         {
             UserInactivityTimer.Stop();
 
-            TimeFormatter(e.PropertyName);
             LimitSetter(e.PropertyName);
             
             UserInactivityTimer.Start();
-        }
-
-        #endregion
-
-        #region Minute display helpers
-
-        public string ShortDisplayTimeFormatted
-        {
-            get
-            {
-                return _shortDisplayTimeFormatted;
-            }
-            set
-            {
-                _shortDisplayTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ShortIntervalTimeFormatted
-        {
-            get
-            {
-                return _shortIntervalTimeFormatted;
-            }
-            set
-            {
-                _shortIntervalTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string LongDisplayTimeFormatted
-        {
-            get
-            {
-                return _LongDisplayTimeFormatted;
-            }
-            set
-            {
-                _LongDisplayTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string LongIntervalTimeFormatted
-        {
-            get
-            {
-                return _longIntervalTimeFormatted;
-            }
-            set
-            {
-                _longIntervalTimeFormatted = value;
-                NotifyPropertyChanged();
-            }
         }
 
         #endregion
@@ -256,109 +200,28 @@ namespace BlinkReminder.DTOs
             }
         }
 
+        /// <summary>
+        /// The amount of time a break will be postponed
+        /// </summary>
+        public int PostponeAmount
+        {
+            get
+            {
+                return _postponeAmount;
+            }
+
+            set
+            {
+                if (value != _postponeAmount)
+                {
+                    _postponeAmount = value;
+                }
+            }
+        }
+
         #endregion
 
         #region Helpers
-        /// <summary>
-        /// Converts the second based times to easily readable format
-        /// </summary>
-        private void TimeFormatter(string propertyName)
-        {
-            TimeSpan time;
-            switch (propertyName)
-            {
-                case ("ShortDisplayAmount"):
-                    
-                    time = TimeSpan.FromSeconds(ShortDisplayAmount);
-                    if (time < TimeSpan.FromSeconds(10))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        ShortDisplayTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("ShortIntervalAmount"):
-
-                    time = TimeSpan.FromMinutes(ShortIntervalAmount);
-                    if (time == TimeSpan.Zero)
-                    {
-                        ShortIntervalTimeFormatted = DISABLED_TEXT;
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        ShortIntervalTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("LongDisplayAmount"):
-
-                    time = TimeSpan.FromMinutes(LongDisplayAmount);
-                    if (time < TimeSpan.FromSeconds(10))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOSECONDSHORT);
-                    }
-                    else if (time < TimeSpan.FromSeconds(60))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOSECONDLONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        LongDisplayTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-
-                    break;
-
-                case ("LongIntervalAmount"):
-
-                    time = TimeSpan.FromMinutes(LongIntervalAmount);
-                    if (time == TimeSpan.Zero)
-                    {
-                        LongIntervalTimeFormatted = DISABLED_TEXT;
-                    }
-                    else if (time < TimeSpan.FromMinutes(60))
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOMINUTELONG);
-                    }
-                    else if (time < TimeSpan.FromMinutes(10))
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOMINUTESHORT);
-                    }
-                    else
-                    {
-                        LongIntervalTimeFormatted = time.ToString(TOHOUR);
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
 
         /// <summary>
         /// Sets the min/max amounts of break intervals so short and long ones can't flip
