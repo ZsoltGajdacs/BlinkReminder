@@ -37,11 +37,12 @@ namespace BlinkReminder.DTOs
         private double _longDisplayAmount;
         private double _longIntervalAmount;
 
-        // For lock length decision if it's short or long
+        // Secondary settings controls
         private int _lockLengthTimeExtent;
-
-        // For the time a break is postponed on the notification window
+        private int _postponeLength;
         private int _postponeAmount;
+        private int _notificationLength;
+
 
         // Time control min/max holders
         public long ShortDisplayMin { get; set; }
@@ -61,7 +62,8 @@ namespace BlinkReminder.DTOs
         #region CTOR
         public SettingsDTO(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime, 
                             ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime,
-                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeAmount)
+                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeLength, 
+                            ref int postponeAmount, ref TimeSpan notificationLength)
         {
             PropertyChanged += SettingsDto_PropertyChanged;
 
@@ -81,6 +83,12 @@ namespace BlinkReminder.DTOs
             LongDisplayAmount = longDisplayTime.TotalMinutes;
             LongIntervalAmount = longIntervalTime.TotalMinutes;
 
+            // Set supplementary times
+            LockLengthTimeExtent = (int)lockLengthTimeExtent.TotalMinutes;
+            PostponeLength = (int)postponeLength.TotalMinutes;
+            PostponeAmount = postponeAmount;
+            NotificationLength = (int)notificationLength.TotalSeconds;
+
             // Set min/max values to default safe
             // NOT USED RIGHT NOW
             ShortDisplayMin = 0;
@@ -92,10 +100,6 @@ namespace BlinkReminder.DTOs
             ShortIntervalMax = 10000;
             LongDisplayMax = 10000;
             LongIntervalMax = 10000;
-
-            // Set supplementary times
-            LockLengthTimeExtent = (int)lockLengthTimeExtent.TotalMinutes;
-            PostponeAmount = (int)postponeAmount.TotalMinutes;
         }
         #endregion
 
@@ -180,7 +184,7 @@ namespace BlinkReminder.DTOs
         }
 
         /// <summary>
-        /// The amount of time below which a locked screen is considered a short break 
+        /// The amount of minutes below which a locked screen is considered a short break 
         /// or above it a long one
         /// </summary>
         public int LockLengthTimeExtent
@@ -201,7 +205,27 @@ namespace BlinkReminder.DTOs
         }
 
         /// <summary>
-        /// The amount of time a break will be postponed
+        /// The amount of minutes a break will be postponed by
+        /// </summary>
+        public int PostponeLength
+        {
+            get
+            {
+                return _postponeLength;
+            }
+
+            set
+            {
+                if (value != _postponeLength)
+                {
+                    _postponeLength = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The amount of times a break can be postponed before it's cancelled entirely
         /// </summary>
         public int PostponeAmount
         {
@@ -215,6 +239,27 @@ namespace BlinkReminder.DTOs
                 if (value != _postponeAmount)
                 {
                     _postponeAmount = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Number of seconds a pre-break notification lasts
+        /// </summary>
+        public int NotificationLength
+        {
+            get
+            {
+                return _notificationLength;
+            }
+
+            set
+            {
+                if (value != _notificationLength)
+                {
+                    _notificationLength = value;
+                    NotifyPropertyChanged();
                 }
             }
         }

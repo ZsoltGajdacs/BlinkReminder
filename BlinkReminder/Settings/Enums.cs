@@ -11,12 +11,4 @@ namespace BlinkReminder.Settings
         LongDisplayTime = 500, // 8m 20s
         LongIntervalTime = 3600, // 60m
     }
-
-    /// <summary>
-    /// Default pre-notification time
-    /// </summary>
-    internal enum NotificationDurationEnum
-    {
-        NotificationTime = 8 // 8s
-    }
 }

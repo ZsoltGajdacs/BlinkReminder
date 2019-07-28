@@ -35,11 +35,12 @@ namespace BlinkReminder.Settings
         // For locked screen length intrepretation
         private TimeSpan _lockLengthTimeExtent;
 
-        // For the time a break is postponed on the notification window
-        private TimeSpan _postponeAmount;
+        // Postpone length and amount
+        private TimeSpan _postponeLength;
+        private int _postponeAmount;
 
-        // Gives back the duration of the pre-break notification
-        internal TimeSpan PreNotificationTime { get; set; }
+        // The amount of seconds a notification lasts
+        private TimeSpan _notificationLength;
 
         // For setting whether the breaks are skippable
         private bool _isShortSkippable;
@@ -114,7 +115,7 @@ namespace BlinkReminder.Settings
 
         #region Constructors
         /// <summary>
-        /// Default ctor sets default values
+        /// Default ctor sets default values, called when there are no serialized settings
         /// </summary>
         private UserSettings()
         {
@@ -126,9 +127,10 @@ namespace BlinkReminder.Settings
             LongDisplayTime = TimeSpan.FromSeconds((double)CycleTimesEnum.LongDisplayTime);
             LongIntervalTime = TimeSpan.FromSeconds((double)CycleTimesEnum.LongIntervalTime);
 
-            LockLengthTimeExtent = TimeSpan.FromMinutes(1);
-            PreNotificationTime = TimeSpan.FromSeconds((double)NotificationDurationEnum.NotificationTime);
-            PostponeAmount = TimeSpan.FromMinutes(2);
+            LockLengthTimeExtent = TimeSpan.FromMinutes(5);
+            NotificationLength = TimeSpan.FromSeconds(6);
+            PostponeLength = TimeSpan.FromMinutes(2);
+            PostponeAmount = 2;
 
             IsShortSkippable = false;
             IsLongSkippable = true;
@@ -148,7 +150,7 @@ namespace BlinkReminder.Settings
         }
 
         /// <summary>
-        /// Serialization ctor, loads data from file
+        /// Serialization ctor, loads data from file, skipped of no serialized data
         /// </summary>
         private UserSettings(SerializationInfo info, StreamingContext context)
         {
@@ -212,7 +214,9 @@ namespace BlinkReminder.Settings
                 IsLongBreakLocksScreen = (bool)info.GetValue("ilbls", typeof(bool));
                 IsPermissiveNotification = (bool)info.GetValue("ipn", typeof(bool));
                 IsNotificationEnabled = (bool)info.GetValue("ine", typeof(bool));
-                PostponeAmount = (TimeSpan)info.GetValue("ppa", typeof(TimeSpan));
+                PostponeLength = (TimeSpan)info.GetValue("ppl", typeof(TimeSpan));
+                PostponeAmount = (int)info.GetValue("ppa", typeof(int));
+                NotificationLength = (TimeSpan)info.GetValue("nlh", typeof(TimeSpan));
             }
             catch (Exception ex)
             {
@@ -220,11 +224,9 @@ namespace BlinkReminder.Settings
                 IsLongBreakLocksScreen = false;
                 IsPermissiveNotification = false;
                 IsNotificationEnabled = false;
-                PostponeAmount = TimeSpan.FromMinutes(2);
-            }
-            finally
-            {
-                PreNotificationTime = TimeSpan.FromSeconds((double)NotificationDurationEnum.NotificationTime);
+                PostponeLength = TimeSpan.FromMinutes(2);
+                PostponeAmount = 2;
+                NotificationLength = TimeSpan.FromSeconds(6);
             }
 
             CreateStuff(false);
@@ -285,7 +287,8 @@ namespace BlinkReminder.Settings
         {
             SettingsDTO = new SettingsDTO(ref _shortDisplayTime, ref _shortIntervalTime,
                                             ref _longDisplayTime, ref _longIntervalTime,
-                                            ref _lockLengthTimeExtent, ref _postponeAmount);
+                                            ref _lockLengthTimeExtent, ref _postponeLength, 
+                                            ref _postponeAmount, ref _notificationLength);
 
             SettingsDTO.UserInactivityTimer.Elapsed += UserInactivityTimer_Elapsed;
 
@@ -579,9 +582,28 @@ namespace BlinkReminder.Settings
         }
 
         /// <summary>
+        /// Amount of minutes a break can be postponed by
+        /// </summary>
+        public TimeSpan PostponeLength
+        {
+            get
+            {
+                return _postponeLength;
+            }
+
+            set
+            {
+                if (_postponeLength != value)
+                {
+                    _postponeLength = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// The amount of time a break will be postponed
         /// </summary>
-        public TimeSpan PostponeAmount
+        public int PostponeAmount
         {
             get
             {
@@ -593,6 +615,25 @@ namespace BlinkReminder.Settings
                 if (value != _postponeAmount)
                 {
                     _postponeAmount = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Number of seconds a notification lasts
+        /// </summary>
+        public TimeSpan NotificationLength
+        {
+            get
+            {
+                return _notificationLength;
+            }
+
+            set
+            {
+                if (_notificationLength != value)
+                {
+                    _notificationLength = value;
                 }
             }
         }
@@ -628,7 +669,7 @@ namespace BlinkReminder.Settings
 
         /// <summary>
         /// Executes when the incativity timer in settingsDto, which is 'attached' to the UI, 
-        /// is done. The purpose is to save the changes the user made whatever happens
+        /// is done. The purpose is to save the changes the user made whatever happens.
         /// </summary>
         private void UserInactivityTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -636,8 +677,11 @@ namespace BlinkReminder.Settings
             ShortIntervalTime = TimeSpan.FromMinutes(SettingsDTO.ShortIntervalAmount);
             LongDisplayTime = TimeSpan.FromMinutes(SettingsDTO.LongDisplayAmount);
             LongIntervalTime = TimeSpan.FromMinutes(SettingsDTO.LongIntervalAmount);
+
             LockLengthTimeExtent = TimeSpan.FromMinutes(SettingsDTO.LockLengthTimeExtent);
-            PostponeAmount = TimeSpan.FromMinutes(SettingsDTO.PostponeAmount);
+            PostponeLength = TimeSpan.FromMinutes(SettingsDTO.PostponeLength);
+            PostponeAmount = SettingsDTO.PostponeAmount;
+            NotificationLength = TimeSpan.FromSeconds(SettingsDTO.NotificationLength);
         }
 
         #endregion
@@ -651,7 +695,9 @@ namespace BlinkReminder.Settings
             info.AddValue("lit", _longIntervalTime, typeof(TimeSpan));
 
             info.AddValue("llte", _lockLengthTimeExtent, typeof(TimeSpan));
-            info.AddValue("ppa", _postponeAmount, typeof(TimeSpan));
+            info.AddValue("ppl", _postponeLength, typeof(TimeSpan));
+            info.AddValue("ppa", _postponeAmount, typeof(int));
+            info.AddValue("nlh", _notificationLength, typeof(TimeSpan));
 
             info.AddValue("iss", _isShortSkippable, typeof(bool));
             info.AddValue("ils", _isLongSkippable, typeof(bool));
@@ -674,8 +720,6 @@ namespace BlinkReminder.Settings
         /// <summary>
         /// Gives back a randomly chosen quote from the given list
         /// </summary>
-        /// <param name="quoteList"></param>
-        /// <returns></returns>
         private string GetQuote(ref BindingList<Quote> quoteList, string defaultQuote)
         {
             if (quoteList.Count == 0)

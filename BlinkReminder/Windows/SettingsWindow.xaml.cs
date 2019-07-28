@@ -56,6 +56,39 @@ namespace BlinkReminder.Windows
         }
 
         /// <summary>
+        /// Subscribes to settings events
+        /// </summary>
+        private void SubscribeToEvents()
+        {
+            settings.PropertyChanged += Settings_PropertyChanged;
+            settings.SettingsDTO.PropertyChanged += SettingsDTO_PropertyChanged;
+        }
+        #endregion
+
+        #region Click Events
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+        #endregion
+
+        #region Property Events
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("IsFullscreenBreak"))
+            {
+                SetControlAccessability();
+            }
+        }
+
+        private void SettingsDTO_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            CheckDisabledState();
+        }
+        #endregion
+
+        #region Property helpers
+        /// <summary>
         /// Checks if the timers are disabled in the settings obj
         /// </summary>
         private void CheckDisabledState()
@@ -74,14 +107,6 @@ namespace BlinkReminder.Windows
         }
 
         /// <summary>
-        /// Subscribes to settings events
-        /// </summary>
-        private void SubscribeToEvents()
-        {
-            settings.PropertyChanged += Settings_PropertyChanged;
-        }
-
-        /// <summary>
         /// Sets the read/write state of UI controls
         /// </summary>
         private void SetControlAccessability()
@@ -94,24 +119,7 @@ namespace BlinkReminder.Windows
             {
                 scaleControl.IsEnabled = true;
             }
-            
-        }
-        #endregion
 
-        #region Click Events
-        private void OkButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-        #endregion
-
-        #region Property Events
-        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals("IsFullscreenBreak"))
-            {
-                SetControlAccessability();
-            }
         }
         #endregion
 

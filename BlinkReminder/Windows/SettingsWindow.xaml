@@ -9,13 +9,13 @@
         xmlns:brControl="clr-namespace:BlinkReminder.Windows.Controls"
     x:Name="SettingsView" x:Class="BlinkReminder.Windows.SettingsWindow"
         mc:Ignorable="d"
-        Title="BlinkReminder settings" Height="390" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
+        Title="BlinkReminder settings" Height="430" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFF8F8F8">
     <Grid >
         <TabControl Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
                 <Grid x:Name="SettingsGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="135"/> <!--0 TimeGrid-->
+                        <RowDefinition Height="170"/> <!--0 TimeGrid-->
                         <RowDefinition Height="20"/> <!--1 FullscreenChkbox-->
                         <RowDefinition Height="5"/> <!--2 Padding-->
                         <RowDefinition Height="20"/> <!--3 shortSkipChkBox-->
@@ -44,19 +44,23 @@
                     <Grid x:Name="TimeGrid" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="10"/>
-                            <!--0 Padding top-->
+                            <!--0-->
                             <RowDefinition Height="30"/>
-                            <!--1 ShortInterval-->
+                            <!--1-->
                             <RowDefinition Height="5"/>
-                            <!--2 Padding-->
+                            <!--2-->
                             <RowDefinition Height="30"/>
-                            <!--3 ShortDisplay-->
+                            <!--3-->
                             <RowDefinition Height="10"/>
-                            <!--4 Padding-->
+                            <!--4-->
                             <RowDefinition Height="30"/>
-                            <!--5 LongInterval-->
+                            <!--5-->
+                            <RowDefinition Height="5"/>
+                            <!--6-->
+                            <RowDefinition Height="30"/>
+                            <!--7-->
                             <RowDefinition Height="15"/>
-                            <!--6 Padding-->
+                            <!--8-->
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
@@ -107,17 +111,33 @@
                                            Value="{Binding LockLengthTimeExtent, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                            Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"
                                            FormatString="0 min" 
-                                           ToolTip="The amount of time above which workstation lock is considered a long break"/>
+                                           ToolTip="The amount of minutes above which workstation lock is considered a long break"/>
 
-                        <Label x:Name="postponeAmountLabel" Content="Break postpone amount: " 
+                        <Label x:Name="postponeLengthLabel" Content="Postpone break by: " 
                                            Grid.Column="3" Grid.Row="5"/>
-                        <xce:IntegerUpDown x:Name="postponeAmountControl" Grid.Column="4" Grid.Row="5"
-                                           Value="{Binding PostponeAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                        <xce:IntegerUpDown x:Name="postponeLengthControl" Grid.Column="4" Grid.Row="5"
+                                           Value="{Binding PostponeLength, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                            Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"
                                            FormatString="0 min" 
                                            ToolTip="The amount of minutes a break will be postponed, when the button is clicked on the notification window"/>
+
+                        <Label x:Name="notificationWaitLabel" Content="Notification length: " 
+                                           Grid.Column="0" Grid.Row="7"/>
+                        <xce:IntegerUpDown x:Name="notificationWaitControl" Grid.Column="1" Grid.Row="7"
+                                           Value="{Binding NotificationLength, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                                           Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"
+                                           FormatString="0 sec" 
+                                           ToolTip="The amount of seconds the notification comes up before the break"/>
+
+                        <Label x:Name="postponeAmountLabel" Content="Can postpone x times: " 
+                                           Grid.Column="3" Grid.Row="7"/>
+                        <xce:IntegerUpDown x:Name="postponeAmountControl" Grid.Column="4" Grid.Row="7"
+                                           Value="{Binding PostponeAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                                           Minimum="1" ClipValueToMinMax="True" Background="#FFF8F8F8"
+                                           FormatString="0x" 
+                                           ToolTip="The number of times a break can be postponed, before cancelled entirely"/>
                         
-                        <Separator Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5"/>
+                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5"/>
                     </Grid>
 
                     <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" 

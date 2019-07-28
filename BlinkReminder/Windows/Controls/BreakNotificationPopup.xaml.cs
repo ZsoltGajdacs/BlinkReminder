@@ -2,21 +2,10 @@
 using BlinkReminder.Windows.Support;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BlinkReminder.Windows.Controls
 {
@@ -65,11 +54,11 @@ namespace BlinkReminder.Windows.Controls
         }
         #endregion
 
-        internal void SetValues(string textToShow)
+        internal void SetValues(string textToShow, int postponeCount)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                countdownTimer = new CountdownTimer(settings.PreNotificationTime);
+                countdownTimer = new CountdownTimer(settings.NotificationLength);
                 timerBlock.DataContext = countdownTimer;
 
                 TextToShow = textToShow;
@@ -84,6 +73,16 @@ namespace BlinkReminder.Windows.Controls
                 else
                 {
                     ShouldStartBreak = true;
+                }
+
+                // If the user already exceeded the set postpone count then it should be disabled
+                if (postponeCount >= settings.PostponeAmount)
+                {
+                    postponeBtn.IsEnabled = false;
+                }
+                else
+                {
+                    postponeBtn.IsEnabled = true;
                 }
             }));
         }
