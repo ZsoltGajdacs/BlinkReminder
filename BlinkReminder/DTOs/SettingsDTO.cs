@@ -45,14 +45,8 @@ namespace BlinkReminder.DTOs
 
 
         // Time control min/max holders
-        public long ShortDisplayMin { get; set; }
-        public long ShortDisplayMax { get; set; }
-        public long ShortIntervalMin { get; set; }
-        public long ShortIntervalMax { get; set; }
-        public long LongDisplayMin { get; set; }
-        public long LongDisplayMax { get; set; }
-        public long LongIntervalMin { get; set; }
-        public long LongIntervalMax { get; set; }
+        public double _shortIntervalMax;
+        public double _longIntervalMin;
 
         // Timer to know when to update the main time variables
         public Timer UserInactivityTimer { get; set; }
@@ -72,11 +66,6 @@ namespace BlinkReminder.DTOs
             UserInactivityTimer = new Timer(MILLISECONDS_TO_SAVE);
             UserInactivityTimer.AutoReset = false;
 
-            // Manually set long and short interval helper texts if they are set to zero
-            // TODO: Figure out how to show that timers are disabled
-            //if (shortIntervalTime == TimeSpan.Zero) ShortIntervalTimeFormatted = DISABLED_TEXT;
-            //if (longIntervalTime == TimeSpan.Zero) LongIntervalTimeFormatted = DISABLED_TEXT;
-
             // Set internal keepers from settings
             ShortDisplayAmount = (long)shortDisplayTime.TotalSeconds;
             ShortIntervalAmount = shortIntervalTime.TotalMinutes;
@@ -88,18 +77,6 @@ namespace BlinkReminder.DTOs
             PostponeLength = (int)postponeLength.TotalMinutes;
             PostponeAmount = postponeAmount;
             NotificationLength = (int)notificationLength.TotalSeconds;
-
-            // Set min/max values to default safe
-            // NOT USED RIGHT NOW
-            ShortDisplayMin = 0;
-            ShortIntervalMin = 0;
-            LongDisplayMin = 0;
-            LongIntervalMin = 0;
-
-            ShortDisplayMax = 10000;
-            ShortIntervalMax = 10000;
-            LongDisplayMax = 10000;
-            LongIntervalMax = 10000;
         }
         #endregion
 
@@ -264,6 +241,38 @@ namespace BlinkReminder.DTOs
             }
         }
 
+        public double LongIntervalMin
+        {
+            get
+            {
+                return _longIntervalMin;
+            }
+            set
+            {
+                if (_longIntervalMin != value)
+                {
+                    _longIntervalMin = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double ShortIntervalMax
+        {
+            get
+            {
+                return _shortIntervalMax;
+            }
+            set
+            {
+                if (_shortIntervalMax != value)
+                {
+                    _shortIntervalMax = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region Helpers
@@ -280,7 +289,14 @@ namespace BlinkReminder.DTOs
                     break;
 
                 case ("ShortIntervalAmount"):
-                    LongIntervalMin = (long)Math.Round(ShortIntervalAmount + 1, 1);
+                    if (ShortIntervalAmount == 0)
+                    {
+                        LongIntervalMin = 0;
+                    }
+                    else
+                    {
+                        LongIntervalMin = (long)Math.Round(ShortIntervalAmount + 1, 1);
+                    }
                     break;
 
                 case ("LongDisplayAmount"):
@@ -288,7 +304,14 @@ namespace BlinkReminder.DTOs
                     break;
 
                 case ("LongIntervalAmount"):
-                    ShortIntervalMax = (long)Math.Round(LongIntervalAmount - 1, 1);
+                    if (LongIntervalAmount < 1)
+                    {
+                        ShortIntervalMax = 0;
+                    }
+                    else
+                    {
+                        ShortIntervalMax = (long)Math.Round(LongIntervalAmount - 1, 1);
+                    }
                     break;
 
                 default:

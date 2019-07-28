@@ -78,32 +78,32 @@
 
                         <Label x:Name="shortIntervalLabel" Content="Interval of short breaks: " Grid.Column="0" Grid.Row="1"/>
                         <xce:DoubleUpDown x:Name="shortIntervalControl" Grid.Column="1" Grid.Row="1" 
-                                        Value="{Binding ShortIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Value="{Binding ShortIntervalAmount, Mode=TwoWay}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
-                                        ToolTip="Time between two short breaks, measured in minutes" Increment="0.1"/>
-                        <Label x:Name="shortIntervalMinuteLabel" Content="{Binding ShortIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="1"/>
+                                        Minimum="0" Maximum="{Binding ShortIntervalMax, Mode=OneWay}" Increment="0.1"
+                                        ToolTip="Time between two short breaks, measured in minutes" 
+                                        ValueChanged="ShortIntervalControl_ValueChanged"/>
 
                         <Label x:Name="shortDispLabel" Content="Length of short break: " Grid.Column="3" Grid.Row="1"/>
                         <xce:LongUpDown x:Name="shortDispControl" Grid.Column="4" Grid.Row="1" 
-                                        Value="{Binding ShortDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
+                                        Value="{Binding ShortDisplayAmount, Mode=TwoWay}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0 sec"
+                                        Minimum="0"
                                         ToolTip="Display time of a short break, measured in seconds"/>
-                        <Label x:Name="shortDispMinuteLabel" Content="{Binding ShortDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="3"/>
 
                         <Label x:Name="longIntervalLabel" Content="Interval of long breaks: " Grid.Column="0" Grid.Row="3"/>
                         <xce:DoubleUpDown x:Name="longIntervalControl" Grid.Column="1" Grid.Row="3" 
-                                        Value="{Binding LongIntervalAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}"  
+                                        Value="{Binding LongIntervalAmount, Mode=TwoWay}"  
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
-                                        SourceUpdated="LongIntervalControl_SourceUpdated"
-                                        ToolTip="Time between two long breaks, measured in minutes" Increment="0.1"/>
-                        <Label x:Name="longIntervalMinuteLabel" Content="{Binding LongIntervalTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="5"/>
+                                        Minimum="{Binding LongIntervalMin, Mode=OneWay}"
+                                        ToolTip="Time between two long breaks, measured in minutes" Increment="0.1"
+                                        ValueChanged="LongIntervalControl_ValueChanged"/>
 
                         <Label x:Name="longDispLabel" Content="Length of long break: " Grid.Column="3" Grid.Row="3"/>
                         <xce:DoubleUpDown x:Name="longDispControl" Grid.Column="4" Grid.Row="3" 
                                         Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
                                         ClipValueToMinMax="True" Background="#FFF8F8F8" FormatString="0.0 min"
                                         ToolTip="Display time of a long break, measured in minutes" Increment="0.1"/>
-                        <Label x:Name="longDispMinuteLabel" Content="{Binding LongDisplayTimeFormatted, Mode=OneWay}" Grid.Column="3" Grid.Row="7"/>
 
                         <Label x:Name="lockedLengthExtentLabel" Content="Lock time to long break: " 
                                            Grid.Column="0" Grid.Row="5"/>

@@ -95,13 +95,11 @@ namespace BlinkReminder.Windows
         {
             if (settings.LongIntervalTime == TimeSpan.Zero)
             {
-                longDispMinuteLabel.IsEnabled = false;
                 longDispControl.IsEnabled = false;
             }
 
             if (settings.ShortIntervalTime == TimeSpan.Zero)
             {
-                shortDispMinuteLabel.IsEnabled = false;
                 shortDispControl.IsEnabled = false;
             }
         }
@@ -213,33 +211,32 @@ namespace BlinkReminder.Windows
         #endregion
 
         #region Timer disable support
-        private void ShortIntervalControl_SourceUpdated(object sender, DataTransferEventArgs e)
+
+        private void ShortIntervalControl_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (shortIntervalControl.Value.Equals(TimeSpan.Zero))
+            if(shortIntervalControl.Value == 0)
             {
-                shortDispMinuteLabel.IsEnabled = false;
                 shortDispControl.IsEnabled = false;
             }
             else
             {
-                shortDispMinuteLabel.IsEnabled = true;
                 shortDispControl.IsEnabled = true;
             }
         }
 
-        private void LongIntervalControl_SourceUpdated(object sender, DataTransferEventArgs e)
+        private void LongIntervalControl_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (longIntervalControl.Value.Equals(TimeSpan.Zero))
+            if (longIntervalControl.Value == 0)
             {
-                longDispMinuteLabel.IsEnabled = false;
                 longDispControl.IsEnabled = false;
             }
             else
             {
-                longDispMinuteLabel.IsEnabled = true;
                 longDispControl.IsEnabled = true;
             }
         }
+
         #endregion
+
     }
 }
