@@ -19,7 +19,7 @@ namespace BlinkReminder
         private static int BASE_WINDOW_HEIGHT = 150;
         private static int BASE_WINDOW_WIDTH = 400;
         private static int BASE_WINDOW_WIDTH_PADDING = 60;
-        private static int BASE_BTN_WIDTH = 100;
+        private static int BASE_BTN_WIDTH = 120;
         private static int BASE_FONT_SIZE = 16;
         private readonly int QUOTE_TEXT_WIDTH;
 
@@ -33,7 +33,9 @@ namespace BlinkReminder
         public double BtnWidth { get; set; }
         public double Distance { get; set; }
 
-        internal ViewBlocker(TimeSpan interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
+        internal ViewBlocker(TimeSpan interval, double scaling, bool isSkippable, 
+                                bool isFullscreen, bool isLongBreakLocksScreen, 
+                                bool isLongBreak, string message)
         {
             InitializeComponent();
 
@@ -217,6 +219,11 @@ namespace BlinkReminder
             CloseBlockWindow();
         }
 
+        private void LockButton_Click(object sender, RoutedEventArgs e)
+        {
+            Locker.LockWorkStation();
+        }
+
         /// <summary>
         /// Called when the timer to control when to lock the machine finishes
         /// </summary>
@@ -282,5 +289,7 @@ namespace BlinkReminder
             // GC.SuppressFinalize(this);
         }
         #endregion
+
+        
     }
 }

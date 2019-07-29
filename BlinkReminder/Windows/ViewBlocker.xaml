@@ -22,15 +22,17 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>   <!--0-->
             <ColumnDefinition Width="{Binding BtnWidth, Mode=OneWay}"/>   <!--1 skipBtn-->
-            <ColumnDefinition Width="*"/>   <!--2-->
+            <ColumnDefinition Width="20"/>   <!--2-->
+            <ColumnDefinition Width="{Binding BtnWidth, Mode=OneWay}"/>   <!--3 lockBtn-->
+            <ColumnDefinition Width="*"/>   <!--4-->
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="quoteText" Foreground="White" 
                    TextAlignment="Center"
-                   Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2"/>
+                   Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2"/>
         
         <StackPanel x:Name="blockerStack" Orientation="Vertical" HorizontalAlignment="Center"
-                    Grid.Column="1" Grid.Row="4" >
+                    Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4" >
            
             <TextBlock x:Name="counterText" Foreground="White" 
                    Text="{Binding TimeToDisplay, Mode=OneWay}" 
@@ -40,6 +42,9 @@
 
         <Button x:Name="skipButton" Content="Skip Break" Click="SkipButton_Click"
                     Grid.Column="1" Grid.Row="6"/>
+
+        <Button x:Name="lockButton" Content="Lock Windows" Click="LockButton_Click"
+                    Grid.Column="3" Grid.Row="6"/>
 
     </Grid>
 </Window>
