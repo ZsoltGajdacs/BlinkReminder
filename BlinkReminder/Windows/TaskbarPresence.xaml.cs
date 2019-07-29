@@ -227,7 +227,10 @@ namespace BlinkReminder.Windows
 
         private void LongBreak_Click(object sender, RoutedEventArgs e)
         {
-            LongCycleTimer_Elapsed(sender, e);
+            bool isLongBreak = true;
+            ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
+                    settings.IsLongSkippable, settings.IsFullscreenBreak,
+                    settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
         }
 
         private void PauseItem_Click(object sender, RoutedEventArgs e)
