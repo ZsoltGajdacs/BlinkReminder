@@ -314,10 +314,7 @@ namespace BlinkReminder.Windows
                 // Handle the case when the user wants to have pre-break notifications
                 if (settings.IsNotificationEnabled)
                 {
-                    breakPopup.SetValues(PRE_LONG_BREAK_POPUP_TEXT, longBreakPostponeCount);
-                    taskbarIcon.ShowCustomBalloon(breakPopup,
-                        System.Windows.Controls.Primitives.PopupAnimation.Fade,
-                        (int)settings.NotificationLength.TotalMilliseconds);
+                    ShowNotificationPopup(PRE_LONG_BREAK_POPUP_TEXT, longBreakPostponeCount);
                 }
                 else
                 {
@@ -349,10 +346,7 @@ namespace BlinkReminder.Windows
                 {
                     if (settings.IsNotificationEnabled)
                     {
-                        breakPopup.SetValues(PRE_SHORT_BREAK_POPUP_TEXT, shortBreakPostponeCount);
-                        taskbarIcon.ShowCustomBalloon(breakPopup,
-                            System.Windows.Controls.Primitives.PopupAnimation.Fade,
-                            (int)settings.NotificationLength.TotalMilliseconds);
+                        ShowNotificationPopup(PRE_SHORT_BREAK_POPUP_TEXT, shortBreakPostponeCount);
                     }
                     else
                     {
@@ -597,7 +591,23 @@ namespace BlinkReminder.Windows
                 aboutWindow.Activate();
             }
         }
-        
+
+        #endregion
+
+        #region Popup handling
+
+        /// <summary>
+        /// Shows the pre-notification popup with the given text. PostponeCount is for the internal 
+        /// postpone limiter
+        /// </summary>
+        private void ShowNotificationPopup(string popupText, int popupPostponeCount)
+        {
+            breakPopup.SetValues(popupText, popupPostponeCount);
+            taskbarIcon.ShowCustomBalloon(breakPopup,
+                System.Windows.Controls.Primitives.PopupAnimation.Slide,
+                (int)settings.NotificationLength.TotalMilliseconds);
+        }
+
         #endregion
 
         #region Timer methods
