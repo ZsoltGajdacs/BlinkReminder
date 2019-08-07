@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BlinkReminder.Windows.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="130" d:DesignWidth="370"
-             FontSize="16">
-    <Border Margin="5,5,5,5"
-            BorderThickness="1,1,1,1"
+             d:DesignHeight="110" d:DesignWidth="320"
+             FontSize="14">
+    <Border Margin="5"
+            BorderThickness="1"
             BorderBrush="#FF997137"
             HorizontalAlignment="Left"
             VerticalAlignment="Top">
@@ -25,20 +25,20 @@
         
         <Grid x:Name="controlGrid" Background="Black" Opacity="0.95">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="5" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="10" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="10" />
-                <RowDefinition Height="30" />
+                <RowDefinition Height="27" />
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="135" />
                 <ColumnDefinition Width="20" />
-                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="135" />
                 <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
 

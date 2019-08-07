@@ -11,6 +11,9 @@ namespace BlinkReminder.Windows.Controls
 {
     public partial class BreakNotificationPopup : UserControl, INotifyPropertyChanged
     {
+        private static readonly string GO_BREAK_LABEL = "Let's have a break!";
+        private static readonly string NO_BREAK_LABEL = "Can't rest now!";
+
         private string _textToShow = String.Empty;
         private CountdownTimer countdownTimer;
         private UserSettings settings;
@@ -95,11 +98,11 @@ namespace BlinkReminder.Windows.Controls
             string btnLabel = String.Empty;
             if (settings.IsPermissiveNotification)
             {
-                btnLabel = "Let's have a break!";
+                btnLabel = GO_BREAK_LABEL;
             }
             else
             {
-                btnLabel = "No break yet!";
+                btnLabel = NO_BREAK_LABEL;
             }
 
             confirmBtn.Content = btnLabel;
