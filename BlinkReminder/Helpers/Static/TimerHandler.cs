@@ -12,8 +12,11 @@ namespace BlinkReminder.Helpers
         internal static void RestartTimer(ref Timer timer, double milliSecondTime)
         {
             timer.Stop();
-            timer.Interval = milliSecondTime;
-            timer.Start();
+            if (milliSecondTime > 0)
+            {
+                timer.Interval = milliSecondTime;
+                timer.Start();
+            }
         }
 
         /// <summary>
@@ -21,9 +24,7 @@ namespace BlinkReminder.Helpers
         /// </summary>
         internal static void RestartTimer(ref Timer timer, TimeSpan time)
         {
-            timer.Stop();
-            timer.Interval = time.TotalMilliseconds;
-            timer.Start();
+            RestartTimer(ref timer, time.TotalMilliseconds);
         }
 
         /// <summary>
