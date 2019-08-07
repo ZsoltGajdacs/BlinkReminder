@@ -46,7 +46,8 @@ namespace BlinkReminder
             SetBinding();
             StartViewTimer(interval);
             StartLockTimer(isLongBreakLocksScreen, isLongBreak, 5000);
-            SetSkippable(isSkippable);
+            SetBtnVisibility(isSkippable, isLongBreak);
+            AdjustBtnPos();
             SetMessage(message);
             PrepareWindow();
         }
@@ -62,15 +63,56 @@ namespace BlinkReminder
         }
 
         /// <summary>
-        /// Sets if the skip button should appear or not
+        /// Sets the skip and lock btn's visibility based on settings and break type
         /// </summary>
-        /// <param name="isSkippable">true or false</param>
-        private void SetSkippable(bool isSkippable)
+        private void SetBtnVisibility(bool isSkippable, bool isLongBreak)
         {
             if (!isSkippable)
             {
                 skipButton.IsEnabled = false;
                 skipButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                skipButton.IsEnabled = true;
+                skipButton.Visibility = Visibility.Visible;
+            }
+
+            if (!isLongBreak)
+            {
+                lockButton.IsEnabled = false;
+                lockButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                lockButton.IsEnabled = true;
+                lockButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// Adjusts the btn positions based on their visibility
+        /// </summary>
+        private void AdjustBtnPos()
+        {
+            if (!lockButton.IsEnabled)
+            {
+                skipButton.SetValue(Grid.ColumnSpanProperty, 3);
+            }
+            else
+            {
+                skipButton.SetValue(Grid.ColumnSpanProperty, 1);
+            }
+
+            if (!skipButton.IsEnabled)
+            {
+                lockButton.SetValue(Grid.ColumnProperty, 1);
+                lockButton.SetValue(Grid.ColumnSpanProperty, 3);
+            }
+            else
+            {
+                lockButton.SetValue(Grid.ColumnProperty, 3);
+                lockButton.SetValue(Grid.ColumnSpanProperty, 1);
             }
         }
 
@@ -108,7 +150,6 @@ namespace BlinkReminder
         /// <summary>
         /// Starts the timer that control the duration of the window's appearance
         /// </summary>
-        /// <param name="interval"></param>
         private void StartViewTimer(TimeSpan interval)
         {
             timeOfBlock = new Timer(interval.TotalMilliseconds)
