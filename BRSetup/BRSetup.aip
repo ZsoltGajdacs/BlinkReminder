@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="15.6" version="16.1" Modules="simple" RootPath="." Language="en" Id="{AB47775A-73C7-4564-A43C-13627B48B2CE}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="15.6" version="16.2" Modules="simple" RootPath="." Language="en" Id="{AB47775A-73C7-4564-A43C-13627B48B2CE}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;FixupComponent"/>
   </COMPONENT>
@@ -28,10 +28,10 @@
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/ZsoltGajdacs/BlinkReminder/releases"/>
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="Manufacturer" Value="ZsGWorks"/>
-    <ROW Property="ProductCode" Value="1033:{F855CB4F-E501-405D-9751-5B2FA4A8507E} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{1118A12A-BC3E-42C9-B795-D57B4AF189B8} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlinkReminder"/>
-    <ROW Property="ProductVersion" Value="0.8.02" Type="32"/>
+    <ROW Property="ProductVersion" Value="0.8.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CED82C3D-3135-468B-84C3-73AF11ECFFDA}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
