@@ -1,3 +1,13 @@
+-------------------- v0.8.0 -----------------------
+- New feature: Pre-break notification
+- New feature: Breaks can be postponed - time and amount set in settings
+- Settings: Reordered controls
+- Settings: Replaced time controls with minute/second based ones
+- Settings: Long and short breaks can no longer be mixed up. The minimum time of long break is the current amount of short break + 1 min.
+- Break: Workstation can now be locked via click on the break screen, or it can auto lock, if that is turned on
+- Updater: The app now checks for updates on startup - if the user wants the update it is auto downloaded and the installer starts
+- Various bugfixes and cleanups
+
 -------------------- v0.7.1 -----------------------
 - Fixed full screen break text misalignment
 - Fixed scale control not being disabled when full screen break is enabled

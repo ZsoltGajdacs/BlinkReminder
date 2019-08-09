@@ -19,10 +19,10 @@ Write! :)
 * Custom quotes for the breaks, can be added in settings
 * Most things can be changed in settings (Saved in AppData/Roaming)
 * Can check for update or go to bug report site (Issue opener here on GitHub) in About
-
-## Planned features
 * Notification before breaks
 * Long breaks lock the machine
+
+## Planned features
 * Multi display support
 * Home / Office mode
 * Statistics about usage
