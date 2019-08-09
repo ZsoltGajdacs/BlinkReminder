@@ -160,7 +160,7 @@
 
                     <CheckBox x:Name="longLockChkbox" IsChecked="{Binding IsLongBreakLocksScreen, Mode=TwoWay}" 
                               Content="Long rest locks the screen" 
-                              ToolTip="On long break the workstation will lock down in 5 seconds"
+                              ToolTip="On long break the workstation will lock down in 5 seconds. WARNING! The app cannot unlock the PC at the end of the break!"
                               Grid.Column="3" Grid.Row="5" 
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
