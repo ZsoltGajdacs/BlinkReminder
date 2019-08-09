@@ -9,12 +9,16 @@ namespace BlinkReminder.Helpers
 {
     internal class UpdateCheck
     {
+        // Logger
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         // Consts
         private static readonly string PRODUCT_NAME = "BlinkReminder";
         private static readonly string RELEASES_URL = "https://api.github.com/repos/ZsoltGajdacs/BlinkReminder/releases";
         private static readonly string CHECK_FAILED = "Check failed:";
         private static readonly string PROTOCOL_ERROR = "Protocol Error";
         private static readonly string CONNECTION_ERROR = "Couldn't connect to GitHub";
+        private static readonly string UNKNOWN_CONNECTION_ERROR = "Unknown connection error";
         private static readonly string API_ERROR = "Github API mismatch";
         private static readonly string NO_UPDATE = "No new version";
 
@@ -38,22 +42,28 @@ namespace BlinkReminder.Helpers
             {
                 content = await httpClient.GetStringAsync(RELEASES_URL);
             }
-            catch (ProtocolViolationException)
+            catch (ProtocolViolationException e)
             {
-                // log
+                logger.Error("Protocol error", e);
                 return CHECK_FAILED + " " + PROTOCOL_ERROR;
             }
             catch (HttpRequestException e)
             {
-                //log
                 if (e.Message.Contains("40"))
                 {
+                    logger.Error("API error", e);
                     return CHECK_FAILED + " " + API_ERROR;
                 }
                 else
                 {
+                    logger.Error("Connection error", e);
                     return CHECK_FAILED + " " + CONNECTION_ERROR;
                 }
+            }
+            catch (Exception e)
+            {
+                logger.Error(UNKNOWN_CONNECTION_ERROR, e);
+                return CHECK_FAILED + " " + UNKNOWN_CONNECTION_ERROR;
             }
 
             return ParseJsonForDownloadUrl(content);
@@ -82,9 +92,9 @@ namespace BlinkReminder.Helpers
                     return NO_UPDATE;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                logger.Error(API_ERROR, e);
                 return CHECK_FAILED + " " + API_ERROR;
             }
         }
