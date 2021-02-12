@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Windows;
 using System.Timers;
-using BlinkReminder.Windows.Support;
-using BlinkReminder.Helpers;
+using BlinkReminder.Timers;
 using System.Windows.Media;
 using System.Globalization;
 using System.Windows.Controls;
+using BlinkReminder.Helpers.ScreenInfo;
+using BlinkReminder.Helpers;
 
 namespace BlinkReminder
 {
@@ -262,7 +263,7 @@ namespace BlinkReminder
 
         private void LockButton_Click(object sender, RoutedEventArgs e)
         {
-            Locker.LockWorkStation();
+            WorkStationLock.LockWorkStation();
         }
 
         /// <summary>
@@ -270,7 +271,7 @@ namespace BlinkReminder
         /// </summary>
         private void TimeToLock_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Locker.LockWorkStation();
+            WorkStationLock.LockWorkStation();
         }
         #endregion
 

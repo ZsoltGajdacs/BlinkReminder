@@ -37,14 +37,13 @@
 ///                     - Modified Disopose to conform to the dispose pattern
 ///                     - Charset set to UNICODE on native method dllimports
 
-
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Helper.Hooks
 {
     /// <summary>
     /// Low-level keyboard intercept class to trap and suppress system keys.

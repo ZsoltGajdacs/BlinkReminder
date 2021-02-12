@@ -1,4 +1,4 @@
-﻿using BlinkReminder.Helpers;
+﻿using BlinkReminder.Update;
 using System;
 using System.Windows;
 using System.Windows.Documents;

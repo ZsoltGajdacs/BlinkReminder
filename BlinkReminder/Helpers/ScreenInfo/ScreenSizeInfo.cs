@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlinkReminder.Helpers
+﻿namespace BlinkReminder.Helpers.ScreenInfo
 {
     internal static class ScreenSizeInfo
     {
@@ -14,13 +7,13 @@ namespace BlinkReminder.Helpers
         /// </summary>
         internal static double CalculateLeftEdgeOfWindow(double width)
         {
-            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            System.Windows.Rect desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
             return desktopWorkingArea.Right - width;
         }
 
         internal static double CalculateTopEdgeOfWindow(double height)
         {
-            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            System.Windows.Rect desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
             return desktopWorkingArea.Bottom - height;
         }
     }

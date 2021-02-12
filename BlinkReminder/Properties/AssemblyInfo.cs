@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Zsolt Gajdács")]
 [assembly: AssemblyProduct("BlinkReminder")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ZsGWorks ©  2018")]
 [assembly: AssemblyTrademark("Licensed under GNU General Public License v3.0")]
 [assembly: AssemblyCulture("")]
 

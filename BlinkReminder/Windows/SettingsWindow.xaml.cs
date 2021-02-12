@@ -1,4 +1,4 @@
-﻿using BlinkReminder.Helpers;
+﻿using BlinkReminder.Timers;
 using BlinkReminder.Settings;
 using System;
 using System.ComponentModel;
@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit;
+using BlinkReminder.Helpers;
 
 namespace BlinkReminder.Windows
 {

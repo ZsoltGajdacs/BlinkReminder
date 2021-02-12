@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Timers;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Timers
 {
     internal static class TimerHandler
     {

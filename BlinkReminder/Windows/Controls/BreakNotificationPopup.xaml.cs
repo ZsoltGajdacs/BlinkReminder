@@ -1,5 +1,5 @@
 ﻿using BlinkReminder.Settings;
-using BlinkReminder.Windows.Support;
+using BlinkReminder.Timers;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.ComponentModel;

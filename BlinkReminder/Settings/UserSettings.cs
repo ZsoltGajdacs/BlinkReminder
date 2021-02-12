@@ -1,5 +1,6 @@
 ﻿using BlinkReminder.DTOs;
 using BlinkReminder.Helpers;
+using BlinkReminder.Helpers.FileHandlers;
 using NLog;
 using NLog.Layouts;
 using System;
@@ -92,8 +93,8 @@ namespace BlinkReminder.Settings
             string settingsDirPath = GetSettingsDirLocation();
 
             // Configure logger
-            var config = new NLog.Config.LoggingConfiguration();
-            var logfile = new NLog.Targets.FileTarget("logfile")
+            NLog.Config.LoggingConfiguration config = new NLog.Config.LoggingConfiguration();
+            NLog.Targets.FileTarget logfile = new NLog.Targets.FileTarget("logfile")
             {
                 FileName = settingsDirPath + "\\brlog.log",
                 Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}"),

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace BlinkReminder.Windows.Support
+namespace BlinkReminder.Timers
 {
     /// <summary>
     /// Timer for the block window. Counts the remaining time left from the break

@@ -5,12 +5,16 @@ using System.Windows;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using BlinkReminder.Helpers;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using BlinkReminder.Windows.Controls;
 using Hardcodet.Wpf.TaskbarNotification;
+using BlinkReminder.Update;
+using BlinkReminder.Helper.Hooks;
+using BlinkReminder.Timers;
+using BlinkReminder.Helpers.FileHandlers;
+using BlinkReminder.Helpers.ScreenInfo;
 
 namespace BlinkReminder.Windows
 {
@@ -303,7 +307,7 @@ namespace BlinkReminder.Windows
             isLongIntervalTimerDone = true;
             SetTaskbarTooltip((settings.LongIntervalTime.TotalMinutes) + TOOLTIP_LONG_MSG);
 
-            if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc))
+            if (settings.ShouldBreakWhenFullScreen && FullScreenDetect.IsFullscreenAppRunning(out foreProc))
             {
                 ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
             }
@@ -337,7 +341,7 @@ namespace BlinkReminder.Windows
                     isPopupOpen = taskbarIcon.CustomBalloon.IsOpen;
                 }
 
-                if (settings.ShouldBreakWhenFullScreen && NativeMethods.IsFullscreenAppRunning(out foreProc)
+                if (settings.ShouldBreakWhenFullScreen && FullScreenDetect.IsFullscreenAppRunning(out foreProc)
                     || isPopupOpen)
                 {
                     ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);

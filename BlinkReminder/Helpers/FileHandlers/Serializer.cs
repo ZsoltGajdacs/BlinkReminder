@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Helpers.FileHandlers
 {
     internal static class Serializer
     {

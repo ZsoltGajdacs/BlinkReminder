@@ -1,9 +1,10 @@
-﻿using BlinkReminder.Helpers;
+﻿using BlinkReminder.Timers;
 using BlinkReminder.Settings;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using BlinkReminder.Helpers;
 
 namespace BlinkReminder.Windows
 {

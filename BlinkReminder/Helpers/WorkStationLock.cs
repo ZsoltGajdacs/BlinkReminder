@@ -10,7 +10,7 @@ namespace BlinkReminder.Helpers
     /// <summary>
     /// Static class for locking the workstation
     /// </summary>
-    internal static class Locker
+    internal static class WorkStationLock
     {
         /// <summary>
         /// Locks the workstation

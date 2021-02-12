@@ -9,11 +9,10 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Update
 {
     internal class UpdateHandler
     {
-        // Logger
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private const string UPDATE_ZIPNAME = "brupdate.zip";

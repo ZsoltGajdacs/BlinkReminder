@@ -8,13 +8,12 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Helpers.ScreenInfo
 {
     /// <summary>
     /// Contains methods for detecting fullscreen applications. 
-    /// Named NativeMethods 'cause VS2017 said so :D
     /// </summary>
-    internal static class NativeMethods
+    internal static class FullScreenDetect
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT

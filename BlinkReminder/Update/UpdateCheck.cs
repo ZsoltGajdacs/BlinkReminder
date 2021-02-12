@@ -5,14 +5,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 
-namespace BlinkReminder.Helpers
+namespace BlinkReminder.Update
 {
     internal class UpdateCheck
     {
-        // Logger
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        // Consts
         private static readonly string PRODUCT_NAME = "BlinkReminder";
         private static readonly string RELEASES_URL = "https://api.github.com/repos/ZsoltGajdacs/BlinkReminder/releases";
         private static readonly string CHECK_FAILED = "Check failed:";
