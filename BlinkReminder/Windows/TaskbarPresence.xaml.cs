@@ -403,7 +403,7 @@ namespace BlinkReminder.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-            Serializer.SerializeObj(settings, settings.SettingsFilePath, settings.SettingsDirPath);
+            Serializer.JsonObjectSerialize<UserSettings>(settings.SettingsDirPath, settings.SettingsFilePath, ref settings, DoBackup.Yes);
         }
 
         private void AboutWindow_Closed(object sender, EventArgs e)

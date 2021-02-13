@@ -20,10 +20,9 @@ namespace BlinkReminder.Settings
     {
         #region Data members
         // Logger
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        // Settings data
-        private const string SETTINGS_FILENAME = "Settings.brs";
+        // Settings file data
         internal string SettingsFilePath { get; set; }
         internal string SettingsDirPath { get; set; }
 
@@ -89,14 +88,11 @@ namespace BlinkReminder.Settings
         #region Singleton stuff
         private static readonly Lazy<UserSettings> lazy = new Lazy<UserSettings>(() =>
         {
-            string settingsPath = GetSettingsLocation();
-            string settingsDirPath = GetSettingsDirLocation();
-
             // Configure logger
             NLog.Config.LoggingConfiguration config = new NLog.Config.LoggingConfiguration();
             NLog.Targets.FileTarget logfile = new NLog.Targets.FileTarget("logfile")
             {
-                FileName = settingsDirPath + "\\brlog.log",
+                FileName = FilesLocation.GetSaveDirPath() + "\\brlog.log",
                 Layout = new SimpleLayout("${longdate}|${level:uppercase=true}|${logger}|${threadid}|${message}|${exception:format=tostring}"),
                 ArchiveOldFileOnStartup = true,
                 MaxArchiveFiles = 5,
@@ -106,7 +102,7 @@ namespace BlinkReminder.Settings
             NLog.LogManager.Configuration = config;
 
             // Deserialize settings
-            UserSettings settings = (UserSettings)Serializer.DeserializeObject(settingsPath);
+            UserSettings settings = Serializer.JsonObjectDeserialize<UserSettings>(FilesLocation.GetSavePath());
             
             return settings ?? new UserSettings();
         });
@@ -120,8 +116,8 @@ namespace BlinkReminder.Settings
         /// </summary>
         private UserSettings()
         {
-            SettingsDirPath = GetSettingsDirLocation();
-            SettingsFilePath = GetSettingsLocation();
+            SettingsDirPath = FilesLocation.GetSaveDirPath();
+            SettingsFilePath = FilesLocation.GetSavePath();
 
             ShortDisplayTime = TimeSpan.FromSeconds((double)CycleTimesEnum.ShortDisplayTime);
             ShortIntervalTime = TimeSpan.FromSeconds((double)CycleTimesEnum.ShortIntervalTime);
@@ -145,118 +141,11 @@ namespace BlinkReminder.Settings
             Scaling = 1;
 
             AddDefaultQuotes();
-            CreateStuff();
+            CreateSettingsDto();
+            SetUpQuoteRandomizer();
 
             logger.Info("New settings created with defaults");
         }
-
-        /// <summary>
-        /// Serialization ctor, loads data from file, skipped of no serialized data
-        /// </summary>
-        private UserSettings(SerializationInfo info, StreamingContext context)
-        {
-            SettingsDirPath = GetSettingsDirLocation();
-            SettingsFilePath = GetSettingsLocation();
-
-            // ------------------- v0.5 settings -------------------
-            IsShortSkippable = (bool)info.GetValue("iss", typeof(bool));
-            IsLongSkippable = (bool)info.GetValue("ils", typeof(bool));
-            ShouldBreakWhenFullScreen = (bool)info.GetValue("sbwfs", typeof(bool));
-
-            _shortBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("sbq", typeof(Quote[]))).ToList());
-            _longBreakQuotes = new BindingList<Quote>(((Quote[])info.GetValue("lbq", typeof(Quote[]))).ToList());
-
-            // Settings options after v0.5 must go in "try" blocks as they might be missing from the 
-            // file on the user's end.
-            //--------------------- v0.6 settings --------------------
-            try
-            {
-                IndefPauseEnabled = (bool)info.GetValue("ipe", typeof(bool));
-            }
-            catch (Exception ex)
-            {
-                logger.Debug(ex, "Getting IndefPauseEnabled failed");
-                IndefPauseEnabled = false;
-            }
-
-            //--------------------- v0.7 settings --------------------
-            try
-            {
-                ShortDisplayTime = (TimeSpan)info.GetValue("sdt", typeof(TimeSpan));
-                ShortIntervalTime = (TimeSpan)info.GetValue("sit", typeof(TimeSpan));
-                LongDisplayTime = (TimeSpan)info.GetValue("ldt", typeof(TimeSpan));
-                LongIntervalTime = (TimeSpan)info.GetValue("lit", typeof(TimeSpan));
-
-                LockLengthTimeExtent = (TimeSpan)info.GetValue("llte", typeof(TimeSpan));
-
-                IsFullscreenBreak = (bool)info.GetValue("ifb", typeof(bool));
-
-                Scaling = (double)info.GetValue("scl", typeof(double));
-            }
-            catch (Exception ex)
-            {
-                logger.Debug(ex, "Getting 0.7 settings failed");
-
-                ShortDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("sdt", typeof(double)));
-                ShortIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("sit", typeof(double)));
-                LongDisplayTime = TimeSpan.FromSeconds((double)info.GetValue("ldt", typeof(double)));
-                LongIntervalTime = TimeSpan.FromSeconds((double)info.GetValue("lit", typeof(double)));
-
-                LockLengthTimeExtent = TimeSpan.FromMinutes(1);
-
-                IsFullscreenBreak = true;
-
-                Scaling = 1;
-            }
-
-            //--------------------- v0.8 settings --------------------
-            try
-            {
-                IsLongBreakLocksScreen = (bool)info.GetValue("ilbls", typeof(bool));
-                IsPermissiveNotification = (bool)info.GetValue("ipn", typeof(bool));
-                IsNotificationEnabled = (bool)info.GetValue("ine", typeof(bool));
-                PostponeLength = (TimeSpan)info.GetValue("ppl", typeof(TimeSpan));
-                PostponeAmount = (int)info.GetValue("ppa", typeof(int));
-                NotificationLength = (TimeSpan)info.GetValue("nlh", typeof(TimeSpan));
-            }
-            catch (Exception ex)
-            {
-                logger.Debug(ex, "Getting v0.8 settings failed");
-                IsLongBreakLocksScreen = false;
-                IsPermissiveNotification = false;
-                IsNotificationEnabled = false;
-                PostponeLength = TimeSpan.FromMinutes(2);
-                PostponeAmount = 2;
-                NotificationLength = TimeSpan.FromSeconds(6);
-            }
-
-            CreateStuff(false);
-
-            logger.Info("Settings successfully deserialized");
-        }
-        #endregion
-
-        #region Static methods
-
-        /// <summary>
-        /// Gives back the path of the settings file.
-        /// </summary>
-        /// <returns></returns>
-        private static string GetSettingsLocation()
-        {
-            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            return userAppData + "\\BlinkReminder\\" + SETTINGS_FILENAME;
-        }
-
-        /// <summary>
-        /// Sets the application settings directory property
-        /// </summary>
-        private static string GetSettingsDirLocation()
-        {
-            string userAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            return userAppData + "\\BlinkReminder";
-        }
-
         #endregion
 
         #region Startup methods
@@ -284,7 +173,7 @@ namespace BlinkReminder.Settings
         /// <summary>
         /// Creates the necessary custom data members
         /// </summary>
-        private void CreateStuff(bool isNew = true)
+        private void CreateSettingsDto()
         {
             SettingsDTO = new SettingsDTO(ref _shortDisplayTime, ref _shortIntervalTime,
                                             ref _longDisplayTime, ref _longIntervalTime,
@@ -292,27 +181,14 @@ namespace BlinkReminder.Settings
                                             ref _postponeAmount, ref _notificationLength);
 
             SettingsDTO.UserInactivityTimer.Elapsed += UserInactivityTimer_Elapsed;
+        }
 
-            if (isNew)
-            {
-                rand = new RandIntMem(2);
-            }
-            else
-            {
-                rand = new RandIntMem(1);
-            }
+        private void SetUpQuoteRandomizer()
+        {
+            int numToRemember = _shortBreakQuotes.Count > _longBreakQuotes.Count ?
+                                _longBreakQuotes.Count - 1 : _shortBreakQuotes.Count - 1;
 
-            // Check the amount of quotes to know how many can be shown without repetition
-            // Commented out until flexible RandIntMem is implemented
-            /*if (_shortBreakQuotes.Count >= 3 && _longBreakQuotes.Count >= 3)
-            {
-                rand = new RandIntMem(2);
-            }
-            else
-            {
-                rand = new RandIntMem(1);
-            }*/
-
+            rand = new RandIntMem(numToRemember);
         }
 
         #endregion

@@ -1,65 +1,99 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BlinkReminder.Helpers.FileHandlers
 {
     internal static class Serializer
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        /// <summary>
-        /// Serializes the given object to the given path via Binary formatting
-        /// </summary>
-        internal static void SerializeObj(Object o, string serializePath, string parentDir)
+        internal static bool JsonObjectSerialize<T>(string saveDir, string filePath, 
+            ref T serializable, DoBackup doBackup)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(parentDir);
+            CreateDirIfDoesntExist(saveDir);
+            CreateBackupIfNeeded(filePath, doBackup);
 
-            if (!dirInfo.Exists)
-            {
-                dirInfo.Create();
-            }
-
+            TextWriter writer = null;
+            bool isSaveSuccessful = false;
             try
             {
-                IFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(serializePath, FileMode.Create, FileAccess.Write);
+                string output = JsonConvert.SerializeObject(serializable);
+                writer = new StreamWriter(filePath, false);
+                writer.Write(output);
 
-                formatter.Serialize(stream, o);
-                stream.Close();
-
-                logger.Info(o.ToString() + " serialization successful");
+                isSaveSuccessful = true;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 logger.Error(ex, "Serialization failed!");
             }
+            finally
+            {
+                if (writer != null) writer.Close();
+            }
+
+            return isSaveSuccessful;
         }
 
-        /// <summary>
-        /// Deserializes the given object at path via Binary formatting
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        internal static object DeserializeObject(string path)
+        internal static T JsonObjectDeserialize<T>(string filePath)
         {
-            if (File.Exists(path) && new FileInfo(path).Length > 0)
+            T deserializedObj = default;
+            if (new FileInfo(filePath).Exists)
             {
+                TextReader reader = null;
                 try
                 {
-                    IFormatter formatter = new BinaryFormatter();
-                    FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                    reader = new StreamReader(filePath);
+                    string fileContents = reader.ReadToEnd();
 
-                    return formatter.Deserialize(stream);
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    };
+
+                    deserializedObj = JsonConvert.DeserializeObject<T>(fileContents, settings);
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Deserialization failed!");
                 }
+                finally
+                {
+                    if (reader != null)
+                        reader.Close();
+                }
             }
 
-            return null;
+            return deserializedObj;
         }
+
+        private static void CreateDirIfDoesntExist(string dirName)
+        {
+            if (!Directory.Exists(dirName))
+            {
+                Directory.CreateDirectory(dirName);
+            }
+        }
+
+        private static void CreateBackupIfNeeded(string path, DoBackup doBackup)
+        {
+            if (DoBackup.Yes == doBackup && File.Exists(path))
+            {
+                string backupPath = path + ".bak";
+                if (File.Exists(backupPath))
+                {
+                    File.Delete(backupPath);
+                }
+
+                File.Copy(path, backupPath);
+            }
+        }
+    }
+
+    internal enum DoBackup
+    {
+        Yes,
+        No
     }
 }
