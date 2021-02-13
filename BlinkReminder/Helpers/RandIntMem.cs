@@ -6,21 +6,21 @@ namespace BlinkReminder.Helpers
     /// <summary>
     /// For random integer generaton, with the last n number not being repeated
     /// </summary>
-    internal class RandIntMem
+    public class RandIntMem
     {
         private readonly Random random = new Random();
-        private int[] lastNums;
+        private readonly int[] lastNums;
         private int counter;
 
         /// <summary>
         /// Throws out of range exception if the amount is, or less than zero
         /// </summary>
-        /// <param name="amountToRemember"></param>
-        internal RandIntMem(int amountToRemember)
+        /// <param name="amountToRemember">Number of times a completely new number is given</param>
+        public RandIntMem(int amountToRemember)
         {
             if (amountToRemember <= 0)
             {
-                throw new ArgumentOutOfRangeException("amountToRemember", "Value must be higher than Zero");
+                throw new ArgumentOutOfRangeException(nameof(amountToRemember), "Value must be higher than Zero");
             }
 
             lastNums = new int[amountToRemember];
@@ -36,11 +36,11 @@ namespace BlinkReminder.Helpers
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        internal int GetRandInt(int min, int max)
+        public int GetRandInt(int min, int max)
         {
             if (max - min < lastNums.Length)
             {
-                throw new ArgumentOutOfRangeException("max", "Max - Min can't be less then the object's int memory");
+                throw new ArgumentOutOfRangeException(nameof(max), "Max - Min can't be less then the object's int memory");
             }
 
             int numToReturn;
@@ -52,14 +52,7 @@ namespace BlinkReminder.Helpers
 
             lastNums[counter] = numToReturn;
 
-            if (counter == lastNums.Length - 1)
-            {
-                counter = 0;
-            }
-            else
-            {
-                ++counter;
-            }
+            counter = counter == lastNums.Length - 1 ? counter = 0 : counter + 1;
 
             return numToReturn;
         }

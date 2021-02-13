@@ -6,13 +6,13 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe" Value="..\BlinkReminder\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_BlinkReminder.exe.config" Value="..\BlinkReminder\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_NLog.dll" Value="..\packages\NLog.4.7.5\lib\net45"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_NLog.dll" Value="..\packages\NLog.4.7.7\lib\net45"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\packages\Newtonsoft.Json.12.0.3\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.Toolkit.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Aero.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.2\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.Metro.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.2\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.Themes.VS2010.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.2\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.AvalonDock.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.2\lib\net40"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Xceed.Wpf.Toolkit.dll" Value="..\packages\Extended.Wpf.Toolkit.4.0.2\lib\net40"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe" Value="BlinkReminder.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_BlinkReminder.exe.config" Value="BlinkReminder.exe.config"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Hardcodet.Wpf.TaskbarNotification.dll" Value="Hardcodet.Wpf.TaskbarNotification.dll"/>
