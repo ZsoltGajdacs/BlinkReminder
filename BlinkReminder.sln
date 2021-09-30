@@ -4,10 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkReminder", "BlinkReminder\BlinkReminder.csproj", "{E80DADB3-3681-4EF9-A00B-017FEDEE7EED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02} = {58EEE0BF-B91E-4628-8106-6D44C0147F02}
+	EndProjectSection
 EndProject
 Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "BRSetup", "BRSetup\BRSetup.aiproj", "{21376782-A476-4181-ACA6-E9B0A4C8C9AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BRTest", "BRTest\BRTest.csproj", "{3A8DFA49-B783-4399-A577-6074D4EF8BDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BRCore", "BRCore\BRCore.csproj", "{58EEE0BF-B91E-4628-8106-6D44C0147F02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +39,12 @@ Global
 		{3A8DFA49-B783-4399-A577-6074D4EF8BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A8DFA49-B783-4399-A577-6074D4EF8BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A8DFA49-B783-4399-A577-6074D4EF8BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.All|Any CPU.ActiveCfg = Debug|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.All|Any CPU.Build.0 = Debug|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58EEE0BF-B91E-4628-8106-6D44C0147F02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
