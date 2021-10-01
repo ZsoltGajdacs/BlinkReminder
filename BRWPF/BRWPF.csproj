@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
+    <None Remove="Images\BlinkReminder.ico" />
+    <None Remove="Images\Red_X.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BRCore\BRCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\BlinkReminder.ico" />
+    <Resource Include="Images\Red_X.png" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,68 @@
+﻿<Window x:Name="Blocker" x:Class="BRWPF.Windows.ViewBlockerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BRWPF.Windows"
+        mc:Ignorable="d"
+        Title="Blocker" FontSize="16" ResizeMode="NoResize" 
+        WindowState="Maximized" WindowStartupLocation="CenterScreen" 
+        WindowStyle="None" Opacity="0.95" Background="Black" 
+        AllowsTransparency="True" ShowInTaskbar="False" >
+    
+    <Grid x:Name="blockerGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <!--0-->
+            <RowDefinition Height="{Binding Distance, Mode=OneWay}"/>
+            <!--1-->
+            <RowDefinition Height="{Binding ControlHeight, Mode=OneWay}"/>
+            <!--2 quoteText-->
+            <RowDefinition Height="*"/>
+            <!--3 padding-->
+            <RowDefinition Height="{Binding ControlHeight, Mode=OneWay}"/>
+            <!--4 counterText in Stackpanel-->
+            <RowDefinition Height="*"/>
+            <!--5 padding-->
+            <RowDefinition Height="{Binding ControlHeight, Mode=OneWay}"/>
+            <!--6 skipbtn-->
+            <RowDefinition Height="{Binding Distance, Mode=OneWay}"/>
+            <!--7-->
+            <RowDefinition Height="10*"/>
+            <!--8-->
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <!--0-->
+            <ColumnDefinition Width="{Binding BtnWidth, Mode=OneWay}"/>
+            <!--1 skipBtn-->
+            <ColumnDefinition Width="20"/>
+            <!--2-->
+            <ColumnDefinition Width="{Binding BtnWidth, Mode=OneWay}"/>
+            <!--3 lockBtn-->
+            <ColumnDefinition Width="*"/>
+            <!--4-->
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="quoteText" Foreground="White" 
+                   TextAlignment="Center"
+                   Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2"/>
+
+        <StackPanel x:Name="blockerStack" Orientation="Vertical" HorizontalAlignment="Center"
+                    Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4" >
+
+            <TextBlock x:Name="counterText" Foreground="White" 
+                   Text="{Binding TimeToDisplay, Mode=OneWay}" 
+                   TextAlignment="Center"/>
+
+        </StackPanel>
+
+        <Button x:Name="skipButton" Content="Skip Break" Click="SkipButton_Click"
+                    Grid.Column="1" Grid.Row="6"/>
+
+        <Button x:Name="lockButton" Content="Lock Windows" Click="LockButton_Click"
+                    Grid.Column="3" Grid.Row="6"/>
+
+    </Grid>
+</Window>

@@ -109,7 +109,7 @@ namespace BRWPF.Windows
                     {
                         keyTrap = new KeyboardHook(); // Intercept every key
                     }
-                    blockerWindow = new ViewBlocker(interval, scaling, isSkippable, isFullscreen, isLongBreakLocksScreen, isLongBreak, message);
+                    blockerWindow = new ViewBlockerWindow(interval, scaling, isSkippable, isFullscreen, isLongBreakLocksScreen, isLongBreak, message);
                     blockerWindow.Closed += BlockerWindow_Closed;
                     blockerWindow.Show();
 
@@ -124,7 +124,7 @@ namespace BRWPF.Windows
             {
                 if (settingsWindow == null)
                 {
-                    settingsWindow = new SettingsWindow(ref settings);
+                    settingsWindow = new SettingsWindow();
                     settingsWindow.Closed += SettingsWindow_Closed;
                     settingsWindow.Show();
 
@@ -146,6 +146,81 @@ namespace BRWPF.Windows
                 aboutWindow.Activate();
             }
         }
+        #endregion
+
+        #region Window Events
+
+        private void BlockerWindow_Closed(object sender, EventArgs e)
+        {
+            blockerWindow = null;
+            keyTrap?.Dispose(); // Release keyboard trap
+            ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
+
+            // Set back the taskbarWindow to be the main one
+            Application.Current.MainWindow = this;
+        }
+
+        private void SettingsWindow_Closed(object sender, EventArgs e)
+        {
+            settingsWindow = null;
+            Serializer.JsonObjectSerialize<UserSettings>(settings.SettingsDirPath, settings.SettingsFilePath, ref settings, DoBackup.Yes);
+        }
+
+        private void AboutWindow_Closed(object sender, EventArgs e)
+        {
+            aboutWindow = null;
+        }
+
+        private void PauseWindow_Closed(object sender, EventArgs e)
+        {
+            pauseWindow = null;
+        }
+
+        private void OnBalloonClosing(object sender, RoutedEventArgs e)
+        {
+            bool isLongBreak = true;
+
+            if (breakPopup.ShouldPostponeBreak)
+            {
+                if (isLongIntervalTimerDone)
+                {
+                    ++longBreakPostponeCount;
+                }
+                else if (isShortIntervalTimerDone)
+                {
+                    ++shortBreakPostponeCount;
+                }
+
+                // The timer that called for restart is reset with the postpone length
+                ResetTimers(settings.PostponeLength, settings.PostponeLength);
+            }
+            else
+            {
+                ResetPostponeCount();
+
+                if (breakPopup.ShouldStartBreak)
+                {
+                    if (isLongIntervalTimerDone)
+                    {
+                        ShowViewBlocker(settings.LongDisplayTime, settings.Scaling,
+                            settings.IsLongSkippable, settings.IsFullscreenBreak,
+                            settings.IsLongBreakLocksScreen, isLongBreak, settings.GetLongQuote());
+                    }
+                    else if (isShortIntervalTimerDone)
+                    {
+                        isLongBreak = false;
+                        ShowViewBlocker(settings.ShortDisplayTime, settings.Scaling,
+                            settings.IsShortSkippable, settings.IsFullscreenBreak,
+                            settings.IsLongBreakLocksScreen, isLongBreak, settings.GetShortQuote());
+                    }
+                }
+                else
+                {
+                    ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
+                }
+            }
+        }
+
         #endregion
     }
 }
