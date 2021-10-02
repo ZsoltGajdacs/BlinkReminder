@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 
 namespace BRCore.Settings.DTO
 {
     public sealed class SettingsDto
     {
-        
+        public GeneralSettingsDto GeneralSettingsDto { get; private set; }
+        public List<BreakTimerSettingsDto> TimerSettingsDtos { get; private set; }
+
+        public SettingsDto(GeneralSettingsDto generalSettingsDto, List<BreakTimerSettingsDto> timerSettingsDtos)
+        {
+            GeneralSettingsDto = generalSettingsDto ?? throw new ArgumentNullException(nameof(generalSettingsDto));
+            TimerSettingsDtos = timerSettingsDtos ?? throw new ArgumentNullException(nameof(timerSettingsDtos));
+        }
     }
 }

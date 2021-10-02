@@ -23,7 +23,7 @@ namespace BRCore.Utils
         /// <returns></returns>
         internal static string GetSaveFileName()
         {
-            return "Settings.brs";
+            return "settings.json";
         }
 
         /// <summary>

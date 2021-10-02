@@ -1,4 +1,4 @@
-﻿using BRCore.TimerBasedMeasurement;
+﻿using BRCore.MeasurementSystems.TimerBasedMeasurement;
 using BRCore.Utils;
 using BRWPF.Utils.ScreenInfo;
 using System;

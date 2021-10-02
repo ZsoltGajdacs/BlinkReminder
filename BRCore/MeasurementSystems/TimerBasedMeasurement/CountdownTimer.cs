@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Timers;
 
-namespace BRCore.TimerBasedMeasurement
+namespace BRCore.MeasurementSystems.TimerBasedMeasurement
 {
     /// <summary>
     /// Timer for the block window. Counts the remaining time left from the break
     /// </summary>
-    class CountdownTimer : INotifyPropertyChanged
+    public class CountdownTimer : INotifyPropertyChanged
     {
         private Timer timer; // Timer to display remaining time
         private TimeSpan duration; // Remaining time for display timer

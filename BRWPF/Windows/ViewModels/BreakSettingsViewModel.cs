@@ -5,11 +5,8 @@ using System.Timers;
 
 namespace BRWPF.Windows.ViewModels
 {
-    public class SettingsBreakViewModel : INotifyPropertyChanged, IDisposable
+    public class BreakSettingsViewModel : INotifyPropertyChanged, IDisposable
     {
-        // Logger
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
         // Text Consts
         private const string DISABLED_TEXT = "Timer disabled";
 
@@ -46,10 +43,10 @@ namespace BRWPF.Windows.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region CTOR
-        public SettingsBreakViewModel(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime,
-                            ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime,
-                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeLength,
-                            ref int postponeAmount, ref TimeSpan notificationLength)
+        public BreakSettingsViewModel(TimeSpan shortDisplayTime, TimeSpan shortIntervalTime,
+                            TimeSpan longDisplayTime, TimeSpan longIntervalTime,
+                            TimeSpan lockLengthTimeExtent, TimeSpan postponeLength,
+                            int postponeAmount, TimeSpan notificationLength)
         {
             PropertyChanged += SettingsDto_PropertyChanged;
 

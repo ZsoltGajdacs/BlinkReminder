@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Timers;
 
-namespace BRCore.TimerBasedMeasurement
+namespace BRCore.MeasurementSystems.TimerBasedMeasurement
 {
-    public class TimerMeasurement : IMeasurementHandler
+    public class TimerMeasurement
     {
 
         private Dictionary<string, Timer> timers;
@@ -13,7 +13,7 @@ namespace BRCore.TimerBasedMeasurement
         /// <summary>
         /// If the user changes time amounts in settings this method is called to set in logic
         /// </summary>
-        private void DecideWhichClockToReset(string changedProperty)
+        /*private void DecideWhichClockToReset(string changedProperty)
         {
             switch (changedProperty)
             {
@@ -238,6 +238,6 @@ namespace BRCore.TimerBasedMeasurement
         public void RemoveTimer(string name)
         {
             throw new NotImplementedException();
-        }
+        }*/
     }
 }

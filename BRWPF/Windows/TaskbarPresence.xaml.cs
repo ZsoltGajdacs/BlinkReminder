@@ -72,10 +72,13 @@ namespace BRWPF.Windows
                     settingsWindow = new SettingsWindow(coreRouter.GetSettings());
                     settingsWindow.Closed += SettingsWindow_Closed;
 
-                    SettingsDto settingsDto = settingsWindow.ShowDialog();
-                    coreRouter.RefreshSettings(settingsDto);
+                    /*GeneralSettingsDto settingsDto = settingsWindow;
+                    coreRouter.UpdateSettings(settingsDto);*/
                 }
-                else { settingsWindow.Activate(); }
+                else
+                {
+                    settingsWindow.Activate();
+                }
             }));
         }
 

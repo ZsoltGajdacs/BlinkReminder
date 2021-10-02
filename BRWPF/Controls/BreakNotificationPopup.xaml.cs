@@ -1,5 +1,6 @@
-﻿using BRCore.Settings;
-using BRCore.TimerBasedMeasurement;
+﻿using BRCore.MeasurementSystems.TimerBasedMeasurement;
+using BRCore.Settings;
+using BRCore.Settings.DTO;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.ComponentModel;
@@ -18,18 +19,20 @@ namespace BRWPF.Controls
         private static readonly string GO_BREAK_LABEL = "Let's have a break!";
         private static readonly string NO_BREAK_LABEL = "Can't rest now!";
 
-        private string _textToShow = String.Empty;
+        private string _textToShow = string.Empty;
         private CountdownTimer countdownTimer;
-        private UserSettings settings;
+        private BreakTimerSettingsDto breakSettings;
 
         public bool ShouldStartBreak { get; set; }
         public bool ShouldPostponeBreak { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BreakNotificationPopup()
+        public BreakNotificationPopup(BreakTimerSettingsDto breakSettings)
         {
             InitializeComponent();
+
+            this.breakSettings = breakSettings;
         }
 
         #region Property changed handler
@@ -42,14 +45,11 @@ namespace BRWPF.Controls
         #region Accessors
         public string TextToShow
         {
-            get
-            {
-                return _textToShow;
-            }
+            get => _textToShow;
 
             set
             {
-                if (!value.Equals(_textToShow))
+                if (!value.Equals(_textToShow, StringComparison.Ordinal))
                 {
                     _textToShow = value;
                     NotifyPropertyChanged();
@@ -62,7 +62,7 @@ namespace BRWPF.Controls
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                countdownTimer = new CountdownTimer(settings.NotificationLength);
+                countdownTimer = new CountdownTimer(breakSettings.PreBreakNotificationLength);
                 timerBlock.DataContext = countdownTimer;
 
                 TextToShow = textToShow;
@@ -70,7 +70,7 @@ namespace BRWPF.Controls
                 ShouldPostponeBreak = false;
 
                 // Set the default if there is no click
-                if (settings.IsPermissiveNotification)
+                if (breakSettings.IsPermissiveNotification)
                 {
                     ShouldStartBreak = false;
                 }
@@ -80,7 +80,7 @@ namespace BRWPF.Controls
                 }
 
                 // If the user already exceeded the set postpone count then it should be disabled
-                if (postponeCount >= settings.PostponeAmount)
+                if (postponeCount >= breakSettings.PostponeAmount)
                 {
                     postponeBtn.IsEnabled = false;
                 }
@@ -97,7 +97,7 @@ namespace BRWPF.Controls
         private void SetBtnLabel()
         {
             string btnLabel = String.Empty;
-            if (settings.IsPermissiveNotification)
+            if (breakSettings.IsPermissiveNotification)
             {
                 btnLabel = GO_BREAK_LABEL;
             }
@@ -111,7 +111,7 @@ namespace BRWPF.Controls
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (settings.IsPermissiveNotification)
+            if (breakSettings.IsPermissiveNotification)
             {
                 ShouldStartBreak = true;
             }

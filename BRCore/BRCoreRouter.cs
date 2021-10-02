@@ -1,8 +1,6 @@
-﻿using BRCore.Settings;
+﻿using BRCore.Settings.DTO;
 using BRCore.Update;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BRCore
 {
@@ -13,7 +11,7 @@ namespace BRCore
         #region Timer methods
         public void PauseTimers(TimeSpan pauseAmount)
         {
-            bool isPaused = true;
+            /*bool isPaused = true;
 
             // If the user chose timed pause
             if (pauseAmount.TotalSeconds > 0)
@@ -36,7 +34,7 @@ namespace BRCore
             else
             {
                 isPaused = false;
-            }
+            }*/
         }
 
         public void ResetTimers()
@@ -56,12 +54,12 @@ namespace BRCore
             return updateRunner ??= new UpdateRunner();
         }
 
-        public SettingsDTO GetSettings()
+        public GeneralSettingsDto GetSettings()
         {
             throw new NotImplementedException();
         }
 
-        public void RefreshSettings(SettingsDTO settings)
+        public void UpdateSettings(GeneralSettingsDto settings)
         {
             throw new NotImplementedException();
         }

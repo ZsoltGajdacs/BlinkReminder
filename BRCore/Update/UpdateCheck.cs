@@ -75,19 +75,20 @@ namespace BRCore.Update
         {
             try
             {
-                JArray json = JArray.Parse(jsonString);
-                dynamic data = json[0];
-                string tag = data.tag_name;
+                /*JArray json = JArray.Parse(jsonString);
+                dynamic jsonData = json[0];
+                string tag = jsonData.tag_name;
 
                 if (CheckIfVersionIsNewer(tag))
                 {
-                    dynamic assets = data.assets;
+                    dynamic assets = jsonData.assets;
                     return new UpdateResultDto(true, string.Empty, assets[0].browser_download_url);
                 }
                 else
                 {
                     return new UpdateResultDto(false, NO_UPDATE, string.Empty);
-                }
+                }*/
+                return new UpdateResultDto(false, NO_UPDATE, string.Empty);
             }
             catch (Exception e)
             {

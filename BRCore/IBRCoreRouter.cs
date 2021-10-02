@@ -15,7 +15,7 @@ namespace BRCore
 
         public UpdateRunner GetUpdateRunner();
 
-        public SettingsDto GetSettings();
-        public void RefreshSettings(SettingsDto settings);
+        public GeneralSettingsDto GetSettings();
+        public void UpdateSettings(GeneralSettingsDto settings);
     }
 }

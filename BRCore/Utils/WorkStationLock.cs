@@ -10,12 +10,12 @@ namespace BRCore.Utils
     /// <summary>
     /// Static class for locking the workstation
     /// </summary>
-    internal static class WorkStationLock
+    public static class WorkStationLock
     {
         /// <summary>
         /// Locks the workstation
         /// </summary>
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool LockWorkStation();
+        public static extern bool LockWorkStation();
     }
 }

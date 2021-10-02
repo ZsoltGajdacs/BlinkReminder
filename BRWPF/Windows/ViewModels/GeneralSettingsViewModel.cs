@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace BRWPF.Windows.ViewModels
 {
-    public class GeneralSettingsViewModel
+    public class GeneralSettingsViewModel : INotifyPropertyChanged
     {
         public bool IsTimerMode { get; set; }
         public bool IsActivityMode { get; set; }
@@ -18,5 +14,7 @@ namespace BRWPF.Windows.ViewModels
 
         public int DefaultPauseLength { get; set; }
         public double ScalingFactor { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

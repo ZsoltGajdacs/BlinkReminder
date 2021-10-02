@@ -16,7 +16,7 @@ namespace BRWPF.Windows
         private static readonly string VERSION_LABEL = "Version:";
         private static readonly string VERSION_CHECK_INIT_LABEL = "Checking update....";
         private static readonly string DOWNLOAD_LINK_TEXT = "Click to update";
-        private static readonly string DOWNLOAD_IN_PROGRESS = "Downloading update...."
+        private static readonly string DOWNLOAD_IN_PROGRESS = "Downloading update....";
         private static readonly string ISSUE_LINK_TEXT = "You can report bugs here (GitHub)";
         private static readonly string ISSUE_LINK_ADDRESS = "https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose";
 
