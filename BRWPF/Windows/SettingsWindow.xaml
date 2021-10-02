@@ -12,281 +12,96 @@
         HorizontalAlignment="Center" VerticalAlignment="Center" >
     
     <Grid >
-        <TabControl Grid.Column="0" Grid.Row="0">
+        <TabControl x:Name="SettingsTabControl" Grid.Column="0" Grid.Row="0">
             <TabItem Header="General">
-                <Grid x:Name="SettingsGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="170"/>
-                        <!--0 TimeGrid-->
-                        <RowDefinition Height="20"/>
-                        <!--1 FullscreenChkbox-->
-                        <RowDefinition Height="5"/>
-                        <!--2 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--3 shortSkipChkBox-->
-                        <RowDefinition Height="5"/>
-                        <!--4 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--5 longSkipChkBox-->
-                        <RowDefinition Height="5"/>
-                        <!--6 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--7 longLockChkBox-->
-                        <RowDefinition Height="5"/>
-                        <!--8 Padding-->
-                        <RowDefinition Height="20"/>
-                        <!--9 IndefPause-->
-                        <RowDefinition Height="5"/>
-                        <!--10 Padding-->
-                        <RowDefinition Height="30"/>
-                        <!--11 IndefPause-->
-                        <RowDefinition Height="*"/>
-                        <!--12 Fill-->
-                        <RowDefinition Height="25"/>
-                        <!--13 OkBtn-->
-                        <RowDefinition Height="7"/>
-                        <!--14 Padding bottom-->
-                    </Grid.RowDefinitions>
+                <DockPanel x:Name="SettingsPanel" LastChildFill="False" Margin=" 10 0 0 0">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5" />
-                        <!--0 Padding Left-->
-                        <ColumnDefinition Width="*" />
-                        <!--1 1st column-->
-                        <ColumnDefinition Width="10" />
-                        <!--2 Center padding-->
-                        <ColumnDefinition Width="*" />
-                        <!--3 2nd column-->
-                        <ColumnDefinition Width="5" />
-                        <!--4 Right padding-->
-                    </Grid.ColumnDefinitions>
+                    <CheckBox x:Name="modeCheckboxTimer" IsChecked="{Binding IsTimerMode, Mode=TwoWay}" IsEnabled="False" 
+                              Content="Timer based measurement" 
+                              ToolTip="Uses timers which you can add in the tab above"
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
-                    <!-- TimeGrid, this is where the timer setting are -->
-                    <Grid x:Name="TimeGrid" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="10"/>
-                            <!--0-->
-                            <RowDefinition Height="30"/>
-                            <!--1-->
-                            <RowDefinition Height="5"/>
-                            <!--2-->
-                            <RowDefinition Height="30"/>
-                            <!--3-->
-                            <RowDefinition Height="10"/>
-                            <!--4-->
-                            <RowDefinition Height="30"/>
-                            <!--5-->
-                            <RowDefinition Height="5"/>
-                            <!--6-->
-                            <RowDefinition Height="30"/>
-                            <!--7-->
-                            <RowDefinition Height="15"/>
-                            <!--8-->
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <!--0 Description Labels 1st col-->
-                            <ColumnDefinition Width="*" />
-                            <!--1 Textboxes 1st col-->
-                            <ColumnDefinition Width="10" />
-                            <!--2 Center padding-->
-                            <ColumnDefinition Width="150" />
-                            <!--3 Description Labels 2st col-->
-                            <ColumnDefinition Width="*" />
-                            <!--4 Textboxes 2st col-->
-                        </Grid.ColumnDefinitions>
-
-                        <Label x:Name="shortIntervalLabel" Content="Interval of short breaks: " Grid.Column="0" Grid.Row="1"/>
-                        <flat:DoubleSpinner x:Name="shortIntervalControl" Grid.Column="1" Grid.Row="1" 
-                                        Value="{Binding ShortIntervalAmount, Mode=TwoWay}" 
-                                        Background="#FFF8F8F8" ContentStringFormat="0.0 min" 
-                                        MinValue="0" MaxValue="{Binding ShortIntervalMax, Mode=OneWay}"
-                                        ToolTip="Time between two short breaks, measured in minutes" 
-                                        ValueChanged="ShortIntervalControl_ValueChanged"/>
-
-                        <Label x:Name="shortDispLabel" Content="Length of short break: " Grid.Column="3" Grid.Row="1"/>
-                        <flat:IntegerSpinner x:Name="shortDispControl" Grid.Column="4" Grid.Row="1" 
-                                        Value="{Binding ShortDisplayAmount, Mode=TwoWay}" 
-                                        Background="#FFF8F8F8" ContentStringFormat="0 sec"
-                                        MinValue="0"
-                                        ToolTip="Display time of a short break, measured in seconds"/>
-
-                        <Label x:Name="longIntervalLabel" Content="Interval of long breaks: " Grid.Column="0" Grid.Row="3"/>
-                        <flat:DoubleSpinner x:Name="longIntervalControl" Grid.Column="1" Grid.Row="3" 
-                                        Value="{Binding LongIntervalAmount, Mode=TwoWay}"  
-                                        Background="#FFF8F8F8" ContentStringFormat="0.0 min"
-                                        MinValue="{Binding LongIntervalMin, Mode=OneWay}"
-                                        ToolTip="Time between two long breaks, measured in minutes"
-                                        ValueChanged="LongIntervalControl_ValueChanged"/>
-
-                        <Label x:Name="longDispLabel" Content="Length of long break: " Grid.Column="3" Grid.Row="3"/>
-                        <flat:DoubleSpinner x:Name="longDispControl" Grid.Column="4" Grid.Row="3" 
-                                        Value="{Binding LongDisplayAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}" 
-                                        Background="#FFF8F8F8" ContentStringFormat="0.0 min"
-                                        ToolTip="Display time of a long break, measured in minutes"/>
-
-                        <Label x:Name="lockedLengthExtentLabel" Content="Lock time to long break: " 
-                                           Grid.Column="0" Grid.Row="5"/>
-                        <flat:IntegerSpinner x:Name="lockedLengthExtentControl" Grid.Column="1" Grid.Row="5"
-                                           Value="{Binding LockLengthTimeExtent, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                                           MinValue="1" Background="#FFF8F8F8"
-                                           ContentStringFormat="0 min" 
-                                           ToolTip="The amount of minutes above which workstation lock is considered a long break"/>
-
-                        <Label x:Name="postponeLengthLabel" Content="Postpone break by: " 
-                                           Grid.Column="3" Grid.Row="5"/>
-                        <flat:IntegerSpinner x:Name="postponeLengthControl" Grid.Column="4" Grid.Row="5"
-                                           Value="{Binding PostponeLength, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                                           MinValue="1" Background="#FFF8F8F8"
-                                           ContentStringFormat="0 min" 
-                                           ToolTip="The amount of minutes a break will be postponed, when the button is clicked on the notification window"/>
-
-                        <Label x:Name="notificationWaitLabel" Content="Notification length: " 
-                                           Grid.Column="0" Grid.Row="7"/>
-                        <flat:IntegerSpinner x:Name="notificationWaitControl" Grid.Column="1" Grid.Row="7"
-                                           Value="{Binding NotificationLength, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                                           MinValue="1" Background="#FFF8F8F8"
-                                           ContentStringFormat="0 sec" 
-                                           ToolTip="The amount of seconds the notification comes up before the break"/>
-
-                        <Label x:Name="postponeAmountLabel" Content="Can postpone x times: " 
-                                           Grid.Column="3" Grid.Row="7"/>
-                        <flat:IntegerSpinner x:Name="postponeAmountControl" Grid.Column="4" Grid.Row="7"
-                                           Value="{Binding PostponeAmount, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                                           MinValue="1" Background="#FFF8F8F8"
-                                           ContentStringFormat="0x" 
-                                           ToolTip="The number of times a break can be postponed, before cancelled entirely"/>
-
-                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5"/>
-                    </Grid>
+                    <CheckBox x:Name="modeCheckboxActivity" IsChecked="{Binding IsActivityMode, Mode=TwoWay}" IsEnabled="False" 
+                              Content="Activity based measurement" 
+                              ToolTip="Rest are based only mouse and keyboard usage"
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
                     <CheckBox x:Name="fullscreenChkbox" IsChecked="{Binding ShouldBreakWhenFullScreen, Mode=TwoWay}" 
                               Content="Full screen application blocks rests" 
                               ToolTip="Skip break if an app hides the taskbar"
-                              Grid.Column="1" Grid.Row="1"
-                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
-
-                    <CheckBox x:Name="shortSkipChkbox" IsChecked="{Binding IsShortSkippable, Mode=TwoWay}" 
-                              Content="Skippable short breaks"
-                              ToolTip="Whether the skip button displays on the break screen"
-                              Grid.Column="3" Grid.Row="1"
-                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
-
-                    <CheckBox x:Name="longSkipChkbox" IsChecked="{Binding IsLongSkippable, Mode=TwoWay}" 
-                              Content="Skippable long breaks"
-                              ToolTip="Whether the skip button displays on the break screen"
-                              Grid.Column="3" Grid.Row="3" 
-                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
-
-                    <CheckBox x:Name="longLockChkbox" IsChecked="{Binding IsLongBreakLocksScreen, Mode=TwoWay}" 
-                              Content="Long rest locks the screen" 
-                              ToolTip="On long break the workstation will lock down in 5 seconds. WARNING! The app cannot unlock the PC at the end of the break!"
-                              Grid.Column="3" Grid.Row="5" 
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
                     <CheckBox x:Name="indefPauseChkbox" IsChecked="{Binding IndefPauseEnabled, Mode=TwoWay}" 
-                              Content="Indefinite pause"
-                              ToolTip="Pause until the resume button is clicked"
-                              Grid.Column="1" Grid.Row="3" 
+                              Content="Indefinite pause of rests"
+                              ToolTip="Pause is on until the resume button is clicked"
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 5 0 0" DockPanel.Dock="Top">
+                        
+                        <flat:IntegerSpinner x:Name="defaultPauseLength" Value="{Binding DefaultPauseLength, Mode=TwoWay}"
+                                             ToolTip="Default length of pause in the pause window"
+                                             Width="50"/>
+
+                        <Label x:Name="pauseLengthLabel" Content="Default pause length" />
+                        
+                    </StackPanel>
+                    
 
                     <CheckBox x:Name="preNotificationChkbox" IsChecked="{Binding IsNotificationEnabled, Mode=TwoWay}" 
                               Content="Pre-break notifications"
                               ToolTip="Before a break occurs, a notification popup comes up above the taskbar icon"
-                              Grid.Column="1" Grid.Row="5"
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
                     <CheckBox x:Name="permissiveNotificationChkbox" IsChecked="{Binding IsPermissiveNotification, Mode=TwoWay}" 
                               Content="Permissive notifications"
                               ToolTip="Permissive: Clicking on the popup starts the break. Restrictive: Clicking on the popup dismisses the break."
-                              Grid.Column="1" Grid.Row="7" 
-                              VerticalAlignment="Center" Background="#FFF8F8F8" HorizontalAlignment="Right"
-                              Margin="0 0 50 0"/>
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
+                              VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
                     <CheckBox x:Name="isFullscreenBreakChkBox" IsChecked="{Binding IsFullscreenBreak, Mode=TwoWay}"
                               Content="Full screen breaks"
                               ToolTip="The break will be displayed in a small window on the lower right hand corner of the screen"
-                              Grid.Column="1" Grid.Row="9"
+                              Margin="0 5 0 0" DockPanel.Dock="Top"
                               VerticalAlignment="Center" Background="#FFF8F8F8"/>
 
-                    <!--<toggleswitch:ToggleSwitch x:Name="fullscreenBreakSwitch" IsOn="{Binding IsFullscreenBreak, Mode=TwoWay}" 
-                                TrackBackgroundOnColor="LightGreen" CircleBackgroundColor="LightGray" 
-                                Grid.Column="1" Grid.Row="9"/>-->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 5 0 0" DockPanel.Dock="Top">
 
-                    <Label x:Name="scaleLabel" Content="Scale small window by: " 
-                           Grid.Column="1" Grid.Row="11" HorizontalAlignment="Left"
-                           Margin="30 0 0 0"/>
-
-                    <flat:DoubleSpinner x:Name="scaleControl" Value="{Binding Scaling, Mode=TwoWay}"
-                                      Grid.Column="1" Grid.Row="11" Width="50" HorizontalAlignment="Right"
-                                      Margin="0 0 10 0"
+                        <flat:DoubleSpinner x:Name="scaleControl" Value="{Binding ScalingFactor, Mode=TwoWay}"
+                                      Width="50" 
                                       VerticalAlignment="Center" Background="#FFF8F8F8"
                                       MinValue="0.5" MaxValue="1.5" ContentStringFormat="0.0x"
                                       ToolTip="Controls the size of the small screen break window"/>
 
-                    <Button x:Name="okButtonG" Content="OK" Width="80" 
-                            Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="13" 
-                            Click="OkButton_Click" />
+                        <Label x:Name="scaleLabel" Content="Proportions to scale break window"/>
 
-                </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                Margin="0 10 0 0" DockPanel.Dock="Bottom">
+
+                        <Button x:Name="SaveBtn" Content="Save" Width="80" 
+                            HorizontalAlignment="Center"
+                            Margin="0 0 50 10" DockPanel.Dock="Bottom" 
+                            Click="SaveButton_Click" />
+
+                        <Button x:Name="CancelBtn" Content="Cancel" Width="80" 
+                            HorizontalAlignment="Center"
+                            Margin="0 0 0 10" DockPanel.Dock="Bottom" 
+                            Click="CancelBtn_Click" />
+
+                    </StackPanel>
+                </DockPanel>
             </TabItem>
 
-            <TabItem Header="Short Break Quotes">
-                <Grid x:Name="ShortQuoteGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="5"/>
-                    </Grid.RowDefinitions>
+            <TabItem x:Name="newBreakTab" Header="Add new break" 
+                     MouseLeftButtonUp="NewBreakTab_MouseLeftButtonUp"/>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox x:Name="ShortQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="ShortQuoteInput_KeyUp" KeyDown="ShortQuoteInput_KeyDown"/>
-
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="3">
-                        <ItemsControl x:Name="ShortQuoteItems" ItemTemplate="{StaticResource ShortQuoteTemplate}"/>
-                    </ScrollViewer>
-
-                    <Button x:Name="okButtonS" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Long Break Quotes">
-                <Grid x:Name="LongQuoteGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="5"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox x:Name="LongQuoteInput" Grid.Column="1" Grid.Row="1" Background="#FFF8F8F8" KeyUp="LongQuoteInput_KeyUp" KeyDown="LongQuoteInput_KeyDown"/>
-
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="3">
-                        <ItemsControl x:Name="LongQuoteItems" ItemTemplate="{StaticResource LongQuoteTemplate}"/>
-                    </ScrollViewer>
-
-                    <Button x:Name="okButtonL" Content="OK" Width="80" Grid.Column="1" Grid.Row="5" Click="OkButton_Click" />
-                </Grid>
-            </TabItem>
         </TabControl>
     </Grid>
 </Window>

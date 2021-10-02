@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BRCore.Settings;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace BRWPF.Update
+namespace BRCore.Update
 {
     internal class UpdateHandler
     {

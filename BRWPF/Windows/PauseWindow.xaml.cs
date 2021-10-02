@@ -69,13 +69,13 @@ namespace BRWPF.Windows
         /// -2 if user closed window with 'x'
         /// </summary>
         /// <returns></returns>
-        public new long ShowDialog()
+        public new int ShowDialog()
         {
             base.ShowDialog();
 
             if (btnClicked)
             {
-                PauseTime = (long)pauseTimeControl.Value;
+                PauseTime = pauseTimeControl.Value;
                 return PauseTime;
             }
             else

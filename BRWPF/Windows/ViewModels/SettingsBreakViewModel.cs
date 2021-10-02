@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
-namespace BRCore.Settings
+namespace BRWPF.Windows.ViewModels
 {
-    /// <summary>
-    /// Intermediary between settings and the UI. TODO: Come up with a better name, 
-    /// as this is not really a DTO!
-    /// </summary>
-    public class SettingsDTO : INotifyPropertyChanged, IDisposable
+    public class SettingsBreakViewModel : INotifyPropertyChanged, IDisposable
     {
         // Logger
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -54,9 +46,9 @@ namespace BRCore.Settings
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region CTOR
-        public SettingsDTO(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime, 
+        public SettingsBreakViewModel(ref TimeSpan shortDisplayTime, ref TimeSpan shortIntervalTime,
                             ref TimeSpan longDisplayTime, ref TimeSpan longIntervalTime,
-                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeLength, 
+                            ref TimeSpan lockLengthTimeExtent, ref TimeSpan postponeLength,
                             ref int postponeAmount, ref TimeSpan notificationLength)
         {
             PropertyChanged += SettingsDto_PropertyChanged;
@@ -96,7 +88,7 @@ namespace BRCore.Settings
             UserInactivityTimer.Stop();
 
             LimitSetter(e.PropertyName);
-            
+
             UserInactivityTimer.Start();
         }
 

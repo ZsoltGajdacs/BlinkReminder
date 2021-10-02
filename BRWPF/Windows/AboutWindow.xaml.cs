@@ -1,4 +1,5 @@
-﻿using BRWPF.Update;
+﻿using BRCore.Update;
+using BRCore.Update.DTO;
 using System;
 using System.Windows;
 using System.Windows.Documents;
@@ -15,21 +16,22 @@ namespace BRWPF.Windows
         private static readonly string VERSION_LABEL = "Version:";
         private static readonly string VERSION_CHECK_INIT_LABEL = "Checking update....";
         private static readonly string DOWNLOAD_LINK_TEXT = "Click to update";
+        private static readonly string DOWNLOAD_IN_PROGRESS = "Downloading update...."
         private static readonly string ISSUE_LINK_TEXT = "You can report bugs here (GitHub)";
         private static readonly string ISSUE_LINK_ADDRESS = "https://github.com/ZsoltGajdacs/BlinkReminder/issues/new/choose";
 
         private string updateLinkUrl;
 
-        private UpdateCheck update;
+        private UpdateRunner updater;
 
-        internal AboutWindow(ref UpdateCheck updater)
+        internal AboutWindow(UpdateRunner updateRunner)
         {
             InitializeComponent();
 
-            this.update = updater;
+            this.updater = updateRunner;
             updateLinkUrl = String.Empty;
 
-            SetTexts(update.versionText);
+            SetTexts(updater.CurrentVersion.VersionText);
             SetUpdateLabel(VERSION_CHECK_INIT_LABEL);
             CheckUpdate();
         }
@@ -42,11 +44,16 @@ namespace BRWPF.Windows
             authorLabel.Content = AUTHOR_LABEL;
             versionLabel.Content = VERSION_LABEL + " " + versionText;
 
-            Run linkText = new Run(ISSUE_LINK_TEXT);
-            Hyperlink issueLink = new Hyperlink(linkText);
+            Hyperlink issueLink = new Hyperlink(new Run(ISSUE_LINK_TEXT));
             issueLink.RequestNavigate += HyperLink_RequestNavigate;
             issueLink.NavigateUri = new Uri(ISSUE_LINK_ADDRESS);
             issueLabel.Content = issueLink;
+        }
+
+        private async void CheckUpdate()
+        {
+            UpdateResultDto result = await updater.CheckUpdate();
+            SetUpdateLabel(result.IsSuccessfulUpdateCheck ? result.UpdateLink : result.ErrorMessage);
         }
 
         /// <summary>
@@ -70,12 +77,7 @@ namespace BRWPF.Windows
             }
         }
 
-        private async void CheckUpdate()
-        {
-            string result = await update.GetUpdateUrl();
-            SetUpdateLabel(result);
-        }
-
+        #region Click event handlers
         private void OkBtn_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -85,13 +87,8 @@ namespace BRWPF.Windows
         {
             if (updateLinkUrl != String.Empty)
             {
-                UpdateHandler updater = new UpdateHandler();
-                bool isOkToLaunch = await updater.DownloadUpdate(updateLinkUrl);
-
-                if (isOkToLaunch)
-                {
-                    updater.RunUpdate();
-                }
+                updateLabel.Content = DOWNLOAD_IN_PROGRESS;
+                await updater.RunUpdate(updateLinkUrl);
 
                 Close();
             }
@@ -104,5 +101,6 @@ namespace BRWPF.Windows
         {
             System.Diagnostics.Process.Start(e.Uri.ToString());
         }
+        #endregion
     }
 }

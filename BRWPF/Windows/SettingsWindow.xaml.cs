@@ -1,6 +1,9 @@
 ﻿using BRCore.Settings;
+using BRCore.Settings.DTO;
 using BRWPF.Utils;
+using BRWPF.Windows.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -9,48 +12,60 @@ using System.Windows.Input;
 
 namespace BRWPF.Windows
 {
-    /// <summary>
-    /// Interaction logic for SettingsWindow.xaml
-    /// </summary>
     public partial class SettingsWindow : Window
     {
         private static string QUOTE_INPUT_PLACEHOLDER = "Add new quote here";
 
-        private UserSettings settings = UserSettings.Instance;
-        private TooltipHandler tooltipHandler;
+        private readonly Dictionary<string, SettingsBreakViewModel> breakSettingsVMs;
+        private GeneralSettingsViewModel generalSettingsVM;
 
-        public SettingsWindow()
+        private readonly TooltipHandler tooltipHandler;
+
+        private bool shouldSave;
+
+        public SettingsWindow(SettingsDto settingsDto)
         {
             InitializeComponent();
 
+            breakSettingsVMs = new Dictionary<string, SettingsBreakViewModel>();
             tooltipHandler = new TooltipHandler();
 
-            SetDefaults();
+            FillViewModels(settingsDto);
             SetDataBinding();
             SubscribeToEvents();
             CheckDisabledState();
             SetControlAccessability();
         }
 
+        public new SettingsDto ShowDialog()
+        {
+            base.ShowDialog();
+
+            if (shouldSave)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         #region Startup methods
+        /// <summary>
+        /// Fills up all the viewmodels from the incoming settings data
+        /// </summary>
+        private void FillViewModels(SettingsDto settingsDto)
+        {
+
+        }
+
         /// <summary>
         /// Sets the panel data bindings
         /// </summary>
         private void SetDataBinding()
         {
-            SettingsGrid.DataContext = settings;
-            TimeGrid.DataContext = settings.SettingsDTO;
-            ShortQuoteItems.ItemsSource = settings.ShortBreakQuotes;
-            LongQuoteItems.ItemsSource = settings.LongBreakQuotes;
-        }
-
-        /// <summary>
-        /// Sets the default texts
-        /// </summary>
-        private void SetDefaults()
-        {
-            ShortQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
-            LongQuoteInput.Text = QUOTE_INPUT_PLACEHOLDER;
+            SettingsPanel.DataContext = generalSettingsVM;
         }
 
         /// <summary>
@@ -64,9 +79,20 @@ namespace BRWPF.Windows
         #endregion
 
         #region Click Events
-        private void OkButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            shouldSave = true;
+            Close();
+        }
+
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void NewBreakTab_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+
         }
         #endregion
 

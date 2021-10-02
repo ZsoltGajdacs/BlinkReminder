@@ -1,88 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BRCore;
+using BRCore.Settings.DTO;
+using BRWPF.Controls;
+using BRWPF.Utils;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BRWPF.Windows
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class TaskbarPresence : Window
+    public partial class TaskbarPresence : Window, IDisposable
     {
         #region Data members
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        // Logger
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        // Windows
         private Window settingsWindow;
         private Window blockerWindow;
         private Window aboutWindow;
         private PauseWindow pauseWindow;
+
+        // Pop-ups
+        private BreakNotificationPopup breakPopup;
+
+        // Keyboard input catcher
+        private KeyboardHook keyTrap;
+
+        // Core router
+        private IBRCoreRouter coreRouter = new BRCoreRouter();
         #endregion
 
+        #region CTOR and init
         public TaskbarPresence()
         {
             InitializeComponent();
+            Init();
         }
+
+        private void Init()
+        {
+
+        }
+        #endregion
 
         #region Taskbar event handlers
         private void PauseItem_Click(object sender, RoutedEventArgs e)
         {
-            if (pauseWindow == null)
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                pauseWindow = new PauseWindow();
-                pauseWindow.Closed += PauseWindow_Closed;
-            }
-            else
-            {
-                pauseWindow.Activate();
-            }
+                if (pauseWindow == null)
+                {
+                    pauseWindow = new PauseWindow();
+                    pauseWindow.Closed += PauseWindow_Closed;
+                }
+                else
+                {
+                    pauseWindow.Activate();
+                }
 
-            pauseTotalLength = TimeSpan.FromMinutes(pauseWindow.ShowDialog());
-
-            isPaused = true;
-
-            // If the user chose timed pause
-            if (pauseTotalLength.TotalSeconds > 0)
-            {
-                // Zero out the counter to know how long the pause should be going on
-                TimerHandler.ResetCounterTime(ref pauseLengthSoFar);
-
-                ActivateResumeBtn();
-                SetTaskbarTooltip(TimeToPauseEnd() + TOOLTIP_PAUSE_MSG);
-                PauseTimers(true);
-            }
-            // if this is going on till resume is pushed
-            else if (pauseTotalLength.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
-            {
-                ActivateResumeBtn();
-                SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
-                PauseTimers(false);
-            }
-            // Or the user just canceled
-            else
-            {
-                isPaused = false;
-            }
+                int pauseAmount = pauseWindow.ShowDialog();
+                coreRouter.PauseTimers(TimeSpan.FromMinutes(pauseAmount));
+            }));
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            ShowSettings();
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (settingsWindow == null)
+                {
+                    settingsWindow = new SettingsWindow(coreRouter.GetSettings());
+                    settingsWindow.Closed += SettingsWindow_Closed;
+
+                    SettingsDto settingsDto = settingsWindow.ShowDialog();
+                    coreRouter.RefreshSettings(settingsDto);
+                }
+                else { settingsWindow.Activate(); }
+            }));
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            ShowAbout();
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (aboutWindow == null)
+                {
+                    aboutWindow = new AboutWindow(coreRouter.GetUpdateRunner());
+                    aboutWindow.Closed += AboutWindow_Closed;
+                    aboutWindow.Show();
+                }
+                else
+                {
+                    aboutWindow.Activate();
+                }
+            }));
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
@@ -90,26 +101,27 @@ namespace BRWPF.Windows
             Application.Current.Shutdown();
         }
 
-        #endregion
-
         private void ResumeItem_Click(object sender, RoutedEventArgs e)
         {
             ActivatePauseBtn();
-            ResumeTimers();
+            coreRouter.ResumeTimers();
         }
+        #endregion
 
         #region Window handlers
-        private void ShowViewBlocker(TimeSpan interval, double scaling, bool isSkippable, bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
+        private void ShowViewBlocker(TimeSpan interval, double scaling, bool isSkippable,
+            bool isFullscreen, bool isLongBreakLocksScreen, bool isLongBreak, string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 if (blockerWindow == null)
                 {
-                    if (settings.IsFullscreenBreak)
+                    if (isFullscreen)
                     {
                         keyTrap = new KeyboardHook(); // Intercept every key
                     }
-                    blockerWindow = new ViewBlockerWindow(interval, scaling, isSkippable, isFullscreen, isLongBreakLocksScreen, isLongBreak, message);
+                    blockerWindow = new ViewBlockerWindow(interval, scaling, isSkippable, isFullscreen,
+                                                            isLongBreakLocksScreen, isLongBreak, message);
                     blockerWindow.Closed += BlockerWindow_Closed;
                     blockerWindow.Show();
 
@@ -117,44 +129,15 @@ namespace BRWPF.Windows
                 else { blockerWindow.Activate(); }
             }));
         }
-
-        private void ShowSettings()
-        {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                if (settingsWindow == null)
-                {
-                    settingsWindow = new SettingsWindow();
-                    settingsWindow.Closed += SettingsWindow_Closed;
-                    settingsWindow.Show();
-
-                }
-                else { settingsWindow.Activate(); }
-            }));
-        }
-
-        private void ShowAbout()
-        {
-            if (aboutWindow == null)
-            {
-                aboutWindow = new AboutWindow(ref updater);
-                aboutWindow.Closed += AboutWindow_Closed;
-                aboutWindow.Show();
-            }
-            else
-            {
-                aboutWindow.Activate();
-            }
-        }
         #endregion
 
         #region Window Events
-
         private void BlockerWindow_Closed(object sender, EventArgs e)
         {
             blockerWindow = null;
+
             keyTrap?.Dispose(); // Release keyboard trap
-            ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
+            coreRouter.ResetTimers();
 
             // Set back the taskbarWindow to be the main one
             Application.Current.MainWindow = this;
@@ -163,7 +146,7 @@ namespace BRWPF.Windows
         private void SettingsWindow_Closed(object sender, EventArgs e)
         {
             settingsWindow = null;
-            Serializer.JsonObjectSerialize<UserSettings>(settings.SettingsDirPath, settings.SettingsFilePath, ref settings, DoBackup.Yes);
+            //Serializer.JsonObjectSerialize<UserSettings>(settings.SettingsDirPath, settings.SettingsFilePath, ref settings, DoBackup.Yes);
         }
 
         private void AboutWindow_Closed(object sender, EventArgs e)
@@ -178,7 +161,7 @@ namespace BRWPF.Windows
 
         private void OnBalloonClosing(object sender, RoutedEventArgs e)
         {
-            bool isLongBreak = true;
+            /*bool isLongBreak = true;
 
             if (breakPopup.ShouldPostponeBreak)
             {
@@ -218,9 +201,126 @@ namespace BRWPF.Windows
                 {
                     ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
                 }
+            }*/
+        }
+        #endregion
+
+        #region Popup handling
+        /// <summary>
+        /// Shows the pre-notification popup with the given text. PostponeCount is for the internal 
+        /// postpone limiter
+        /// </summary>
+        private void ShowNotificationPopup(string popupText, int popupPostponeCount, int notificationLength)
+        {
+            breakPopup.SetValues(popupText, popupPostponeCount);
+            taskbarIcon.ShowCustomBalloon(breakPopup,
+                System.Windows.Controls.Primitives.PopupAnimation.Slide, notificationLength);
+        }
+        #endregion
+
+        #region Taskbar manipulation
+        /// <summary>
+        /// Sets the taskbar tooltip to the given text
+        /// </summary>
+        private void SetTaskbarTooltip(string text)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                taskbarIcon.ToolTipText = text;
+            }));
+        }
+
+        /// <summary>
+        /// Disables the given taskbar MenuItem
+        /// </summary>
+        private void DisableTaskbarOption(MenuItem option)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                option.IsEnabled = false;
+            }));
+        }
+
+        /// <summary>
+        /// Enable the given taskbar MenuItem
+        /// </summary>
+        private void EnableTaskbarOption(MenuItem option)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                option.IsEnabled = true;
+            }));
+        }
+
+        /// <summary>
+        /// Switch to 'Resume' btn on taskbar
+        /// </summary>
+        private void ActivateResumeBtn()
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                PauseItem.Header = "Resume";
+                PauseItem.Click -= PauseItem_Click;
+                PauseItem.Click += ResumeItem_Click;
+            }));
+        }
+
+        /// <summary>
+        /// Switch to 'Pause' btn on taskbar
+        /// </summary>
+        private void ActivatePauseBtn()
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                PauseItem.Header = "Pause";
+                PauseItem.Click += PauseItem_Click;
+                PauseItem.Click -= ResumeItem_Click;
+            }));
+        }
+        #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // Dispose of all the stuff that could remain in memory after exit
+                    /*shortIntervalTimer.Dispose();
+                    longIntervalTimer.Dispose();
+                    minuteTimer.Dispose();
+                    pauseTimer.Dispose();*/
+                    taskbarIcon.Dispose();
+                    keyTrap?.Dispose();
+
+                    // Important! See the manual for the event
+                    // SystemEvents.PowerModeChanged -= OnPowerChange;
+                }
+
+                // free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // set large fields to null.
+
+                disposedValue = true;
             }
         }
 
+        // override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~TaskbarPresence() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
         #endregion
     }
 }

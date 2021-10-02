@@ -1,15 +1,16 @@
-﻿using System;
+﻿using BRCore.Update.DTO;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Net;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
-namespace BRWPF.Update
+namespace BRCore.Update
 {
     internal class UpdateCheck
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private static readonly string PRODUCT_NAME = "BlinkReminder";
         private static readonly string RELEASES_URL = "https://api.github.com/repos/ZsoltGajdacs/BlinkReminder/releases";
@@ -20,19 +21,17 @@ namespace BRWPF.Update
         private static readonly string API_ERROR = "Github API mismatch";
         private static readonly string NO_UPDATE = "No new version";
 
-        private readonly int[] currentVersionArr;
-        internal readonly string versionText;
+        private readonly VersionDto currentVersion;
 
-        internal UpdateCheck(int[] versionNums)
+        internal UpdateCheck(VersionDto currentVersion)
         {
-            currentVersionArr = versionNums;
-            versionText = versionNums[0] + "." + versionNums[1] + "." + versionNums[2];
+            this.currentVersion = currentVersion;
         }
 
-        internal async Task<string> GetUpdateUrl()
+        internal async Task<UpdateResultDto> GetUpdateUrl()
         {
             HttpClient httpClient = new HttpClient();
-            ProductInfoHeaderValue header = new ProductInfoHeaderValue(PRODUCT_NAME, versionText);
+            ProductInfoHeaderValue header = new ProductInfoHeaderValue(PRODUCT_NAME, currentVersion.VersionText);
             httpClient.DefaultRequestHeaders.UserAgent.Add(header);
             string content = String.Empty;
 
@@ -42,26 +41,26 @@ namespace BRWPF.Update
             }
             catch (ProtocolViolationException e)
             {
-                logger.Error("Protocol error", e);
-                return CHECK_FAILED + " " + PROTOCOL_ERROR;
+                logger.Error(e, "Protocol error");
+                return new UpdateResultDto(false, CHECK_FAILED + " " + PROTOCOL_ERROR, string.Empty);
             }
             catch (HttpRequestException e)
             {
                 if (e.Message.Contains("40"))
                 {
-                    logger.Error("API error", e);
-                    return CHECK_FAILED + " " + API_ERROR;
+                    logger.Error(e, "API error");
+                    return new UpdateResultDto(false, CHECK_FAILED + " " + API_ERROR, string.Empty);
                 }
                 else
                 {
-                    logger.Error("Connection error", e);
-                    return CHECK_FAILED + " " + CONNECTION_ERROR;
+                    logger.Error(e, "Connection error");
+                    return new UpdateResultDto(false, CHECK_FAILED + " " + CONNECTION_ERROR, string.Empty);
                 }
             }
             catch (Exception e)
             {
-                logger.Error(UNKNOWN_CONNECTION_ERROR, e);
-                return CHECK_FAILED + " " + UNKNOWN_CONNECTION_ERROR;
+                logger.Error(e, UNKNOWN_CONNECTION_ERROR);
+                return new UpdateResultDto(false, CHECK_FAILED + " " + UNKNOWN_CONNECTION_ERROR, string.Empty);
             }
 
             return ParseJsonForDownloadUrl(content);
@@ -72,7 +71,7 @@ namespace BRWPF.Update
         /// </summary>
         /// <param name="jsonString"></param>
         /// <returns></returns>
-        private string ParseJsonForDownloadUrl(string jsonString)
+        private UpdateResultDto ParseJsonForDownloadUrl(string jsonString)
         {
             try
             {
@@ -83,17 +82,17 @@ namespace BRWPF.Update
                 if (CheckIfVersionIsNewer(tag))
                 {
                     dynamic assets = data.assets;
-                    return assets[0].browser_download_url;
+                    return new UpdateResultDto(true, string.Empty, assets[0].browser_download_url);
                 }
                 else
                 {
-                    return NO_UPDATE;
+                    return new UpdateResultDto(false, NO_UPDATE, string.Empty);
                 }
             }
             catch (Exception e)
             {
-                logger.Error(API_ERROR, e);
-                return CHECK_FAILED + " " + API_ERROR;
+                logger.Error(e, API_ERROR);
+                return new UpdateResultDto(false, CHECK_FAILED + " " + API_ERROR, string.Empty);
             }
         }
 
@@ -108,21 +107,21 @@ namespace BRWPF.Update
             string[] gitVerArr = tag.Substring(1).Split('.');
 
             // Major version comparison
-            if (int.Parse (gitVerArr[0]) > currentVersionArr[0])
+            if (int.Parse(gitVerArr[0]) > currentVersion.MajorVersion)
             {
                 return true;
             }
             // Minor version comparison
-            else if (int.Parse(gitVerArr[1]) > currentVersionArr[1])
+            else if (int.Parse(gitVerArr[1]) > currentVersion.MinorVersion)
             {
                 return true;
             }
             // Revision version comparison
-            else if (int.Parse(gitVerArr[2]) > currentVersionArr[2])
+            else if (int.Parse(gitVerArr[2]) > currentVersion.RevisionVersion)
             {
                 return true;
             }
-            // Not newer...
+            // If neither is higher, there is no new version
             else
             {
                 return false;
