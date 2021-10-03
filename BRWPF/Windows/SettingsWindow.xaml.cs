@@ -1,4 +1,5 @@
-﻿using BRCore.Settings.DTO;
+﻿using BRCore.MeasurementSystems.TimerBasedMeasurement.Settings;
+using BRCore.Settings.DTO;
 using BRWPF.Mappers;
 using BRWPF.Utils;
 using BRWPF.Windows.ViewModels;
@@ -6,23 +7,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using ZsGUtils.Keys;
 
 namespace BRWPF.Windows
 {
     public partial class SettingsWindow : Window
     {
-        private readonly Dictionary<string, BreakSettingsViewModel> breakSettingsVMs;
+        private readonly Dictionary<KeyPair<int, string>, BreakTimerSettings> breakSettingsVMs;
         private GeneralSettingsViewModel generalSettingsVM;
 
         private readonly TooltipHandler tooltipHandler;
 
         private bool shouldSave;
 
-        public SettingsWindow(GeneralSettingsDto settingsDto)
+        public SettingsWindow(SettingsDto settingsDto)
         {
             InitializeComponent();
 
-            breakSettingsVMs = new Dictionary<string, BreakSettingsViewModel>();
+            breakSettingsVMs = new Dictionary<KeyPair<int, string>, BreakTimerSettings>();
             tooltipHandler = new TooltipHandler();
 
             FillViewModels(settingsDto);
@@ -37,7 +39,7 @@ namespace BRWPF.Windows
 
             if (shouldSave)
             {
-                return SettingsMapper.Instance.ToSettingsDto(generalSettingsVM);
+                return SettingsMapper.Instance.ToGeneralSettingsDto(generalSettingsVM);
             }
             else
             {
@@ -49,9 +51,10 @@ namespace BRWPF.Windows
         /// <summary>
         /// Fills up all the viewmodels from the incoming settings data
         /// </summary>
-        private void FillViewModels(GeneralSettingsDto settingsDto)
+        private void FillViewModels(SettingsDto settingsDto)
         {
-            generalSettingsVM = SettingsMapper.Instance.ToGeneralSettingsViewModel(settingsDto);
+            generalSettingsVM = SettingsMapper.Instance.ToGeneralSettingsViewModel(settingsDto.GeneralSettingsDto);
+            // TODO: do break tab and fill it's model
         }
 
         /// <summary>

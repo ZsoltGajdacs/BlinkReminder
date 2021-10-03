@@ -12,5 +12,8 @@
 
         public bool IsNotificationEnabled { get; set; }
         public bool IsPermissiveNotification { get; set; }
+
+        public bool IsFullscreenBreak { get; set; }
+        public double ScalingFactor { get; set; }
     }
 }

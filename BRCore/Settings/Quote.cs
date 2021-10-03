@@ -1,65 +1,35 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using ZsGUtils.UIHelpers;
 
 namespace BRCore.Settings
 {
     [Serializable]
-    public class Quote : INotifyPropertyChanged
+    public class Quote : BindableClass
     {
         private string _quoteText;
         private bool _isActive;
-        public bool IsShort { get; set; }
+        public int BreakId { get; set; }
 
-        public Quote()
-        {
-            // Needed for serialization
-        }
+        public Quote() { /* Needed for serialization */ }
 
-        public Quote(string quoteText, bool isActive, bool isShort)
+        public Quote(string quoteText, bool isActive, int breakId)
         {
             _quoteText = quoteText;
             _isActive = isActive;
-            IsShort = isShort;
+            BreakId = breakId;
         }
-
-        #region Event handling
-        [field: NonSerializedAttribute()]
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
         #region Properties
         public string QuoteText
         {
-            get
-            {
-                return _quoteText;
-            }
-
-            set
-            {
-                _quoteText = value;
-                NotifyPropertyChanged();
-            }
+            get => _quoteText;
+            set => SetAndNotifyPropertyChanged(ref _quoteText, value);
         }
 
         public bool IsActive
         {
-            get
-            {
-                return _isActive;
-            }
-
-            set
-            {
-                _isActive = value;
-                NotifyPropertyChanged();
-            }
+            get => _isActive;
+            set => SetAndNotifyPropertyChanged(ref _isActive, value);
         }
         #endregion
     }
