@@ -2,12 +2,38 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Authors>Zsolt Gajdács</Authors>
+    <Company>ZsGWorks</Company>
+    <Description>Core module of Blinkreminder</Description>
+    <Copyright />
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/ZsoltGajdacs/BlinkReminder</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ZsoltGajdacs/BlinkReminder</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>brcore.pfx</AssemblyOriginatorKeyFile>
+    <CodeAnalysisRuleSet>..\.sonarlint\zsoltgajdacs_blinkremindercsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.11" />
-    <PackageReference Include="NLog.Schema" Version="4.7.11" />
-    <PackageReference Include="ZsGUtils" Version="0.9.1" />
+    <AdditionalFiles Include="..\.sonarlint\zsoltgajdacs_blinkreminder\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.13" />
+    <PackageReference Include="NLog.Schema" Version="4.7.13" />
+    <PackageReference Include="ZsGUtils" Version="0.9.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MeasurementSystems\ActivityBasedMeasurement\" />
   </ItemGroup>
 
 </Project>

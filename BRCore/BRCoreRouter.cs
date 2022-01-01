@@ -1,4 +1,8 @@
-﻿using BRCore.Settings.DTO;
+﻿using BRCore.Events;
+using BRCore.Mappers;
+using BRCore.MeasurementSystems;
+using BRCore.Settings;
+using BRCore.Settings.DTO;
 using BRCore.Update;
 using System;
 
@@ -6,64 +10,40 @@ namespace BRCore
 {
     public class BRCoreRouter : IBRCoreRouter
     {
-        private UpdateRunner updateRunner;
+        private readonly MeasurementCoordinator coordinator;
 
-        #region Timer methods
-        public void PauseTimers(TimeSpan pauseAmount)
+        public event StartBreakEventHandle StartBreakEvent;
+
+        public BRCoreRouter()
         {
-            /*bool isPaused = true;
-
-            // If the user chose timed pause
-            if (pauseAmount.TotalSeconds > 0)
-            {
-                // Zero out the counter to know how long the pause should be going on
-                TimerHandler.ResetCounterTime(ref pauseLengthSoFar);
-
-                ActivateResumeBtn();
-                SetTaskbarTooltip(TimeToPauseEnd() + TOOLTIP_PAUSE_MSG);
-                PauseTimers(true);
-            }
-            // if this is going on till resume is pushed
-            else if (pauseAmount.TotalMinutes.Equals(TimeSpan.FromMinutes(-1)))
-            {
-                ActivateResumeBtn();
-                SetTaskbarTooltip(TOOLTIP_INDEF_PAUSE);
-                PauseTimers(false);
-            }
-            // Or the user just canceled
-            else
-            {
-                isPaused = false;
-            }*/
+            coordinator = new MeasurementCoordinator();
+            Init();
         }
 
-        public void ResetTimers()
+        private void Init()
         {
-            throw new NotImplementedException();
+            SettingsHolder holder = SettingsHolder.Instance;
+            coordinator.InitMeasurement(SettingsMapper.SettingsToDto(holder.Settings));
         }
 
-        public void ResumeTimers()
+        public void PauseMeasurement(TimeSpan pauseAmount)
         {
-            throw new NotImplementedException();
+            coordinator.PauseMeasurement(pauseAmount);
         }
-        #endregion
 
-        #region Data transfer methods
         public UpdateRunner GetUpdateRunner()
         {
-            return updateRunner ??= new UpdateRunner();
+            return new UpdateRunner();
         }
 
-        public GeneralSettingsDto GetSettings()
+        public SettingsDto GetSettings()
+        {
+            return SettingsMapper.SettingsToDto(SettingsHolder.Instance.Settings);
+        }
+
+        public void UpdateSettings(SettingsDto settings)
         {
             throw new NotImplementedException();
         }
-
-        public void UpdateSettings(GeneralSettingsDto settings)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
     }
 }

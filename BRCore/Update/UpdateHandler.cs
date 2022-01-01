@@ -10,7 +10,7 @@ namespace BRCore.Update
 {
     internal class UpdateHandler
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private const string UPDATE_ZIPNAME = "brupdate.zip";
         private const string UPDATE_FILENAME = "BRSetup.msi";
@@ -20,11 +20,11 @@ namespace BRCore.Update
         private readonly string updateFilePath;
         private readonly string updateChangelogPath;
 
-        private UserSettings settings;
+        private ApplicationSettings settings;
 
         public UpdateHandler()
         {
-            settings = UserSettings.Instance;
+            settings = ApplicationSettings.Instance;
             updateZipFilePath = settings.SettingsDirPath + "\\" + UPDATE_ZIPNAME;
             updateFilePath = settings.SettingsDirPath + "\\" + UPDATE_FILENAME;
             updateChangelogPath = settings.SettingsDirPath + "\\" + UPDATE_CHANGELOG;
@@ -60,7 +60,10 @@ namespace BRCore.Update
                 logger.Error("Update extraction failed", e);
             }
 
-            if (File.Exists(updateFilePath)) Process.Start(updateFilePath);
+            if (File.Exists(updateFilePath))
+            {
+                Process.Start(updateFilePath);
+            }
         }
 
         /// <summary>

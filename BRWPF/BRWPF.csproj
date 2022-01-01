@@ -4,20 +4,35 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <StartupObject>BRWPF.App</StartupObject>
+    <Authors>Zsolt Gajdács</Authors>
+    <Company>ZsGWorks</Company>
+    <Product>BRWPF</Product>
+    <Description>Window handling part of BlinkReminder</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/ZsoltGajdacs/BlinkReminder</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ZsoltGajdacs/BlinkReminder</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <CodeAnalysisRuleSet>..\.sonarlint\zsoltgajdacs_blinkremindercsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Images\BlinkReminder.ico" />
     <None Remove="Images\Red_X.png" />
+    <AdditionalFiles Include="..\.sonarlint\zsoltgajdacs_blinkreminder\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
-    <PackageReference Include="NLog" Version="4.7.11" />
-    <PackageReference Include="NLog.Schema" Version="4.7.11" />
-    <PackageReference Include="SolidShineUi" Version="1.8.2" />
-    <PackageReference Include="ZsGUtils" Version="0.9.1" />
+    <PackageReference Include="NLog" Version="4.7.13" />
+    <PackageReference Include="NLog.Schema" Version="4.7.13" />
+    <PackageReference Include="SolidShineUi" Version="1.8.3" />
+    <PackageReference Include="ZsGUtils" Version="0.9.3.1" />
   </ItemGroup>
 
   <ItemGroup>

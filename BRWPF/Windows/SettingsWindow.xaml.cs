@@ -90,6 +90,38 @@ namespace BRWPF.Windows
         {
 
         }
+
+        /// <summary>
+        /// Deletes the Quote clicked on
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShortQuoteClick(object sender, MouseButtonEventArgs e)
+        {
+            /*UserSettings settings = UserSettings.Instance;
+
+            // img's tag contains the quote's text
+            Image img = sender as Image;
+
+            Quote quoteToRemove = settings.ShortBreakQuotes.Where(i => i.QuoteText.Equals((string)img.Tag)).Single();
+            settings.ShortBreakQuotes.Remove(quoteToRemove);*/
+        }
+
+        /// <summary>
+        /// Deletes the Quote clicked on
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LongQuoteClick(object sender, MouseButtonEventArgs e)
+        {
+            /*UserSettings settings = UserSettings.Instance;
+
+            // img's tag contains the quote's text
+            Image img = sender as Image;
+
+            Quote quoteToRemove = settings.LongBreakQuotes.Where(i => i.QuoteText.Equals((string)img.Tag)).Single();
+            settings.LongBreakQuotes.Remove(quoteToRemove);*/
+        }
         #endregion
 
         #region Property Events

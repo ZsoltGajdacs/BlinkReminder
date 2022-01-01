@@ -1,0 +1,15 @@
+{
+  "ServerUri": "https://sonarcloud.io/",
+  "Organization": {
+    "Key": "zsoltgajdacsp16",
+    "Name": "Zsolt Gajdács"
+  },
+  "ProjectKey": "ZsoltGajdacs_BlinkReminder",
+  "ProjectName": "BlinkReminder",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AXPHf9opK6MeWC3IvXIW",
+      "ProfileTimestamp": "2021-11-22T10:44:23Z"
+    }
+  }
+}

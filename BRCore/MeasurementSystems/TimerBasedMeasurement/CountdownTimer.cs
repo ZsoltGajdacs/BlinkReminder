@@ -1,63 +1,51 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Timers;
+using ZsGUtils.UIHelpers;
 
 namespace BRCore.MeasurementSystems.TimerBasedMeasurement
 {
     /// <summary>
     /// Timer for the block window. Counts the remaining time left from the break
     /// </summary>
-    public class CountdownTimer : INotifyPropertyChanged
+    public class CountdownTimer : BindableClass
     {
         private Timer timer; // Timer to display remaining time
         private TimeSpan duration; // Remaining time for display timer
 
         private string _timeToDisplay; // Variable for data binding
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public CountdownTimer(TimeSpan duration)
-        {
-            this.duration = duration;
-            UpdateDurationAndDisplay();
-            SetAndStartTimer();
-        }
-
-        #region Property changed handler
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
-        #region Accessors
-
         /// <summary>
         /// Access to remaing to window close, preformatted hh:mm:ss
         /// </summary>
-        public string TimeToDisplay
-        {
-            get
-            {
-                return _timeToDisplay;
-            }
+        public string TimeToDisplay { get => _timeToDisplay; set => SetAndNotifyPropertyChanged(ref _timeToDisplay, value); }
 
-            set
-            {
-                if (!value.Equals(_timeToDisplay))
-                {
-                    _timeToDisplay = value;
-                    NotifyPropertyChanged();
-                }
-            }
+        public void Start(TimeSpan duration)
+        {
+            this.duration = duration;
+            SetAndStartTimer();
+            UpdateDurationAndDisplay();
         }
 
-        #endregion
+        /// <summary>
+        /// Sets up a dispatcherTimer and starts it
+        /// </summary>
+        private void SetAndStartTimer()
+        {
+            timer = new Timer();
+            timer.Elapsed += Timer_Elapsed;
+            timer.Interval = TimeSpan.FromSeconds(1).TotalMilliseconds;
+            timer.AutoReset = true;
 
-        #region Startup methods
+            timer.Start();
+        }
+
+        /// <summary>
+        /// Called every second by the timer to update the display
+        /// </summary>
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            UpdateDurationAndDisplay();
+        }
 
         /// <summary>
         /// Sets the TimeToDisplay property. 
@@ -89,29 +77,5 @@ namespace BRCore.MeasurementSystems.TimerBasedMeasurement
 
             duration = duration.Add(TimeSpan.FromSeconds(-1));
         }
-
-        /// <summary>
-        /// Sets up a dispatcherTimer and starts it
-        /// </summary>
-        private void SetAndStartTimer()
-        {
-            timer = new Timer();
-            timer.Elapsed += Timer_Elapsed;
-            timer.Interval = TimeSpan.FromSeconds(1).TotalMilliseconds;
-            timer.AutoReset = true;
-
-            timer.Start();
-        }
-        #endregion
-
-        #region Event methods
-        /// <summary>
-        /// Called every second by the timer to update the display
-        /// </summary>
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            UpdateDurationAndDisplay();
-        }
-        #endregion
     }
 }

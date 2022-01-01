@@ -49,7 +49,7 @@ namespace BRWPF.Windows
             InitializeComponent();
             tooltipHandler = new TooltipHandler();
 
-            IndefPauseBtn.IsEnabled = UserSettings.Instance.IndefPauseEnabled;
+            IndefPauseBtn.IsEnabled = ApplicationSettings.Instance.IndefPauseEnabled;
             PauseTime = 1;
 
             SetBinding();

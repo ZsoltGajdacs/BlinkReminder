@@ -26,8 +26,8 @@ namespace BRWPF.Mappers
             var settingsDtoToGeneralSettingsVm = new MapperConfiguration(cfg => cfg.CreateMap<GeneralSettingsDto, GeneralSettingsViewModel>());
             var generalSettingsVmTosettingsDto = new MapperConfiguration(cfg => cfg.CreateMap<GeneralSettingsViewModel, GeneralSettingsDto>());
 
-            var breakTimerSettingsDtoToBreakTimerVm = new MapperConfiguration(cfg => cfg.CreateMap<BreakTimerSettingsDto, BreakSettingsViewModel>());
-            var breakTimerVMToBreakTimerSettingsDto = new MapperConfiguration(cfg => cfg.CreateMap<BreakSettingsViewModel, BreakTimerSettingsDto>());
+            var breakTimerSettingsDtoToBreakTimerVm = new MapperConfiguration(cfg => cfg.CreateMap<BreakSettingsDto, BreakSettingsViewModel>());
+            var breakTimerVMToBreakTimerSettingsDto = new MapperConfiguration(cfg => cfg.CreateMap<BreakSettingsViewModel, BreakSettingsDto>());
 
             return new SettingsMapper(settingsDtoToGeneralSettingsVm, generalSettingsVmTosettingsDto,
                 breakTimerSettingsDtoToBreakTimerVm, breakTimerVMToBreakTimerSettingsDto);
@@ -65,7 +65,7 @@ namespace BRWPF.Mappers
             return generalSettingsVmTosettingsDtoMapper.Map<GeneralSettingsDto>(generalSettingsViewModel);
         }
 
-        public BreakSettingsViewModel ToBreakTimerVM(BreakTimerSettingsDto breakTimerDto)
+        public BreakSettingsViewModel ToBreakTimerVM(BreakSettingsDto breakTimerDto)
         {
             if (breakTimerSettingsDtoToBreakTimerVmMapper == null)
             {
@@ -75,14 +75,14 @@ namespace BRWPF.Mappers
             return breakTimerSettingsDtoToBreakTimerVmMapper.Map<BreakSettingsViewModel>(breakTimerDto);
         }
 
-        public BreakTimerSettingsDto ToBreakSettingsDto(BreakSettingsViewModel breakSettingsViewModel)
+        public BreakSettingsDto ToBreakSettingsDto(BreakSettingsViewModel breakSettingsViewModel)
         {
             if (breakTimerVMToBreakTimerSettingsDtoMapper == null)
             {
                 breakTimerVMToBreakTimerSettingsDtoMapper = breakTimerVMToBreakTimerSettingsDto.CreateMapper();
             }
 
-            return breakTimerVMToBreakTimerSettingsDtoMapper.Map<BreakTimerSettingsDto>(breakSettingsViewModel);
+            return breakTimerVMToBreakTimerSettingsDtoMapper.Map<BreakSettingsDto>(breakSettingsViewModel);
         }
     }
 }

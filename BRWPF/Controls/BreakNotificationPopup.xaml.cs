@@ -21,14 +21,14 @@ namespace BRWPF.Controls
 
         private string _textToShow = string.Empty;
         private CountdownTimer countdownTimer;
-        private BreakTimerSettingsDto breakSettings;
+        private BreakSettingsDto breakSettings;
 
         public bool ShouldStartBreak { get; set; }
         public bool ShouldPostponeBreak { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BreakNotificationPopup(BreakTimerSettingsDto breakSettings)
+        public BreakNotificationPopup(BreakSettingsDto breakSettings)
         {
             InitializeComponent();
 

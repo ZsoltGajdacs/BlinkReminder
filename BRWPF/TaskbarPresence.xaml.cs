@@ -1,5 +1,4 @@
 ﻿using BRCore;
-using BRCore.Settings.DTO;
 using BRWPF.Controls;
 using BRWPF.Utils;
 using System;
@@ -27,17 +26,25 @@ namespace BRWPF.Windows
         private KeyboardHook keyTrap;
 
         // Core router
-        private IBRCoreRouter coreRouter = new BRCoreRouter();
+        private IBRCoreRouter coreRouter;
         #endregion
 
         #region CTOR and init
         public TaskbarPresence()
         {
+            PreInit();
             InitializeComponent();
-            Init();
+            PostInit();
         }
 
-        private void Init()
+        private void PreInit()
+        {
+            coreRouter = new BRCoreRouter();
+            coreRouter.StartBreakEvent += CoreRouter_StartBreak;
+            coreRouter.StopBreak += CoreRouter_StopBreak;
+        }
+
+        private void PostInit()
         {
 
         }
@@ -59,7 +66,7 @@ namespace BRWPF.Windows
                 }
 
                 int pauseAmount = pauseWindow.ShowDialog();
-                coreRouter.PauseTimers(TimeSpan.FromMinutes(pauseAmount));
+                coreRouter.PauseMeasurement(TimeSpan.FromMinutes(pauseAmount));
             }));
         }
 
@@ -107,7 +114,7 @@ namespace BRWPF.Windows
         private void ResumeItem_Click(object sender, RoutedEventArgs e)
         {
             ActivatePauseBtn();
-            coreRouter.ResumeTimers();
+            coreRouter.ResumeMeasurement();
         }
         #endregion
 
@@ -134,13 +141,13 @@ namespace BRWPF.Windows
         }
         #endregion
 
-        #region Window Events
+        #region Window Event handlers
         private void BlockerWindow_Closed(object sender, EventArgs e)
         {
             blockerWindow = null;
 
             keyTrap?.Dispose(); // Release keyboard trap
-            coreRouter.ResetTimers();
+            coreRouter.ResetMeasurement();
 
             // Set back the taskbarWindow to be the main one
             Application.Current.MainWindow = this;
@@ -205,6 +212,18 @@ namespace BRWPF.Windows
                     ResetTimers(settings.LongIntervalTime, settings.ShortIntervalTime);
                 }
             }*/
+        }
+        #endregion
+
+        #region Break event handlers
+        private void CoreRouter_StopBreak()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CoreRouter_StartBreak()
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

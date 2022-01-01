@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace BRCore.MeasurementSystems.TimerBasedMeasurement
 {
-    public class TimerMeasurement
+    internal class TimerMeasurement
     {
 
         private Dictionary<string, Timer> timers;

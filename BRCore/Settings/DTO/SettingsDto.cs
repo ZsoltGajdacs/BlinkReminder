@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BRCore.MeasurementSystems;
+using System;
 using System.Collections.Generic;
 
 namespace BRCore.Settings.DTO
@@ -6,12 +7,12 @@ namespace BRCore.Settings.DTO
     public sealed class SettingsDto
     {
         public GeneralSettingsDto GeneralSettingsDto { get; private set; }
-        public List<BreakTimerSettingsDto> TimerSettingsDtos { get; private set; }
+        public List<BreakDto> BreakDtos { get; private set; }
 
-        public SettingsDto(GeneralSettingsDto generalSettingsDto, List<BreakTimerSettingsDto> timerSettingsDtos)
+        public SettingsDto(GeneralSettingsDto generalSettingsDto, List<BreakDto> breakDtos)
         {
             GeneralSettingsDto = generalSettingsDto ?? throw new ArgumentNullException(nameof(generalSettingsDto));
-            TimerSettingsDtos = timerSettingsDtos ?? throw new ArgumentNullException(nameof(timerSettingsDtos));
+            BreakDtos = breakDtos ?? throw new ArgumentNullException(nameof(breakDtos));
         }
     }
 }
